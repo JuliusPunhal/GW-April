@@ -77,20 +77,61 @@
 
 namespace GW {
 	
+	using Constants::InstanceType;
 	using Constants::MapID;
 	using Constants::SkillID;
 	using Constants::SkillType;
 
 	using Map::GetMapID;
+	using Map::GetInstanceType;
 
 	auto GetInstanceTime() -> std::chrono::milliseconds;
 	auto GetRecharge( GW::SkillbarSkill const& ) -> std::chrono::milliseconds;
 	auto GetTimeRemaining( GW::Effect const& ) -> std::chrono::milliseconds;
+	
+
+	using Morale = int; // -60 <= morale <= +10
+
+	// Only works for player and heros
+	auto GetMorale( GW::AgentID ) -> Morale;
+	auto GetMorale() -> Morale; // player morale
+
+
+	enum class Rarity : char { White, Blue, Purple, Gold, Green, Unknown };
+
+	auto GetRarity( GW::Item const& item ) -> Rarity;
+	void IdentifyItem( GW::Item const& item, GW::Item const& kit );
+	void UseItem( GW::Item const& );
 
 	void SendChat( char channel, const char* msg );
 	void SendChat( char channel, const wchar_t* msg );
 	void SendChat( char channel, std::string const& msg );
 	void SendChat( char channel, std::wstring const& msg );
+	
+	
+	template<typename Pred>
+	auto SearchBags( int const first, int const last, Pred predicate )
+		-> GW::Item*
+	{
+		auto const bags = GW::Items::GetBagArray();
+		if ( bags == nullptr || bags[0] == nullptr ) return nullptr;
+
+		for ( auto bag_iter = first; bag_iter <= last; ++bag_iter )
+		{
+			auto const* bag = bags[bag_iter];
+			if ( bag == nullptr ) continue;
+
+			for ( auto* item : bag->items )
+			{
+				if ( predicate( item ) )
+					return item;
+			}
+		}
+
+		return nullptr;
+	}
+	
+	auto FindUnidentGold() -> GW::Item const*;
 
 
 	using ObjectiveID = int;
@@ -111,5 +152,32 @@ namespace GW {
 		inline constexpr ObjectiveID Dhuum = 157;
 	
 	}
+
+}
+
+
+namespace GW::Constants::ItemID {
+
+	// Weapons
+	inline constexpr int DSR = 32823;
+	inline constexpr int EternalBlade = 1045;
+	inline constexpr int VoltaicSpear = 2071;
+
+	// Consumables
+	inline constexpr int IdentKit = 2989;
+	inline constexpr int IdentKit_Superior = 5899;
+	inline constexpr int Lockpick = 22751;
+	inline constexpr int MiniDhuum = 32822;
+	inline constexpr int PhantomKey = 5882;
+	inline constexpr int PumpkinCookie = 28433;
+	inline constexpr int ResScroll = 26501;
+
+	// Summons
+	inline constexpr int GakiSummon = 30960;
+	inline constexpr int ImperialGuardSummon = 30210;
+	inline constexpr int TurtleSummon = 30966;
+
+	// Tonics
+	inline constexpr int ELMiku = 36451;
 
 }

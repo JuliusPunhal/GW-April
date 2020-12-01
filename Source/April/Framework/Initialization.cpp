@@ -1,6 +1,7 @@
 
 #include "April/Framework/Initialization.h"
 
+#include "April/Module/ConsumablesMgr.h"
 #include "April/Module/UwTimer.h"
 
 #include "April/Gui/HealthEnergy.h"
@@ -26,7 +27,8 @@ namespace fs = std::filesystem;
 
 
 namespace {
-	
+
+	auto consumables_mgr = std::shared_ptr<a::ConsumablesMgr>{};
 	auto uw_timer = std::unique_ptr<a::UwTimer>{};
 
 	auto gui_energy = std::unique_ptr<ag::Energybar>{};
@@ -48,6 +50,7 @@ namespace {
 	{
 		April::WndProc::RestoreMouseInput();
 
+		consumables_mgr->Update();
 		uw_timer->Update();
 
 		ImGui_ImplDX9_NewFrame();
@@ -92,6 +95,7 @@ namespace {
 
 		auto const uw_times = std::make_shared<a::UwTimes>();
 
+		consumables_mgr = std::make_shared<a::ConsumablesMgr>();
 		uw_timer = std::make_unique<a::UwTimer>( uw_times );
 
 		gui_energy = std::make_unique<ag::Energybar>();
