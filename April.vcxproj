@@ -103,6 +103,7 @@
     <ClCompile Include="Source\April\Config\Module\ChatCommands.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\ChatFilter.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\ConsumablesMgr.config.cpp" />
+    <ClCompile Include="Source\April\Config\Module\NotifyEffectLost.config.cpp" />
     <ClCompile Include="Source\April\Gui\Inventory.cpp" />
     <ClCompile Include="Source\April\Config\Gui\Skillbar.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\UwTimesGui.config.cpp" />
@@ -117,6 +118,7 @@
     <ClCompile Include="Source\April\Module\ChatFilter.cpp" />
     <ClCompile Include="Source\April\Module\ConsumablesMgr.cpp" />
     <ClCompile Include="Source\April\Module\CursorFix.cpp" />
+    <ClCompile Include="Source\April\Module\NotifyEffectLoss.cpp" />
     <ClCompile Include="Source\April\Module\ReturnToOutpost.cpp" />
     <ClCompile Include="Source\April\Module\ShowKitUses.cpp" />
     <ClCompile Include="Source\April\Module\SuppressSpeechBubbles.cpp" />
@@ -149,6 +151,7 @@
     <ClInclude Include="Source\April\Config\Module\ChatCommands.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\ChatFilter.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\ConsumablesMgr.config.hpp" />
+    <ClInclude Include="Source\April\Config\Module\NotifyEffectLost.config.hpp" />
     <ClInclude Include="Source\April\Gui\Inventory.h" />
     <ClInclude Include="Source\April\Config\Gui\Skillbar.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\UwTimesGui.config.hpp" />
@@ -165,6 +168,7 @@
     <ClInclude Include="Source\April\Module\ConsumablesMgr.AllowUse.hpp" />
     <ClInclude Include="Source\April\Module\ConsumablesMgr.h" />
     <ClInclude Include="Source\April\Module\CursorFix.h" />
+    <ClInclude Include="Source\April\Module\NotifyEffectLoss.h" />
     <ClInclude Include="Source\April\Module\ReturnToOutpost.h" />
     <ClInclude Include="Source\April\Module\ShowKitUses.h" />
     <ClInclude Include="Source\April\Module\SuppressSpeechBubbles.h" />

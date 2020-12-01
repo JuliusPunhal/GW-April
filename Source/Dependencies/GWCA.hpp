@@ -187,6 +187,14 @@ namespace GW::Constants::ItemID {
 
 
 namespace GW::Packet::StoC {
+	
+	struct RemoveEffect : Packet<RemoveEffect> {
+		// TODO: Confirm layout
+		GW::AgentID agent_id;
+		unsigned	effect_id;
+	};
+	unsigned const Packet<RemoveEffect>::STATIC_HEADER =
+		GAME_SMSG_EFFECT_REMOVED;
 
 	struct UpdateItemOwner : Packet<UpdateItemOwner> {
 		GW::ItemID  item_id;

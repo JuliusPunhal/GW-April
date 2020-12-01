@@ -6,6 +6,7 @@
 #include "April/Module/ChatFilter.h"
 #include "April/Module/ConsumablesMgr.h"
 #include "April/Module/CursorFix.h"
+#include "April/Module/NotifyEffectLoss.h"
 #include "April/Module/ReturnToOutpost.h"
 #include "April/Module/ShowKitUses.h"
 #include "April/Module/SuppressSpeechBubbles.h"
@@ -41,6 +42,7 @@ namespace {
 	auto chatfilter = std::unique_ptr<a::ChatFilter>{};
 	auto consumables_mgr = std::shared_ptr<a::ConsumablesMgr>{};
 	auto cursorfix = std::unique_ptr<a::CursorFix>{};
+	auto notify_effect_lost = std::unique_ptr<a::NotifyEffectLoss>{};
 	auto return_to_outpost = std::unique_ptr<a::ReturnToOutpost>{};
 	auto show_kit_uses = std::unique_ptr<a::ShowKitUses>{};
 	auto suppress_speech_bubbles = std::unique_ptr<a::SuppressSpeechBubbles>{};
@@ -119,6 +121,7 @@ namespace {
 		chatcommands = std::make_unique<a::ChatCommands>( consumables_mgr );
 		chatfilter = std::make_unique<a::ChatFilter>();
 		cursorfix = std::make_unique<a::CursorFix>();
+		notify_effect_lost = std::make_unique<a::NotifyEffectLoss>();
 		return_to_outpost = std::make_unique<a::ReturnToOutpost>();
 		show_kit_uses = std::make_unique<a::ShowKitUses>();
 		suppress_speech_bubbles = std::make_unique<a::SuppressSpeechBubbles>();
