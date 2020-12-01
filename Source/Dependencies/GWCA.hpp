@@ -77,11 +77,35 @@
 
 namespace GW {
 	
+	using Constants::MapID;
+
+	using Map::GetMapID;
+
 	auto GetInstanceTime() -> std::chrono::milliseconds;
 
 	void SendChat( char channel, const char* msg );
 	void SendChat( char channel, const wchar_t* msg );
 	void SendChat( char channel, std::string const& msg );
 	void SendChat( char channel, std::wstring const& msg );
+
+
+	using ObjectiveID = int;
+
+	namespace Objectives {
+	
+		inline constexpr ObjectiveID Chamber = 146;
+		inline constexpr ObjectiveID Restore = 147;
+		inline constexpr ObjectiveID Escort = 148;
+		inline constexpr ObjectiveID UWG = 149;
+		inline constexpr ObjectiveID Vale = 150;
+		inline constexpr ObjectiveID Wastes = 151;
+		inline constexpr ObjectiveID Pits = 152;
+		inline constexpr ObjectiveID Plains = 153;
+		inline constexpr ObjectiveID Mnts = 154;
+		inline constexpr ObjectiveID Pools = 155;
+		inline constexpr ObjectiveID NightmanCometh = 156;
+		inline constexpr ObjectiveID Dhuum = 157;
+	
+	}
 
 }

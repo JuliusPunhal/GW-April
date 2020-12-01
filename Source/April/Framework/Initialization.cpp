@@ -1,7 +1,10 @@
 
 #include "April/Framework/Initialization.h"
 
+#include "April/Module/UwTimer.h"
+
 #include "April/Gui/InstanceTimer.h"
+#include "April/Gui/UwTimes.h"
 
 #include "April/Framework/WndProc.h"
 
@@ -22,7 +25,10 @@ namespace fs = std::filesystem;
 
 namespace {
 	
+	auto uw_timer = std::unique_ptr<a::UwTimer>{};
+
 	auto gui_instancetimer = std::unique_ptr<ag::InstanceTimer>{};
+	auto gui_uwtimer = std::unique_ptr<ag::UwTimesGui>{};
 
 	auto running = true;
 	
@@ -37,11 +43,14 @@ namespace {
 	{
 		April::WndProc::RestoreMouseInput();
 
+		uw_timer->Update();
+
 		ImGui_ImplDX9_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 		{
 			gui_instancetimer->Display();
+			gui_uwtimer->Display();
 		}
 		ImGui::EndFrame();
 		ImGui::Render();
@@ -73,7 +82,12 @@ namespace {
 		io.Fonts->AddFontFromFileTTF( "C:\\Windows\\Fonts\\Consola.ttf", 14.f );
 		io.IniFilename = "April\\imgui.ini";
 
+		auto const uw_times = std::make_shared<a::UwTimes>();
+
+		uw_timer = std::make_unique<a::UwTimer>( uw_times );
+
 		gui_instancetimer = std::make_unique<ag::InstanceTimer>();
+		gui_uwtimer = std::make_unique<ag::UwTimesGui>( uw_times );
 
 		GW::Render::SetRenderCallback( RenderCallback );
 	}

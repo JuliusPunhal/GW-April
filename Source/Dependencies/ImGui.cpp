@@ -20,3 +20,8 @@ bool ImGui::Button( std::string const& label, ImVec2 const& size )
 {
 	return ImGui::Button( label.c_str(), size );
 }
+
+bool ImGui::SmallButton( std::string const& label )
+{
+	return ImGui::SmallButton( label.c_str() );
+}
