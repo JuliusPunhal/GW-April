@@ -1,6 +1,7 @@
 
 #include "April/Framework/Initialization.h"
 
+#include "April/Module/ChatCommands.h"
 #include "April/Module/ConsumablesMgr.h"
 #include "April/Module/UwTimer.h"
 
@@ -29,6 +30,7 @@ namespace fs = std::filesystem;
 
 namespace {
 
+	auto chatcommands = std::unique_ptr<a::ChatCommands>{};
 	auto consumables_mgr = std::shared_ptr<a::ConsumablesMgr>{};
 	auto uw_timer = std::unique_ptr<a::UwTimer>{};
 
@@ -99,6 +101,7 @@ namespace {
 		auto const uw_times = std::make_shared<a::UwTimes>();
 
 		consumables_mgr = std::make_shared<a::ConsumablesMgr>();
+		chatcommands = std::make_unique<a::ChatCommands>( consumables_mgr );
 		uw_timer = std::make_unique<a::UwTimer>( uw_times );
 
 		gui_energy = std::make_unique<ag::Energybar>();

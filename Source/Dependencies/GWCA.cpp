@@ -97,6 +97,26 @@ void GW::SendChat( char const channel, std::wstring const& str )
 	return GW::Chat::SendChat( channel, str.c_str() );
 }
 
+void GW::WriteChat( GW::Chat::Channel const channel, const char* msg )
+{
+	return GW::Chat::WriteChat( channel, msg );
+}
+
+void GW::WriteChat( GW::Chat::Channel const channel, const wchar_t* msg )
+{
+	return GW::Chat::WriteChat( channel, msg );
+}
+
+void GW::WriteChat( GW::Chat::Channel const channel, std::string const& msg )
+{
+	return GW::Chat::WriteChat( channel, msg.c_str() );
+}
+
+void GW::WriteChat( GW::Chat::Channel const channel, std::wstring const& msg )
+{
+	return GW::Chat::WriteChat( channel, msg.c_str() );
+}
+
 auto GW::FindUnidentGold() -> GW::Item const*
 {
 	auto const is_unident_gold = []( GW::Item const* item )

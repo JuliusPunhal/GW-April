@@ -9,6 +9,10 @@ namespace April::Config {
 	{
 		return str && str[0] != '\0';
 	}
+	constexpr bool ValidString( wchar_t const* str )
+	{
+		return str && str[0] != '\0';
+	}
 
 	template<typename Container_t>
 	constexpr bool ValidStrings( Container_t const& container )

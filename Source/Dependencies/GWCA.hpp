@@ -107,7 +107,10 @@ namespace GW {
 	void SendChat( char channel, const wchar_t* msg );
 	void SendChat( char channel, std::string const& msg );
 	void SendChat( char channel, std::wstring const& msg );
-	
+	void WriteChat( GW::Chat::Channel, const char* msg );
+	void WriteChat( GW::Chat::Channel, const wchar_t* msg );
+	void WriteChat( GW::Chat::Channel, std::string const& msg );
+	void WriteChat( GW::Chat::Channel, std::wstring const& msg );
 	
 	template<typename Pred>
 	auto SearchBags( int const first, int const last, Pred predicate )
