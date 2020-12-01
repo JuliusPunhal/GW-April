@@ -6,6 +6,7 @@
 #include "April/Module/ChatFilter.h"
 #include "April/Module/ConsumablesMgr.h"
 #include "April/Module/CursorFix.h"
+#include "April/Module/DhuumBot.h"
 #include "April/Module/DhuumsJudgement.h"
 #include "April/Module/NotifyEffectLoss.h"
 #include "April/Module/ReturnToOutpost.h"
@@ -44,6 +45,7 @@ namespace {
 	auto chatfilter = std::unique_ptr<a::ChatFilter>{};
 	auto consumables_mgr = std::shared_ptr<a::ConsumablesMgr>{};
 	auto cursorfix = std::unique_ptr<a::CursorFix>{};
+	auto dhuum_bot = std::shared_ptr<a::DhuumBot>{};
 	auto dhuums_judgement = std::shared_ptr<a::DhuumsJudgement>{};
 	auto notify_effect_lost = std::unique_ptr<a::NotifyEffectLoss>{};
 	auto return_to_outpost = std::unique_ptr<a::ReturnToOutpost>{};
@@ -73,6 +75,7 @@ namespace {
 		April::WndProc::RestoreMouseInput();
 
 		consumables_mgr->Update();
+		dhuum_bot->Update();
 		dhuums_judgement->Update();
 		uw_timer->Update();
 
@@ -127,6 +130,7 @@ namespace {
 		chatcommands = std::make_unique<a::ChatCommands>( consumables_mgr );
 		chatfilter = std::make_unique<a::ChatFilter>();
 		cursorfix = std::make_unique<a::CursorFix>();
+		dhuum_bot = std::make_shared<a::DhuumBot>();
 		dhuums_judgement = std::make_shared<a::DhuumsJudgement>();
 		notify_effect_lost = std::make_unique<a::NotifyEffectLoss>();
 		return_to_outpost = std::make_unique<a::ReturnToOutpost>();

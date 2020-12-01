@@ -71,6 +71,16 @@ auto GW::GetMorale() -> Morale
 	return GW::GetMorale( GW::Agents::GetPlayerId() );
 }
 
+auto GW::GetHealthPoints( GW::AgentLiving const& agent ) -> int
+{
+	return static_cast<int>( agent.hp * agent.max_hp );
+}
+
+auto GW::GetEnergyPoints( GW::AgentLiving const& agent ) -> int
+{
+	return static_cast<int>( agent.energy * agent.max_energy );
+}
+
 auto GW::GetRarity( GW::Item const& item ) -> Rarity
 {
 	if ( item.complete_name_enc == nullptr )
@@ -136,6 +146,21 @@ void GW::WriteChat( GW::Chat::Channel const channel, std::string const& msg )
 void GW::WriteChat( GW::Chat::Channel const channel, std::wstring const& msg )
 {
 	return GW::Chat::WriteChat( channel, msg.c_str() );
+}
+
+void GW::UseSkill(uint32_t slot_0, uint32_t target_id, bool ping)
+{
+	GW::GameThread::Enqueue(
+		[=]() { GW::SkillbarMgr::UseSkill( slot_0, target_id, ping ); } );
+}
+
+void GW::UseSkill(uint32_t slot_0, GW::AgentLiving const& target, bool ping)
+{
+	GW::GameThread::Enqueue(
+		[=, target_id = target.agent_id]()
+		{
+			GW::SkillbarMgr::UseSkill( slot_0, target_id, ping );
+		} );
 }
 
 auto GW::FindUnidentGold() -> GW::Item const*

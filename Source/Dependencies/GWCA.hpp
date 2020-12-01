@@ -99,6 +99,8 @@ namespace GW {
 	auto GetMorale( GW::AgentID ) -> Morale;
 	auto GetMorale() -> Morale; // player morale
 
+	auto GetHealthPoints( GW::AgentLiving const& ) -> int;
+	auto GetEnergyPoints( GW::AgentLiving const& ) -> int;
 
 	enum class Rarity : char { White, Blue, Purple, Gold, Green, Unknown };
 
@@ -114,6 +116,10 @@ namespace GW {
 	void WriteChat( GW::Chat::Channel, const wchar_t* msg );
 	void WriteChat( GW::Chat::Channel, std::string const& msg );
 	void WriteChat( GW::Chat::Channel, std::wstring const& msg );
+	
+	void UseSkill( uint32_t slot_0, uint32_t target_id = 0, bool ping = false );
+	void UseSkill( 
+		uint32_t slot_0, GW::AgentLiving const& target, bool ping = false );
 	
 	template<typename Pred>
 	auto SearchBags( int const first, int const last, Pred predicate )
