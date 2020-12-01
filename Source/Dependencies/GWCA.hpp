@@ -78,10 +78,14 @@
 namespace GW {
 	
 	using Constants::MapID;
+	using Constants::SkillID;
+	using Constants::SkillType;
 
 	using Map::GetMapID;
 
 	auto GetInstanceTime() -> std::chrono::milliseconds;
+	auto GetRecharge( GW::SkillbarSkill const& ) -> std::chrono::milliseconds;
+	auto GetTimeRemaining( GW::Effect const& ) -> std::chrono::milliseconds;
 
 	void SendChat( char channel, const char* msg );
 	void SendChat( char channel, const wchar_t* msg );

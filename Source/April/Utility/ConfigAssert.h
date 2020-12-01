@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string_view>
+
 
 namespace April::Config {
 
@@ -17,6 +19,20 @@ namespace April::Config {
 				return false;
 		}
 		return true;
+	}
+	
+	constexpr bool IsFontPath( char const* path )
+	{
+		using namespace std::string_view_literals;
+
+		auto const view = std::string_view( path );
+		if ( view.size() <= 4 ) return false;
+
+		return
+			view[view.size() - 4] == '.'
+			&& view[view.size() - 3] == 't'
+			&& view[view.size() - 2] == 't'
+			&& view[view.size() - 1] == 'f';
 	}
 
 }

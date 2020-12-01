@@ -4,6 +4,7 @@
 #include "April/Module/UwTimer.h"
 
 #include "April/Gui/InstanceTimer.h"
+#include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimes.h"
 
 #include "April/Framework/WndProc.h"
@@ -28,6 +29,7 @@ namespace {
 	auto uw_timer = std::unique_ptr<a::UwTimer>{};
 
 	auto gui_instancetimer = std::unique_ptr<ag::InstanceTimer>{};
+	auto gui_skillbar = std::unique_ptr<ag::Skillbar>{};
 	auto gui_uwtimer = std::unique_ptr<ag::UwTimesGui>{};
 
 	auto running = true;
@@ -50,6 +52,7 @@ namespace {
 		ImGui::NewFrame();
 		{
 			gui_instancetimer->Display();
+			gui_skillbar->Display();
 			gui_uwtimer->Display();
 		}
 		ImGui::EndFrame();
@@ -87,6 +90,7 @@ namespace {
 		uw_timer = std::make_unique<a::UwTimer>( uw_times );
 
 		gui_instancetimer = std::make_unique<ag::InstanceTimer>();
+		gui_skillbar = std::make_unique<ag::Skillbar>();
 		gui_uwtimer = std::make_unique<ag::UwTimesGui>( uw_times );
 
 		GW::Render::SetRenderCallback( RenderCallback );

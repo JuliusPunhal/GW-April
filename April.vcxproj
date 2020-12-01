@@ -97,10 +97,12 @@
     <ClCompile Include="Dependencies\ImGui\imgui_draw.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Source\April\Config\Gui\InstanceTimer.config.cpp" />
+    <ClCompile Include="Source\April\Config\Gui\Skillbar.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\UwTimesGui.config.cpp" />
     <ClCompile Include="Source\April\Framework\Initialization.cpp" />
     <ClCompile Include="Source\April\Framework\WndProc.cpp" />
     <ClCompile Include="Source\April\Gui\InstanceTimer.cpp" />
+    <ClCompile Include="Source\April\Gui\Skillbar.cpp" />
     <ClCompile Include="Source\April\Gui\UwTimes.cpp" />
     <ClCompile Include="Source\April\Module\UwTimer.cpp" />
     <ClCompile Include="Source\April\Utility\ConfigAssert.cpp" />
@@ -121,10 +123,12 @@
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
     <ClInclude Include="Source\April\Config\Gui\InstanceTimer.config.hpp" />
+    <ClInclude Include="Source\April\Config\Gui\Skillbar.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\UwTimesGui.config.hpp" />
     <ClInclude Include="Source\April\Framework\Initialization.h" />
     <ClInclude Include="Source\April\Framework\WndProc.h" />
     <ClInclude Include="Source\April\Gui\InstanceTimer.h" />
+    <ClInclude Include="Source\April\Gui\Skillbar.h" />
     <ClInclude Include="Source\April\Gui\UwTimes.h" />
     <ClInclude Include="Source\April\Module\UwTimer.h" />
     <ClInclude Include="Source\April\Utility\ConfigAssert.h" />
