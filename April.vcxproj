@@ -96,6 +96,7 @@
     <ClCompile Include="Dependencies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_draw.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\April\Config\Gui\DhuumInfo.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\HealthEnergy.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\InstanceTimer.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\Inventory.config.cpp" />
@@ -104,6 +105,7 @@
     <ClCompile Include="Source\April\Config\Module\ChatFilter.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\ConsumablesMgr.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\NotifyEffectLost.config.cpp" />
+    <ClCompile Include="Source\April\Gui\DhuumInfo.cpp" />
     <ClCompile Include="Source\April\Gui\Inventory.cpp" />
     <ClCompile Include="Source\April\Config\Gui\Skillbar.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\UwTimesGui.config.cpp" />
@@ -118,6 +120,7 @@
     <ClCompile Include="Source\April\Module\ChatFilter.cpp" />
     <ClCompile Include="Source\April\Module\ConsumablesMgr.cpp" />
     <ClCompile Include="Source\April\Module\CursorFix.cpp" />
+    <ClCompile Include="Source\April\Module\DhuumsJudgement.cpp" />
     <ClCompile Include="Source\April\Module\NotifyEffectLoss.cpp" />
     <ClCompile Include="Source\April\Module\ReturnToOutpost.cpp" />
     <ClCompile Include="Source\April\Module\ShowKitUses.cpp" />
@@ -144,6 +147,7 @@
     <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Source\April\Config\Gui\DhuumInfo.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\HealthEnergy.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\InstanceTimer.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\Inventory.config.hpp" />
@@ -152,6 +156,7 @@
     <ClInclude Include="Source\April\Config\Module\ChatFilter.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\ConsumablesMgr.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\NotifyEffectLost.config.hpp" />
+    <ClInclude Include="Source\April\Gui\DhuumInfo.h" />
     <ClInclude Include="Source\April\Gui\Inventory.h" />
     <ClInclude Include="Source\April\Config\Gui\Skillbar.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\UwTimesGui.config.hpp" />
@@ -168,6 +173,7 @@
     <ClInclude Include="Source\April\Module\ConsumablesMgr.AllowUse.hpp" />
     <ClInclude Include="Source\April\Module\ConsumablesMgr.h" />
     <ClInclude Include="Source\April\Module\CursorFix.h" />
+    <ClInclude Include="Source\April\Module\DhuumsJudgement.h" />
     <ClInclude Include="Source\April\Module\NotifyEffectLoss.h" />
     <ClInclude Include="Source\April\Module\ReturnToOutpost.h" />
     <ClInclude Include="Source\April\Module\ShowKitUses.h" />

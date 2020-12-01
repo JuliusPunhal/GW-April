@@ -1,6 +1,9 @@
 
 #include "Dependencies/GWCA.hpp"
 
+#include <array>
+#include <cstdint>
+
 using namespace std::chrono;
 
 
@@ -21,6 +24,24 @@ auto GW::GetTimeRemaining( GW::Effect const& effect ) -> milliseconds
 	// cast to signed to allow for negative times
 	auto const uptime = static_cast<long>( effect.GetTimeRemaining() );
 	return milliseconds{ uptime };
+}
+
+auto GW::GetMissionProgress() -> float
+{
+	struct ProgressBar {
+		int						pips;
+		std::array<uint8_t, 4>	color;		// ARGB
+		std::array<uint8_t, 4>	background; // ARGB
+		int						unk[7];
+		float					progress;
+		int						unk2[4];	// possibly fewer
+	};
+	
+	auto* bar = 
+		reinterpret_cast<ProgressBar*>(
+			GW::GameContext::instance()->character->progress_bar);
+
+	return bar->progress; // becomes invalid but not nullptr
 }
 
 auto GW::GetMorale( GW::AgentID const agent_id ) -> Morale

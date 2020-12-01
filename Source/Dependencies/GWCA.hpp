@@ -89,6 +89,9 @@ namespace GW {
 	auto GetRecharge( GW::SkillbarSkill const& ) -> std::chrono::milliseconds;
 	auto GetTimeRemaining( GW::Effect const& ) -> std::chrono::milliseconds;
 	
+	// Only works for one active MissionProgress-Bar, either first or last.
+	// In areas where there is only one, this should be the correct one.
+	auto GetMissionProgress() -> float; // 0 <= progress <= 1
 
 	using Morale = int; // -60 <= morale <= +10
 
@@ -206,5 +209,27 @@ namespace GW::Packet::StoC {
 	struct ItemGeneral_ReuseID : ItemGeneral {};
 	unsigned const Packet<ItemGeneral_ReuseID>::STATIC_HEADER =
 		GAME_SMSG_ITEM_GENERAL_INFO + 1;
+	
+	struct CreateMissionProgress : Packet<CreateMissionProgress> {
+		uint8_t		id;
+		wchar_t		unk1[122];
+		wchar_t		unk2[122];
+		uint8_t		unk3;
+		uint32_t	pips;			// probably only signed char used
+		float		regeneration;	// 0 <= x <= 1
+		float		filled;			// 0 <= x <= 1
+		uint32_t	color;			// not including border
+	};
+	unsigned const Packet<CreateMissionProgress>::STATIC_HEADER = 422;
+
+	struct UpdateMissionProgress : Packet<UpdateMissionProgress> {
+		uint8_t		id;
+		uint8_t		unk1;
+		uint32_t	pips;			// only signed char used
+		float		regeneration;	// 0 <= x <= 1
+		float		filled;			// 0 <= x <= 1
+		uint32_t	color;			// not including border
+	};
+	unsigned const Packet<UpdateMissionProgress>::STATIC_HEADER = 424;
 
 }
