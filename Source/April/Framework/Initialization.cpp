@@ -18,6 +18,7 @@
 #include "April/Gui/ChainedSoulInfo.h"
 #include "April/Gui/DhuumBotGui.h"
 #include "April/Gui/DhuumInfo.h"
+#include "April/Gui/Dialogs.h"
 #include "April/Gui/HealthEnergy.h"
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Inventory.h"
@@ -62,6 +63,7 @@ namespace {
 	auto gui_energy = std::unique_ptr<ag::Energybar>{};
 	auto gui_dhuumbot = std::unique_ptr<ag::DhuumBotGui>{};
 	auto gui_dhuuminfo = std::unique_ptr<ag::DhuumInfo>{};
+	auto gui_dialogs = std::unique_ptr<ag::Dialogs>{};
 	auto gui_health = std::unique_ptr<ag::Healthbar>{};
 	auto gui_instancetimer = std::unique_ptr<ag::InstanceTimer>{};
 	auto gui_inventory = std::unique_ptr<ag::Inventory>{};
@@ -96,6 +98,7 @@ namespace {
 			gui_energy->Display();
 			gui_dhuumbot->Display();
 			gui_dhuuminfo->Display();
+			gui_dialogs->Display();
 			gui_health->Display();
 			gui_instancetimer->Display();
 			gui_inventory->Display();
@@ -155,6 +158,7 @@ namespace {
 		gui_energy = std::make_unique<ag::Energybar>();
 		gui_dhuumbot = std::make_unique<ag::DhuumBotGui>( dhuum_bot );
 		gui_dhuuminfo = std::make_unique<ag::DhuumInfo>( dhuums_judgement );
+		gui_dialogs = std::make_unique<ag::Dialogs>();
 		gui_health = std::make_unique<ag::Healthbar>();
 		gui_instancetimer = std::make_unique<ag::InstanceTimer>();
 		gui_inventory = std::make_unique<ag::Inventory>( consumables_mgr );

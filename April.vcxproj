@@ -99,6 +99,7 @@
     <ClCompile Include="Source\April\Config\Gui\ChainedSoulInfo.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\DhuumBotGui.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\DhuumInfo.config.cpp" />
+    <ClCompile Include="Source\April\Config\Gui\Dialogs.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\HealthEnergy.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\InstanceTimer.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\Inventory.config.cpp" />
@@ -111,6 +112,7 @@
     <ClCompile Include="Source\April\Gui\ChainedSoulInfo.cpp" />
     <ClCompile Include="Source\April\Gui\DhuumBotGui.cpp" />
     <ClCompile Include="Source\April\Gui\DhuumInfo.cpp" />
+    <ClCompile Include="Source\April\Gui\Dialogs.cpp" />
     <ClCompile Include="Source\April\Gui\Inventory.cpp" />
     <ClCompile Include="Source\April\Config\Gui\Skillbar.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\UwTimesGui.config.cpp" />
@@ -158,6 +160,7 @@
     <ClInclude Include="Source\April\Config\Gui\ChainedSoulInfo.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\DhuumBotGui.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\DhuumInfo.config.hpp" />
+    <ClInclude Include="Source\April\Config\Gui\Dialogs.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\HealthEnergy.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\InstanceTimer.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\Inventory.config.hpp" />
@@ -170,6 +173,7 @@
     <ClInclude Include="Source\April\Gui\ChainedSoulInfo.h" />
     <ClInclude Include="Source\April\Gui\DhuumBotGui.h" />
     <ClInclude Include="Source\April\Gui\DhuumInfo.h" />
+    <ClInclude Include="Source\April\Gui\Dialogs.h" />
     <ClInclude Include="Source\April\Gui\Inventory.h" />
     <ClInclude Include="Source\April\Config\Gui\Skillbar.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\UwTimesGui.config.hpp" />
