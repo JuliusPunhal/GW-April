@@ -118,6 +118,7 @@
     <ClCompile Include="Source\April\Module\ConsumablesMgr.cpp" />
     <ClCompile Include="Source\April\Module\CursorFix.cpp" />
     <ClCompile Include="Source\April\Module\ReturnToOutpost.cpp" />
+    <ClCompile Include="Source\April\Module\ShowKitUses.cpp" />
     <ClCompile Include="Source\April\Module\SuppressSpeechBubbles.cpp" />
     <ClCompile Include="Source\April\Module\UwTimer.cpp" />
     <ClCompile Include="Source\April\Utility\ConfigAssert.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Source\April\Module\ConsumablesMgr.h" />
     <ClInclude Include="Source\April\Module\CursorFix.h" />
     <ClInclude Include="Source\April\Module\ReturnToOutpost.h" />
+    <ClInclude Include="Source\April\Module\ShowKitUses.h" />
     <ClInclude Include="Source\April\Module\SuppressSpeechBubbles.h" />
     <ClInclude Include="Source\April\Module\UwTimer.h" />
     <ClInclude Include="Source\April\Utility\ConfigAssert.h" />

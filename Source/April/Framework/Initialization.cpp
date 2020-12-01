@@ -7,6 +7,7 @@
 #include "April/Module/ConsumablesMgr.h"
 #include "April/Module/CursorFix.h"
 #include "April/Module/ReturnToOutpost.h"
+#include "April/Module/ShowKitUses.h"
 #include "April/Module/SuppressSpeechBubbles.h"
 #include "April/Module/UwTimer.h"
 
@@ -41,6 +42,7 @@ namespace {
 	auto consumables_mgr = std::shared_ptr<a::ConsumablesMgr>{};
 	auto cursorfix = std::unique_ptr<a::CursorFix>{};
 	auto return_to_outpost = std::unique_ptr<a::ReturnToOutpost>{};
+	auto show_kit_uses = std::unique_ptr<a::ShowKitUses>{};
 	auto suppress_speech_bubbles = std::unique_ptr<a::SuppressSpeechBubbles>{};
 	auto uw_timer = std::unique_ptr<a::UwTimer>{};
 
@@ -118,6 +120,7 @@ namespace {
 		chatfilter = std::make_unique<a::ChatFilter>();
 		cursorfix = std::make_unique<a::CursorFix>();
 		return_to_outpost = std::make_unique<a::ReturnToOutpost>();
+		show_kit_uses = std::make_unique<a::ShowKitUses>();
 		suppress_speech_bubbles = std::make_unique<a::SuppressSpeechBubbles>();
 		uw_timer = std::make_unique<a::UwTimer>( uw_times );
 
