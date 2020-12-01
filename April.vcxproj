@@ -61,7 +61,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>Source\;Dependencies\ImGui\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\;Dependencies\ImGui\;Dependencies\GWCA\Include\</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
@@ -78,8 +78,9 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>Source\;Dependencies\ImGui\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source\;Dependencies\ImGui\;Dependencies\GWCA\Include\</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -95,6 +96,7 @@
     <ClCompile Include="Dependencies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_draw.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\Dependencies\GWCA.cpp" />
     <ClCompile Include="Source\Dependencies\ImGui.cpp" />
     <ClCompile Include="Source\DllMain.cpp" />
   </ItemGroup>
@@ -107,7 +109,13 @@
     <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Source\Dependencies\GWCA.hpp" />
     <ClInclude Include="Source\Dependencies\ImGui.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Dependencies\GWCA\vc\GWCA.vcxproj">
+      <Project>{b3359f05-68cf-4e7f-b9d6-d106f6d48a38}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
