@@ -96,6 +96,8 @@
     <ClCompile Include="Dependencies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_draw.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\April\Framework\Initialization.cpp" />
+    <ClCompile Include="Source\April\Framework\WndProc.cpp" />
     <ClCompile Include="Source\Dependencies\GWCA.cpp" />
     <ClCompile Include="Source\Dependencies\ImGui.cpp" />
     <ClCompile Include="Source\DllMain.cpp" />
@@ -109,6 +111,8 @@
     <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Source\April\Framework\Initialization.h" />
+    <ClInclude Include="Source\April\Framework\WndProc.h" />
     <ClInclude Include="Source\Dependencies\GWCA.hpp" />
     <ClInclude Include="Source\Dependencies\ImGui.hpp" />
   </ItemGroup>
