@@ -3,6 +3,7 @@
 
 #include "April/Module/UwTimer.h"
 
+#include "April/Gui/HealthEnergy.h"
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimes.h"
@@ -28,6 +29,8 @@ namespace {
 	
 	auto uw_timer = std::unique_ptr<a::UwTimer>{};
 
+	auto gui_energy = std::unique_ptr<ag::Energybar>{};
+	auto gui_health = std::unique_ptr<ag::Healthbar>{};
 	auto gui_instancetimer = std::unique_ptr<ag::InstanceTimer>{};
 	auto gui_skillbar = std::unique_ptr<ag::Skillbar>{};
 	auto gui_uwtimer = std::unique_ptr<ag::UwTimesGui>{};
@@ -51,6 +54,8 @@ namespace {
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 		{
+			gui_energy->Display();
+			gui_health->Display();
 			gui_instancetimer->Display();
 			gui_skillbar->Display();
 			gui_uwtimer->Display();
@@ -89,6 +94,8 @@ namespace {
 
 		uw_timer = std::make_unique<a::UwTimer>( uw_times );
 
+		gui_energy = std::make_unique<ag::Energybar>();
+		gui_health = std::make_unique<ag::Healthbar>();
 		gui_instancetimer = std::make_unique<ag::InstanceTimer>();
 		gui_skillbar = std::make_unique<ag::Skillbar>();
 		gui_uwtimer = std::make_unique<ag::UwTimesGui>( uw_times );
