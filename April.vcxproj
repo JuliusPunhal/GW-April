@@ -102,6 +102,7 @@
     <ClCompile Include="Source\April\Config\Gui\HealthEnergy.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\InstanceTimer.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\Inventory.config.cpp" />
+    <ClCompile Include="Source\April\Config\Gui\TargetInfo.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\AgentFilter.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\ChatCommands.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\ChatFilter.config.cpp" />
@@ -118,6 +119,7 @@
     <ClCompile Include="Source\April\Gui\HealthEnergy.cpp" />
     <ClCompile Include="Source\April\Gui\InstanceTimer.cpp" />
     <ClCompile Include="Source\April\Gui\Skillbar.cpp" />
+    <ClCompile Include="Source\April\Gui\TargetInfo.cpp" />
     <ClCompile Include="Source\April\Gui\UwTimes.cpp" />
     <ClCompile Include="Source\April\Module\AgentFilter.cpp" />
     <ClCompile Include="Source\April\Module\ChainedSoul.cpp" />
@@ -159,6 +161,7 @@
     <ClInclude Include="Source\April\Config\Gui\HealthEnergy.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\InstanceTimer.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\Inventory.config.hpp" />
+    <ClInclude Include="Source\April\Config\Gui\TargetInfo.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\AgentFilter.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\ChatCommands.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\ChatFilter.config.hpp" />
@@ -176,6 +179,7 @@
     <ClInclude Include="Source\April\Gui\InstanceTimer.h" />
     <ClInclude Include="Source\April\Gui\Inventory.StateToColor.hpp" />
     <ClInclude Include="Source\April\Gui\Skillbar.h" />
+    <ClInclude Include="Source\April\Gui\TargetInfo.h" />
     <ClInclude Include="Source\April\Gui\UwTimes.h" />
     <ClInclude Include="Source\April\Module\AgentFilter.h" />
     <ClInclude Include="Source\April\Module\ChainedSoul.h" />

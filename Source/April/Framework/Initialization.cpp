@@ -22,6 +22,7 @@
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Inventory.h"
 #include "April/Gui/Skillbar.h"
+#include "April/Gui/TargetInfo.h"
 #include "April/Gui/UwTimes.h"
 
 #include "April/Framework/WndProc.h"
@@ -65,6 +66,7 @@ namespace {
 	auto gui_instancetimer = std::unique_ptr<ag::InstanceTimer>{};
 	auto gui_inventory = std::unique_ptr<ag::Inventory>{};
 	auto gui_skillbar = std::unique_ptr<ag::Skillbar>{};
+	auto gui_targetinfo = std::unique_ptr<ag::TargetInfo>{};
 	auto gui_uwtimer = std::unique_ptr<ag::UwTimesGui>{};
 
 	auto running = true;
@@ -98,6 +100,7 @@ namespace {
 			gui_instancetimer->Display();
 			gui_inventory->Display();
 			gui_skillbar->Display();
+			gui_targetinfo->Display();
 			gui_uwtimer->Display();
 		}
 		ImGui::EndFrame();
@@ -156,6 +159,7 @@ namespace {
 		gui_instancetimer = std::make_unique<ag::InstanceTimer>();
 		gui_inventory = std::make_unique<ag::Inventory>( consumables_mgr );
 		gui_skillbar = std::make_unique<ag::Skillbar>();
+		gui_targetinfo = std::make_unique<ag::TargetInfo>();
 		gui_uwtimer = std::make_unique<ag::UwTimesGui>( uw_times );
 
 		GW::Render::SetRenderCallback( RenderCallback );
