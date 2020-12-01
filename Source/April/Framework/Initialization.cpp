@@ -22,6 +22,7 @@
 #include "April/Gui/HealthEnergy.h"
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Inventory.h"
+#include "April/Gui/Settings.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/TargetInfo.h"
 #include "April/Gui/UwTimes.h"
@@ -67,6 +68,7 @@ namespace {
 	auto gui_health = std::unique_ptr<ag::Healthbar>{};
 	auto gui_instancetimer = std::unique_ptr<ag::InstanceTimer>{};
 	auto gui_inventory = std::unique_ptr<ag::Inventory>{};
+	auto gui_settings = std::unique_ptr<ag::Settings>{};
 	auto gui_skillbar = std::unique_ptr<ag::Skillbar>{};
 	auto gui_targetinfo = std::unique_ptr<ag::TargetInfo>{};
 	auto gui_uwtimer = std::unique_ptr<ag::UwTimesGui>{};
@@ -102,6 +104,7 @@ namespace {
 			gui_health->Display();
 			gui_instancetimer->Display();
 			gui_inventory->Display();
+			gui_settings->Display();
 			gui_skillbar->Display();
 			gui_targetinfo->Display();
 			gui_uwtimer->Display();
@@ -162,6 +165,7 @@ namespace {
 		gui_health = std::make_unique<ag::Healthbar>();
 		gui_instancetimer = std::make_unique<ag::InstanceTimer>();
 		gui_inventory = std::make_unique<ag::Inventory>( consumables_mgr );
+		gui_settings = std::make_unique<ag::Settings>();
 		gui_skillbar = std::make_unique<ag::Skillbar>();
 		gui_targetinfo = std::make_unique<ag::TargetInfo>();
 		gui_uwtimer = std::make_unique<ag::UwTimesGui>( uw_times );
