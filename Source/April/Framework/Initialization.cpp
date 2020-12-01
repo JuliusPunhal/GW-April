@@ -2,6 +2,7 @@
 #include "April/Framework/Initialization.h"
 
 #include "April/Module/AgentFilter.h"
+#include "April/Module/ChainedSoul.h"
 #include "April/Module/ChatCommands.h"
 #include "April/Module/ChatFilter.h"
 #include "April/Module/ConsumablesMgr.h"
@@ -14,6 +15,7 @@
 #include "April/Module/SuppressSpeechBubbles.h"
 #include "April/Module/UwTimer.h"
 
+#include "April/Gui/ChainedSoulInfo.h"
 #include "April/Gui/DhuumBotGui.h"
 #include "April/Gui/DhuumInfo.h"
 #include "April/Gui/HealthEnergy.h"
@@ -42,6 +44,7 @@ namespace fs = std::filesystem;
 namespace {
 
 	auto agentfilter = std::unique_ptr<a::AgentFilter>{};
+	auto chained_soul = std::shared_ptr<a::ChainedSoul>{};
 	auto chatcommands = std::unique_ptr<a::ChatCommands>{};
 	auto chatfilter = std::unique_ptr<a::ChatFilter>{};
 	auto consumables_mgr = std::shared_ptr<a::ConsumablesMgr>{};
@@ -54,6 +57,7 @@ namespace {
 	auto suppress_speech_bubbles = std::unique_ptr<a::SuppressSpeechBubbles>{};
 	auto uw_timer = std::unique_ptr<a::UwTimer>{};
 
+	auto gui_chained_soul = std::unique_ptr<ag::ChainedSoulGui>{};
 	auto gui_energy = std::unique_ptr<ag::Energybar>{};
 	auto gui_dhuumbot = std::unique_ptr<ag::DhuumBotGui>{};
 	auto gui_dhuuminfo = std::unique_ptr<ag::DhuumInfo>{};
@@ -77,6 +81,7 @@ namespace {
 		April::WndProc::RestoreMouseInput();
 
 		consumables_mgr->Update();
+		chained_soul->Update();
 		dhuum_bot->Update();
 		dhuums_judgement->Update();
 		uw_timer->Update();
@@ -85,6 +90,7 @@ namespace {
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 		{
+			gui_chained_soul->Display();
 			gui_energy->Display();
 			gui_dhuumbot->Display();
 			gui_dhuuminfo->Display();
@@ -130,6 +136,7 @@ namespace {
 
 		agentfilter = std::make_unique<a::AgentFilter>();
 		consumables_mgr = std::make_shared<a::ConsumablesMgr>();
+		chained_soul = std::make_shared<a::ChainedSoul>();
 		chatcommands = std::make_unique<a::ChatCommands>( consumables_mgr );
 		chatfilter = std::make_unique<a::ChatFilter>();
 		cursorfix = std::make_unique<a::CursorFix>();
@@ -141,6 +148,7 @@ namespace {
 		suppress_speech_bubbles = std::make_unique<a::SuppressSpeechBubbles>();
 		uw_timer = std::make_unique<a::UwTimer>( uw_times );
 
+		gui_chained_soul = std::make_unique<ag::ChainedSoulGui>( chained_soul );
 		gui_energy = std::make_unique<ag::Energybar>();
 		gui_dhuumbot = std::make_unique<ag::DhuumBotGui>( dhuum_bot );
 		gui_dhuuminfo = std::make_unique<ag::DhuumInfo>( dhuums_judgement );

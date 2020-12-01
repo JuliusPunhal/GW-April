@@ -96,6 +96,7 @@
     <ClCompile Include="Dependencies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_draw.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\April\Config\Gui\ChainedSoulInfo.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\DhuumBotGui.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\DhuumInfo.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\HealthEnergy.config.cpp" />
@@ -106,6 +107,7 @@
     <ClCompile Include="Source\April\Config\Module\ChatFilter.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\ConsumablesMgr.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\NotifyEffectLost.config.cpp" />
+    <ClCompile Include="Source\April\Gui\ChainedSoulInfo.cpp" />
     <ClCompile Include="Source\April\Gui\DhuumBotGui.cpp" />
     <ClCompile Include="Source\April\Gui\DhuumInfo.cpp" />
     <ClCompile Include="Source\April\Gui\Inventory.cpp" />
@@ -118,6 +120,7 @@
     <ClCompile Include="Source\April\Gui\Skillbar.cpp" />
     <ClCompile Include="Source\April\Gui\UwTimes.cpp" />
     <ClCompile Include="Source\April\Module\AgentFilter.cpp" />
+    <ClCompile Include="Source\April\Module\ChainedSoul.cpp" />
     <ClCompile Include="Source\April\Module\ChatCommands.cpp" />
     <ClCompile Include="Source\April\Module\ChatFilter.cpp" />
     <ClCompile Include="Source\April\Module\ConsumablesMgr.cpp" />
@@ -150,6 +153,7 @@
     <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Source\April\Config\Gui\ChainedSoulInfo.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\DhuumBotGui.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\DhuumInfo.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\HealthEnergy.config.hpp" />
@@ -160,6 +164,7 @@
     <ClInclude Include="Source\April\Config\Module\ChatFilter.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\ConsumablesMgr.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\NotifyEffectLost.config.hpp" />
+    <ClInclude Include="Source\April\Gui\ChainedSoulInfo.h" />
     <ClInclude Include="Source\April\Gui\DhuumBotGui.h" />
     <ClInclude Include="Source\April\Gui\DhuumInfo.h" />
     <ClInclude Include="Source\April\Gui\Inventory.h" />
@@ -173,6 +178,7 @@
     <ClInclude Include="Source\April\Gui\Skillbar.h" />
     <ClInclude Include="Source\April\Gui\UwTimes.h" />
     <ClInclude Include="Source\April\Module\AgentFilter.h" />
+    <ClInclude Include="Source\April\Module\ChainedSoul.h" />
     <ClInclude Include="Source\April\Module\ChatCommands.h" />
     <ClInclude Include="Source\April\Module\ChatFilter.h" />
     <ClInclude Include="Source\April\Module\ConsumablesMgr.AllowUse.hpp" />
