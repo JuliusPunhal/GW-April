@@ -184,3 +184,19 @@ namespace GW::Constants::ItemID {
 	inline constexpr int ELMiku = 36451;
 
 }
+
+
+namespace GW::Packet::StoC {
+
+	struct UpdateItemOwner : Packet<UpdateItemOwner> {
+		GW::ItemID  item_id;
+		GW::AgentID owner_agent_id;
+		float seconds_reserved;
+	};
+	unsigned const Packet<UpdateItemOwner>::STATIC_HEADER = 312;
+
+	struct ItemGeneral_ReuseID : ItemGeneral {};
+	unsigned const Packet<ItemGeneral_ReuseID>::STATIC_HEADER =
+		GAME_SMSG_ITEM_GENERAL_INFO + 1;
+
+}

@@ -1,6 +1,7 @@
 
 #include "April/Framework/Initialization.h"
 
+#include "April/Module/AgentFilter.h"
 #include "April/Module/ChatCommands.h"
 #include "April/Module/ChatFilter.h"
 #include "April/Module/ConsumablesMgr.h"
@@ -31,6 +32,7 @@ namespace fs = std::filesystem;
 
 namespace {
 
+	auto agentfilter = std::unique_ptr<a::AgentFilter>{};
 	auto chatcommands = std::unique_ptr<a::ChatCommands>{};
 	auto chatfilter = std::unique_ptr<a::ChatFilter>{};
 	auto consumables_mgr = std::shared_ptr<a::ConsumablesMgr>{};
@@ -80,7 +82,9 @@ namespace {
 			ImGui_ImplDX9_Shutdown();
 			ImGui_ImplWin32_Shutdown();
 			ImGui::DestroyContext();
-		
+
+			agentfilter->DisplaySuppressedItems();
+
 			GW::Render::SetRenderCallback( RenderCallback_Shutdown );
 		}
 	}
@@ -102,6 +106,7 @@ namespace {
 
 		auto const uw_times = std::make_shared<a::UwTimes>();
 
+		agentfilter = std::make_unique<a::AgentFilter>();
 		consumables_mgr = std::make_shared<a::ConsumablesMgr>();
 		chatcommands = std::make_unique<a::ChatCommands>( consumables_mgr );
 		chatfilter = std::make_unique<a::ChatFilter>();
