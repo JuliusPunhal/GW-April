@@ -117,6 +117,7 @@
     <ClCompile Include="Source\April\Module\ChatFilter.cpp" />
     <ClCompile Include="Source\April\Module\ConsumablesMgr.cpp" />
     <ClCompile Include="Source\April\Module\CursorFix.cpp" />
+    <ClCompile Include="Source\April\Module\ReturnToOutpost.cpp" />
     <ClCompile Include="Source\April\Module\UwTimer.cpp" />
     <ClCompile Include="Source\April\Utility\ConfigAssert.cpp" />
     <ClCompile Include="Source\April\Utility\Consumable.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Source\April\Module\ConsumablesMgr.AllowUse.hpp" />
     <ClInclude Include="Source\April\Module\ConsumablesMgr.h" />
     <ClInclude Include="Source\April\Module\CursorFix.h" />
+    <ClInclude Include="Source\April\Module\ReturnToOutpost.h" />
     <ClInclude Include="Source\April\Module\UwTimer.h" />
     <ClInclude Include="Source\April\Utility\ConfigAssert.h" />
     <ClInclude Include="Source\April\Utility\Consumable.h" />

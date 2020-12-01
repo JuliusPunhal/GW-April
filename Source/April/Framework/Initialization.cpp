@@ -6,6 +6,7 @@
 #include "April/Module/ChatFilter.h"
 #include "April/Module/ConsumablesMgr.h"
 #include "April/Module/CursorFix.h"
+#include "April/Module/ReturnToOutpost.h"
 #include "April/Module/UwTimer.h"
 
 #include "April/Gui/HealthEnergy.h"
@@ -38,6 +39,7 @@ namespace {
 	auto chatfilter = std::unique_ptr<a::ChatFilter>{};
 	auto consumables_mgr = std::shared_ptr<a::ConsumablesMgr>{};
 	auto cursorfix = std::unique_ptr<a::CursorFix>{};
+	auto return_to_outpost = std::unique_ptr<a::ReturnToOutpost>{};
 	auto uw_timer = std::unique_ptr<a::UwTimer>{};
 
 	auto gui_energy = std::unique_ptr<ag::Energybar>{};
@@ -113,6 +115,7 @@ namespace {
 		chatcommands = std::make_unique<a::ChatCommands>( consumables_mgr );
 		chatfilter = std::make_unique<a::ChatFilter>();
 		cursorfix = std::make_unique<a::CursorFix>();
+		return_to_outpost = std::make_unique<a::ReturnToOutpost>();
 		uw_timer = std::make_unique<a::UwTimer>( uw_times );
 
 		gui_energy = std::make_unique<ag::Energybar>();
