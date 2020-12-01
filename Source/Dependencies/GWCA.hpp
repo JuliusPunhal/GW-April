@@ -70,3 +70,18 @@
 #include "GWCA/Managers/TradeMgr.h"
 #include "GWCA/Managers/UIMgr.h"
 #pragma warning(pop)
+
+#include <chrono>
+#include <string>
+
+
+namespace GW {
+	
+	auto GetInstanceTime() -> std::chrono::milliseconds;
+
+	void SendChat( char channel, const char* msg );
+	void SendChat( char channel, const wchar_t* msg );
+	void SendChat( char channel, std::string const& msg );
+	void SendChat( char channel, std::wstring const& msg );
+
+}

@@ -10,4 +10,7 @@ namespace April::WndProc {
 	void Initialize( HWND );
 	void Terminate();
 
+	void BlockMouseInput();
+	void RestoreMouseInput();
+
 }

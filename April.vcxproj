@@ -58,7 +58,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;IMGUI_USER_CONFIG="Dependencies/ImGui.config.hpp";_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>Source\;Dependencies\ImGui\;Dependencies\GWCA\Include\</AdditionalIncludeDirectories>
@@ -75,7 +75,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;IMGUI_USER_CONFIG="Dependencies/ImGui.config.hpp";NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>Source\;Dependencies\ImGui\;Dependencies\GWCA\Include\</AdditionalIncludeDirectories>
@@ -96,8 +96,13 @@
     <ClCompile Include="Dependencies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_draw.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\April\Config\Gui\InstanceTimer.config.cpp" />
     <ClCompile Include="Source\April\Framework\Initialization.cpp" />
     <ClCompile Include="Source\April\Framework\WndProc.cpp" />
+    <ClCompile Include="Source\April\Gui\InstanceTimer.cpp" />
+    <ClCompile Include="Source\April\Utility\ConfigAssert.cpp" />
+    <ClCompile Include="Source\April\Utility\DrawStructures.cpp" />
+    <ClCompile Include="Source\April\Utility\TimeFormatting.cpp" />
     <ClCompile Include="Source\Dependencies\GWCA.cpp" />
     <ClCompile Include="Source\Dependencies\ImGui.cpp" />
     <ClCompile Include="Source\DllMain.cpp" />
@@ -111,9 +116,15 @@
     <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Source\April\Config\Gui\InstanceTimer.config.hpp" />
     <ClInclude Include="Source\April\Framework\Initialization.h" />
     <ClInclude Include="Source\April\Framework\WndProc.h" />
+    <ClInclude Include="Source\April\Gui\InstanceTimer.h" />
+    <ClInclude Include="Source\April\Utility\ConfigAssert.h" />
+    <ClInclude Include="Source\April\Utility\DrawStructures.h" />
+    <ClInclude Include="Source\April\Utility\TimeFormatting.h" />
     <ClInclude Include="Source\Dependencies\GWCA.hpp" />
+    <ClInclude Include="Source\Dependencies\ImGui.config.hpp" />
     <ClInclude Include="Source\Dependencies\ImGui.hpp" />
   </ItemGroup>
   <ItemGroup>

@@ -1,21 +1,28 @@
 
 #include "April/Framework/Initialization.h"
 
+#include "April/Gui/InstanceTimer.h"
+
 #include "April/Framework/WndProc.h"
 
 #include "Dependencies/GWCA.hpp"
 #include "Dependencies/ImGui.hpp"
 
 #include <filesystem>
+#include <memory>
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
 
+namespace a = April;
+namespace ag = April::Gui;
 namespace fs = std::filesystem;
 
 
 namespace {
+	
+	auto gui_instancetimer = std::unique_ptr<ag::InstanceTimer>{};
 
 	auto running = true;
 	
@@ -28,11 +35,13 @@ namespace {
 
 	void RenderCallback( IDirect3DDevice9* )
 	{
+		April::WndProc::RestoreMouseInput();
+
 		ImGui_ImplDX9_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 		{
-			ImGui::ShowDemoWindow();
+			gui_instancetimer->Display();
 		}
 		ImGui::EndFrame();
 		ImGui::Render();
@@ -63,6 +72,8 @@ namespace {
 		auto& io = ImGui::GetIO();
 		io.Fonts->AddFontFromFileTTF( "C:\\Windows\\Fonts\\Consola.ttf", 14.f );
 		io.IniFilename = "April\\imgui.ini";
+
+		gui_instancetimer = std::make_unique<ag::InstanceTimer>();
 
 		GW::Render::SetRenderCallback( RenderCallback );
 	}

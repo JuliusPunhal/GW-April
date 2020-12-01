@@ -9,9 +9,10 @@ namespace {
 	
 	auto hwnd = HWND{};
 	auto original = WNDPROC{};
+	auto block_mouse = false;
 	
 
-	bool ImGui_Proc( HWND, UINT msg, WPARAM wParam, LPARAM )
+	bool ImGui_Proc( HWND, UINT msg, WPARAM wParam, LPARAM lParam )
 	{
 		/*	This is basically a copy of ImGui_ImplWin32_WndProcHandler() but
 			::SetCapture() and ::ReleaseCapture() seem to mess with window-
@@ -41,7 +42,7 @@ namespace {
 					button = (GET_XBUTTON_WPARAM( wParam ) == XBUTTON1) ? 3 : 4;
 
 				io.MouseDown[button] = true;
-				return false;
+				return block_mouse;
 			}
 			case WM_LBUTTONUP:
 			case WM_RBUTTONUP:
@@ -58,17 +59,19 @@ namespace {
 				io.MouseDown[button] = false;
 				return false;
 			}
+			case WM_SETCURSOR:
+				return (block_mouse && HIWORD( lParam ) == WM_RBUTTONDOWN);
 			case WM_MOUSEWHEEL:
 			{
 				auto const scroll_distance = GET_WHEEL_DELTA_WPARAM( wParam );
 				io.MouseWheel += (float)scroll_distance / (float)WHEEL_DELTA;
-				return false;
+				return block_mouse;
 			}
 			case WM_MOUSEHWHEEL:
 			{
 				auto const scroll_distance = GET_WHEEL_DELTA_WPARAM( wParam );
 				io.MouseWheelH += (float)scroll_distance / (float)WHEEL_DELTA;
-				return false;
+				return block_mouse;
 			}
 			case WM_KEYDOWN:
 			case WM_SYSKEYDOWN:
@@ -115,4 +118,14 @@ void April::WndProc::Terminate()
 		original = WNDPROC{};
 		hwnd = HWND{};
 	}
+}
+
+void April::WndProc::BlockMouseInput()
+{
+	block_mouse = true;
+}
+
+void April::WndProc::RestoreMouseInput()
+{
+	block_mouse = false;
 }
