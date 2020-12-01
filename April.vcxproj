@@ -100,6 +100,7 @@
     <ClCompile Include="Source\April\Config\Gui\InstanceTimer.config.cpp" />
     <ClCompile Include="Source\April\Config\Gui\Inventory.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\ChatCommands.config.cpp" />
+    <ClCompile Include="Source\April\Config\Module\ChatFilter.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\ConsumablesMgr.config.cpp" />
     <ClCompile Include="Source\April\Gui\Inventory.cpp" />
     <ClCompile Include="Source\April\Config\Gui\Skillbar.config.cpp" />
@@ -111,6 +112,7 @@
     <ClCompile Include="Source\April\Gui\Skillbar.cpp" />
     <ClCompile Include="Source\April\Gui\UwTimes.cpp" />
     <ClCompile Include="Source\April\Module\ChatCommands.cpp" />
+    <ClCompile Include="Source\April\Module\ChatFilter.cpp" />
     <ClCompile Include="Source\April\Module\ConsumablesMgr.cpp" />
     <ClCompile Include="Source\April\Module\UwTimer.cpp" />
     <ClCompile Include="Source\April\Utility\ConfigAssert.cpp" />
@@ -138,6 +140,7 @@
     <ClInclude Include="Source\April\Config\Gui\InstanceTimer.config.hpp" />
     <ClInclude Include="Source\April\Config\Gui\Inventory.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\ChatCommands.config.hpp" />
+    <ClInclude Include="Source\April\Config\Module\ChatFilter.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\ConsumablesMgr.config.hpp" />
     <ClInclude Include="Source\April\Gui\Inventory.h" />
     <ClInclude Include="Source\April\Config\Gui\Skillbar.config.hpp" />
@@ -150,6 +153,7 @@
     <ClInclude Include="Source\April\Gui\Skillbar.h" />
     <ClInclude Include="Source\April\Gui\UwTimes.h" />
     <ClInclude Include="Source\April\Module\ChatCommands.h" />
+    <ClInclude Include="Source\April\Module\ChatFilter.h" />
     <ClInclude Include="Source\April\Module\ConsumablesMgr.AllowUse.hpp" />
     <ClInclude Include="Source\April\Module\ConsumablesMgr.h" />
     <ClInclude Include="Source\April\Module\UwTimer.h" />
