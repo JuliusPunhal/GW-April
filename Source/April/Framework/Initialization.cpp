@@ -14,6 +14,7 @@
 #include "April/Module/SuppressSpeechBubbles.h"
 #include "April/Module/UwTimer.h"
 
+#include "April/Gui/DhuumBotGui.h"
 #include "April/Gui/DhuumInfo.h"
 #include "April/Gui/HealthEnergy.h"
 #include "April/Gui/InstanceTimer.h"
@@ -54,6 +55,7 @@ namespace {
 	auto uw_timer = std::unique_ptr<a::UwTimer>{};
 
 	auto gui_energy = std::unique_ptr<ag::Energybar>{};
+	auto gui_dhuumbot = std::unique_ptr<ag::DhuumBotGui>{};
 	auto gui_dhuuminfo = std::unique_ptr<ag::DhuumInfo>{};
 	auto gui_health = std::unique_ptr<ag::Healthbar>{};
 	auto gui_instancetimer = std::unique_ptr<ag::InstanceTimer>{};
@@ -84,6 +86,7 @@ namespace {
 		ImGui::NewFrame();
 		{
 			gui_energy->Display();
+			gui_dhuumbot->Display();
 			gui_dhuuminfo->Display();
 			gui_health->Display();
 			gui_instancetimer->Display();
@@ -139,6 +142,7 @@ namespace {
 		uw_timer = std::make_unique<a::UwTimer>( uw_times );
 
 		gui_energy = std::make_unique<ag::Energybar>();
+		gui_dhuumbot = std::make_unique<ag::DhuumBotGui>( dhuum_bot );
 		gui_dhuuminfo = std::make_unique<ag::DhuumInfo>( dhuums_judgement );
 		gui_health = std::make_unique<ag::Healthbar>();
 		gui_instancetimer = std::make_unique<ag::InstanceTimer>();
