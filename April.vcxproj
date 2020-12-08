@@ -110,6 +110,7 @@
     <ClCompile Include="Source\April\Config\Module\ChatFilter.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\ConsumablesMgr.config.cpp" />
     <ClCompile Include="Source\April\Config\Module\NotifyEffectLost.config.cpp" />
+    <ClCompile Include="Source\April\Framework\Modules.cpp" />
     <ClCompile Include="Source\April\Gui\ChainedSoulInfo.cpp" />
     <ClCompile Include="Source\April\Gui\DhuumBotGui.cpp" />
     <ClCompile Include="Source\April\Gui\DhuumInfo.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="Source\April\Config\Module\ChatFilter.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\ConsumablesMgr.config.hpp" />
     <ClInclude Include="Source\April\Config\Module\NotifyEffectLost.config.hpp" />
+    <ClInclude Include="Source\April\Framework\Modules.h" />
     <ClInclude Include="Source\April\Gui\ChainedSoulInfo.h" />
     <ClInclude Include="Source\April\Gui\DhuumBotGui.h" />
     <ClInclude Include="Source\April\Gui\DhuumInfo.h" />
