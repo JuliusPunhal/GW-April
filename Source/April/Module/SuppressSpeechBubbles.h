@@ -5,8 +5,18 @@ namespace April {
 
 	class SuppressSpeechBubbles {
 	public:
-		SuppressSpeechBubbles();
+		struct Config {
+			bool active;
 
+			static auto LoadDefault() -> Config;
+		};
+
+
+		SuppressSpeechBubbles( Config const& );
+
+
+	private:
+		Config const& config;
 	};
 
 }

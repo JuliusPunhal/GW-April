@@ -1,7 +1,6 @@
 
 #include "April/Gui/Skillbar.h"
 
-#include "April/Config/Gui/Skillbar.Config.hpp"
 #include "April/Utility/TimeFormatting.h"
 
 #include "Dependencies/GWCA.hpp"
@@ -9,14 +8,13 @@
 
 #include <array>
 
-namespace config = April::Gui::SkillbarConfig;
-
 using April::RGBA;
+using Config = April::Gui::Skillbar::Config;
 using namespace std::chrono;
 
 
 namespace {
-	
+		
 	auto ms_to_string_secf( milliseconds const time, const char* fmt = "%.1f" )
 		-> std::string
 	{
@@ -79,28 +77,29 @@ namespace {
 		return RGBA{ r, g, b, a };
 	}
 
-	constexpr auto get_color( milliseconds const time ) -> RGBA
+	auto get_color( milliseconds const time, Config const& config ) 
+		-> RGBA
 	{
-		if constexpr ( config::thresholds.size() == 0 )
-			return config::color_inactive;
+		if ( config.thresholds.size() == 0 )
+			return config.color_inactive;
 
 		// account for permanently active effects
 		if ( time < -1s )
-			return config::thresholds[0].color;
+			return config.thresholds[0].color;
 
 		// account for negative cooldown; can happen due to ping
 		if ( time <= 0ms ) 
-			return config::color_inactive;
+			return config.color_inactive;
 
 		// uptime > max threshold
-		if ( time > config::thresholds[0].time )
-			return config::thresholds[0].color;
+		if ( time > config.thresholds[0].time )
+			return config.thresholds[0].color;
 
 		// max threshold > uptime > min threshold
-		for ( auto it = 1u; it < config::thresholds.size(); ++it )
+		for ( auto it = 1u; it < config.thresholds.size(); ++it )
 		{
-			auto const& upper = config::thresholds[it - 1];
-			auto const& lower = config::thresholds[it];
+			auto const& upper = config.thresholds[it - 1];
+			auto const& lower = config.thresholds[it];
 
 			if ( time <= lower.time ) continue;
 
@@ -118,14 +117,14 @@ namespace {
 		}
 
 		// min threshold > uptime > 0ms
-		return config::color_inactive;
+		return config.color_inactive;
 	}
 
 }
 
 
-April::Gui::Skillbar::Skillbar()
-	: font{ LoadFont( config::font_path, config::font_size ) }
+April::Gui::Skillbar::Skillbar( Config const& config )
+	: config{ config }
 {
 }
 
@@ -159,16 +158,16 @@ void April::Gui::Skillbar::Display() const
 
 		auto const skill_id = static_cast<GW::SkillID>( raw_id );
 		auto const longest = get_longest_effect_duration( skill_id );
-		skills[it].color = get_color( longest );
+		skills[it].color = get_color( longest, config );
 	}
 
 	// Draw
-	ImGui::Begin( config::window_name, config::window_flags );
-	ImGui::PushFont( font );
-	ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, config::spacing );
+	ImGui::Begin( config.window_name, config.window_flags );
+	ImGui::PushFont( config.font );
+	ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, config.spacing );
 	ImGui::PushStyleVar( ImGuiStyleVar_FrameBorderSize, 1 );
-	ImGui::PushStyleColor( ImGuiCol_Text, config::text_color );
-	ImGui::PushStyleColor( ImGuiCol_Border, config::border_color );
+	ImGui::PushStyleColor( ImGuiCol_Text, config.text_color );
+	ImGui::PushStyleColor( ImGuiCol_Border, config.border_color );
 	{
 		auto const height = ImGui::GetContentRegionAvail().y;
 		for ( auto const& skill : skills )
@@ -189,4 +188,41 @@ void April::Gui::Skillbar::Display() const
 	ImGui::PopStyleVar( 2 );
 	ImGui::PopFont();
 	ImGui::End();
+}
+
+auto April::Gui::Skillbar::Config::LoadDefault() -> Config
+{
+	constexpr auto window_flags = 
+		ImGuiWindowFlags_NoTitleBar
+		| ImGuiWindowFlags_NoResize
+		| ImGuiWindowFlags_NoMove
+		| ImGuiWindowFlags_NoScrollbar
+		| ImGuiWindowFlags_NoScrollWithMouse
+		| ImGuiWindowFlags_NoCollapse
+		| ImGuiWindowFlags_NoBackground
+		| ImGuiWindowFlags_NoMouseInputs
+		| ImGuiWindowFlags_NoFocusOnAppearing
+		| ImGuiWindowFlags_NoBringToFrontOnFocus
+		| ImGuiWindowFlags_NoNavInputs
+		| ImGuiWindowFlags_NoNavFocus;
+
+	auto const config = Config{
+		LoadFont( "C:\\Windows\\Fonts\\Gothic.ttf", 30 ),
+		White(),
+		White(),
+		{ -1, -1 },
+
+		{
+			{ 4s, Green( 0.25f ) },
+			{ 3s, Yellow( 0.25f ) },
+			{ 1s, Red( 0.25f ) },
+			{ 0s, Red( 0.25f ) }
+		},
+		Invisible(),
+
+		"Skillbar",
+		window_flags
+	};
+
+	return config;
 }

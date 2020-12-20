@@ -33,7 +33,7 @@ namespace {
 		return false;
 	}
 
-	void try_return( GW::HookStatus*, PartyDefeated const* )
+	void try_return()
 	{
 		if ( player_is_leader() )
 		{
@@ -44,8 +44,20 @@ namespace {
 }
 
 
-April::ReturnToOutpost::ReturnToOutpost()
+April::ReturnToOutpost::ReturnToOutpost( Config const& config )
+	: config{ config }
 {
 	// Callback will only be cleaned up during GWCA shutdown.
-	GW::StoC::RegisterPacketCallback<PartyDefeated>( &entry, try_return );
+	GW::StoC::RegisterPacketCallback<PartyDefeated>( 
+		&entry, 
+		[this]( auto*, auto* ) { if ( this->config.active ) try_return(); } );
+}
+
+auto April::ReturnToOutpost::Config::LoadDefault() -> Config
+{
+	auto const config = Config{
+		true 
+	};
+	
+	return config;
 }

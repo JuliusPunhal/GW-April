@@ -1,14 +1,11 @@
 
 #include "April/Gui/ChainedSoulInfo.h"
 
-#include "April/Config/Gui/ChainedSoulInfo.config.hpp"
 #include "April/Framework/WndProc.h"
 #include "April/Utility/TimeFormatting.h"
 
 #include "Dependencies/GWCA.hpp"
 #include "Dependencies/ImGui.hpp"
-
-namespace config = April::Gui::ChainedSoulGuiConfig;
 
 using April::to_string;
 using April::MMSS;
@@ -73,9 +70,9 @@ namespace {
 
 
 April::Gui::ChainedSoulGui::ChainedSoulGui( 
-	std::shared_ptr<ChainedSoul const> state )
+	std::shared_ptr<ChainedSoul const> state, Config const& config )
 	: 
-	state{ std::move( state ) }
+	state{ std::move( state ) }, config{ config }
 {
 }
 
@@ -83,7 +80,7 @@ void April::Gui::ChainedSoulGui::Display() const
 {
 	auto const label = parse_chained_soul_state( *state );
 
-	ImGui::Begin( config::window_name, config::window_flags );
+	ImGui::Begin( config.window_name, config.window_flags );
 	{
 		if ( ImGui::IsWindowHovered() )
 		{
@@ -96,4 +93,14 @@ void April::Gui::ChainedSoulGui::Display() const
 		}
 	}
 	ImGui::End();
+}
+
+auto April::Gui::ChainedSoulGui::Config::LoadDefault() -> Config
+{
+	auto const config = Config{
+		"Chained Soul Info",
+		ImGuiWindowFlags_None
+	};
+
+	return config;
 }

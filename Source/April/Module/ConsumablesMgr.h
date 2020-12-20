@@ -14,7 +14,14 @@ namespace April {
 
 	class ConsumablesMgr {
 	public:
-		ConsumablesMgr();
+		struct Config {
+			std::chrono::milliseconds timeout;
+
+			static auto LoadDefault() -> Config;
+		};
+
+
+		ConsumablesMgr( Config const& );
 
 		void Update();
 
@@ -36,6 +43,8 @@ namespace April {
 		std::chrono::steady_clock::time_point last_use{};
 		unique_vector<Consumable> until_load{};
 		unique_vector<Consumable> persistent{};
+
+		Config const& config;
 	};
 
 }

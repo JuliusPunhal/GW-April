@@ -19,8 +19,18 @@ namespace April {
 	
 	class ShowKitUses {
 	public:
-		ShowKitUses();
+		struct Config {
+			bool active;
 
+			static auto LoadDefault() -> Config;
+		};
+
+
+		ShowKitUses( Config const& );
+
+
+	private:
+		Config const& config;
 	};
 
 }

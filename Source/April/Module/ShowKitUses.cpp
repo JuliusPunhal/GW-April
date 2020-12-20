@@ -11,7 +11,7 @@ namespace {
 
 	
 	template<class Packet_t>
-	auto adjust_qty( GW::HookStatus*, Packet_t* packet )
+	auto adjust_qty( Packet_t* packet )
 	{
 		switch ( packet->model_id )
 		{
@@ -41,14 +41,32 @@ namespace {
 
 
 
-April::ShowKitUses::ShowKitUses()
+April::ShowKitUses::ShowKitUses( Config const& config )
+	: config{ config }
 {
 	using namespace GW::Packet::StoC;
 
 	// Callbacks will only be cleaned up during GWCA shutdown.
 	GW::StoC::RegisterPacketCallback<ItemGeneral>( 
-		&entry, adjust_qty<ItemGeneral> );
+		&entry, 
+		[this] ( auto*, auto* packet )
+		{
+			if ( this->config.active ) adjust_qty( packet );
+		} );
 
 	GW::StoC::RegisterPacketCallback<ItemGeneral_ReuseID>(
-		&entry, adjust_qty<ItemGeneral_ReuseID> );
+		&entry,
+		[this] ( auto*, auto* packet )
+		{
+			if ( this->config.active ) adjust_qty( packet );
+		} );
+}
+
+auto April::ShowKitUses::Config::LoadDefault() -> Config
+{
+	auto const config = Config{
+		true
+	};
+
+	return config;
 }

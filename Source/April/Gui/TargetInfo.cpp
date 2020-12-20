@@ -1,27 +1,28 @@
 
 #include "April/Gui/TargetInfo.h"
 
-#include "April/Config/Gui/TargetInfo.config.hpp"
-
 #include "Dependencies/GWCA.hpp"
 #include "Dependencies/ImGui.hpp"
 
-namespace config = April::Gui::TargetInfoConfig;
 
-	
+April::Gui::TargetInfo::TargetInfo( Config const& config )
+	: config{ config }
+{
+}
+
 void April::Gui::TargetInfo::Display() const
 {
 	auto const* target = GW::Agents::GetTarget();
 	if ( target == nullptr )
 	{
-		ImGui::Begin( config::window_name, config::window_flags );
+		ImGui::Begin( config.window_name, config.window_flags );
 		ImGui::Text( "No target found!" );
 		ImGui::End();
 		return;
 	}
 	
 	auto const* player = GW::Agents::GetPlayer();
-	ImGui::Begin( config::window_name, config::window_flags );
+	ImGui::Begin( config.window_name, config.window_flags );
 	{
 		auto const x = static_cast<int>( target->pos.x );
 		auto const y = static_cast<int>( target->pos.y );
@@ -54,4 +55,14 @@ void April::Gui::TargetInfo::Display() const
 		}
 	}
 	ImGui::End();
+}
+
+auto April::Gui::TargetInfo::Config::LoadDefault() -> Config
+{
+	auto const config = Config{
+		"Target Info",
+		ImGuiWindowFlags_None
+	};
+
+	return config;
 }

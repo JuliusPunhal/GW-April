@@ -11,9 +11,24 @@ namespace {
 }
 
 
-April::SuppressSpeechBubbles::SuppressSpeechBubbles()
+April::SuppressSpeechBubbles::SuppressSpeechBubbles( Config const& config )
+	: config{ config }
 {
 	// Callback will onyl be cleaned up during GWCA shutdown.
 	GW::StoC::RegisterPacketCallback<GW::Packet::StoC::SpeechBubble>(
-		&entry, []( auto* status, auto* ) { status->blocked = true; } );
+		&entry, 
+		[this]( auto* status, auto* ) 
+		{ 
+			if ( this->config.active ) 
+				status->blocked = true; 
+		} );
+}
+
+auto April::SuppressSpeechBubbles::Config::LoadDefault() -> Config
+{
+	auto const config = Config{
+		true
+	};
+
+	return config;
 }

@@ -2,7 +2,6 @@
 #include "April/Gui/Inventory.h"
 #include "April/Gui/Inventory.StateToColor.hpp"
 
-#include "April/Config/Gui/Inventory.Config.hpp"
 #include "April/Utility/ConsumableState.h"
 #include "April/Utility/stl.h"
 #include "April/Framework/WndProc.h"
@@ -12,57 +11,59 @@
 
 #include <variant>
 
-namespace config = April::Gui::InventoryConfig;
-
 using April::ConsumablesMgr;
 using April::RGBA;
+using April::WH;
+using Config = April::Gui::Inventory::Config;
 
 
 namespace {
 
-	auto item_color( GW::Item const* item ) -> RGBA
+	auto item_color( GW::Item const* item, Config const& config ) -> RGBA
 	{
 		if ( item == nullptr )
-			return config::no_item;
+			return config.no_item;
 
 		auto const consumable = April::is_consumable( item->model_id );
 		if ( consumable == nullptr )
-			return config::unknown_item;
+			return config.unknown_item;
 
 		auto const state = consumable_state( *consumable );
-		return April::Gui::StateToColor( state );
+		return April::Gui::StateToColor( state, config );
 	}
 
-	constexpr auto surface_color( RGBA color ) -> RGBA
+	constexpr auto surface_color( RGBA color, Config const& config ) -> RGBA
 	{
-		color.a *= config::button_alpha;
+		color.a *= config.button_alpha;
 		return color;
 	}
 
-	auto get_label( GW::Item const* item, ConsumablesMgr const& mgr )
+	auto get_label(
+		GW::Item const* item, ConsumablesMgr const& mgr, Config const& config )
 	{
 		using April::ConsumablesMgr;
-		using namespace config;
 
 		if ( item == nullptr ) 
-			return label_no_item;
+			return config.label_no_item;
 
 		auto const visitor = std::overloaded{ 
-			// need to pass &mgr to all lambdas to avoid corrupted stack error
-			// probably connected to __declspec(empty_bases)
-			[&mgr]( ConsumablesMgr::UntilLoad )
+			[&mgr, &config]( ConsumablesMgr::UntilLoad )
 			{ 
 				return mgr.deactivating_quest == 0
-					? label_until_load : label_until_objective;
+					? config.label_until_load 
+					: config.label_until_objective;
 			},
-			[&mgr]( ConsumablesMgr::Persistent ) { return label_persistent; },
-			[&mgr, item]( ConsumablesMgr::Inactive ) 
+			[&config]( ConsumablesMgr::Persistent )
+			{
+				return config.label_persistent; 
+			},
+			[&config, item]( ConsumablesMgr::Inactive ) 
 			{ 
-				if constexpr ( label_inactive == label_unknown_item )
-					return label_inactive;
-				else if ( April::is_consumable( item->model_id ) )
-					return label_inactive;
-				else label_unknown_item;
+				if ( config.label_inactive == config.label_unknown_item )
+					return config.label_inactive;
+
+				return April::is_consumable( item->model_id )
+					? config.label_inactive : config.label_unknown_item;
 			}
 		};
 		
@@ -74,12 +75,12 @@ namespace {
 		return ImGui::GetIO().KeyCtrl || ImGui::GetIO().KeyShift;
 	}
 
-	bool next_slot_fits_on_same_line()
+	bool next_slot_fits_on_same_line( WH const& slot_size )
 	{
 		auto const last_slot_end = ImGui::GetItemRectMax().x;
 		auto const window_size = 
 			ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
-		auto const next_slot_end = last_slot_end + config::slot_size.w;
+		auto const next_slot_end = last_slot_end + slot_size.w;
 
 		return next_slot_end < window_size;
 	}
@@ -87,10 +88,11 @@ namespace {
 }
 
 
-April::Gui::Inventory::Inventory( std::shared_ptr<ConsumablesMgr> mgr )
+April::Gui::Inventory::Inventory( 
+	std::shared_ptr<ConsumablesMgr> mgr, Config const& style )
 	:
 	cons_mgr{ std::move( mgr ) },
-	font{ LoadFont( config::font_path, config::font_size ) }
+	config{ style }
 {
 }
 
@@ -99,19 +101,19 @@ void April::Gui::Inventory::Display() const
 	auto const bags = GW::Items::GetBagArray();
 	if ( bags == nullptr ) return;
 
-	ImGui::Begin( config::window_name, config::window_flags );
-	ImGui::PushFont( font );
-	ImGui::PushStyleVar( ImGuiStyleVar_FrameBorderSize, config::show_border );
-	ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, config::item_spacing );
+	ImGui::Begin( config.window_name, config.window_flags );
+	ImGui::PushFont( config.font );
+	ImGui::PushStyleVar( ImGuiStyleVar_FrameBorderSize, config.show_border );
+	ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, config.item_spacing );
 	for ( auto bag_it = 1; bag_it < 5; ++bag_it )
 	{
 		if ( bags[bag_it] == nullptr ) continue;
 
 		for ( auto const* item : bags[bag_it]->items )
 		{
-			auto const color = item_color( item );
-			auto const surface = surface_color( color );
-			auto const label = get_label( item, *cons_mgr );
+			auto const color = item_color( item, config );
+			auto const surface = surface_color( color, config );
+			auto const label = get_label( item, *cons_mgr, config );
 
 			ImGui::PushID( item );
 			ImGui::PushStyleColor( ImGuiCol_Border, color );
@@ -120,7 +122,7 @@ void April::Gui::Inventory::Display() const
 			ImGui::PushStyleColor( ImGuiCol_ButtonHovered, surface );
 			{
 				char buf[2] = { label, '\0' };
-				ImGui::Button( buf, config::slot_size );
+				ImGui::Button( buf, config.slot_size );
 				if ( ImGui::IsItemHovered() && leader_pressed() )
 				{
 					WndProc::BlockMouseInput();
@@ -137,11 +139,51 @@ void April::Gui::Inventory::Display() const
 			ImGui::PopStyleColor( 4 );
 			ImGui::PopID();
 
-            if ( next_slot_fits_on_same_line() )
+            if ( next_slot_fits_on_same_line( config.slot_size ) )
 				ImGui::SameLine();
 		}
 	}
 	ImGui::PopStyleVar( 2 );
 	ImGui::PopFont();
 	ImGui::End();
+}
+
+auto April::Gui::Inventory::Config::LoadDefault() -> Config
+{
+	constexpr auto window_flags = 
+		ImGuiWindowFlags_NoTitleBar
+		| ImGuiWindowFlags_NoResize
+		| ImGuiWindowFlags_NoMove
+		| ImGuiWindowFlags_NoScrollbar
+		| ImGuiWindowFlags_NoScrollWithMouse
+		| ImGuiWindowFlags_NoCollapse
+		| ImGuiWindowFlags_NoBackground
+		| ImGuiWindowFlags_NoFocusOnAppearing
+		| ImGuiWindowFlags_NoBringToFrontOnFocus
+		| ImGuiWindowFlags_NoNavInputs
+		| ImGuiWindowFlags_NoNavFocus;
+
+	auto const config = Config{
+		LoadFont( "C:\\Windows\\Fonts\\Gothic.ttf", 30 ),
+
+		WH{ 36, 44 },
+		XY{ 1, 1 },
+		true,
+		0.f,
+
+		Invisible(),
+		Invisible(),
+		Blue(),
+		Green(),
+		White(),
+		Red(),
+		Yellow(),
+
+		'\0', '\0', 'P', 'L', 'Q', '\0',
+
+		"Inventory",
+		window_flags
+	};
+
+	return config;
 }

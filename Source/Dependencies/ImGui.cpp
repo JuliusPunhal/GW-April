@@ -11,6 +11,11 @@ void ImGui::Begin( char const* name, ImGuiWindowFlags const flags )
 		Begin( name, nullptr, flags );
 }
 
+void ImGui::Begin( std::string const& name, ImGuiWindowFlags const flags )
+{
+	Begin( name.c_str(), flags );
+}
+
 void ImGui::Text( std::string const& str )
 {
 	return ImGui::Text( str.c_str() );

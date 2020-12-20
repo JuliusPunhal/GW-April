@@ -1,7 +1,6 @@
 
 #include "April/Module/ChatCommands.h"
 
-#include "April/Config/Module/ChatCommands.Config.hpp"
 #include "April/Utility/stl.h"
 
 #include "Dependencies/GWCA.hpp"
@@ -11,12 +10,11 @@
 #include <string_view>
 #include <variant>
 
-namespace config = April::ChatCommandsConfig;
-
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 using April::ConsumablesMgr;
+using Config = April::ChatCommands::Config;
 
 
 namespace {
@@ -85,21 +83,24 @@ namespace {
 				std::begin( container ), std::end( container ), pred );
 	}
 
-	auto find_original( std::string_view const word ) -> char const*
+	auto find_original( std::string_view const word, Config const& config ) 
+		-> std::optional<std::string>
 	{
 		auto const iter = 
 			std::find_if(
-				config::abbreviations,
-				[=]( config::Abbreviation const& alias )
+				config.abbreviations,
+				[word]( auto const& alias )
 				{
 					return alias.abbreviation == word;
 				} );
 
-		return iter == std::end( config::abbreviations )
-			? nullptr : iter->original;
+		if ( iter == std::end( config.abbreviations ) )
+			return std::nullopt;
+		else
+			return iter->original;
 	}
 
-	void expand_abbreviations( std::string& str )
+	void expand_abbreviations( std::string& str, Config const& config )
 	{
 		for ( 
 			auto word_begin = find_if_unquoted( str, is_word );
@@ -110,11 +111,11 @@ namespace {
 				find_if_unquoted( word_begin, str.end(), is_not_word );
 			
 			auto const abbrev = make_sv( word_begin, word_end );
-			auto const original = find_original( abbrev );
+			auto const original = find_original( abbrev, config );
 			if ( original )
 			{
 				auto const word_pos = std::distance( str.begin(), word_begin );
-				str.replace( word_begin, word_end, original );
+				str.replace( word_begin, word_end, *original );
 				word_begin = str.begin() + word_pos;
 				continue;
 			}
@@ -198,11 +199,11 @@ namespace {
 	}
 
 	bool call_command( 
-		cli const& cmd, ConsumablesMgr& consumables )
+		cli const& cmd, ConsumablesMgr& consumables, Config const& config )
 	{
 		using namespace April;
 
-		if ( cmd.cmd == config::sendchat )
+		if ( cmd.cmd == config.sendchat )
 		{
 			if ( cmd.arguments.size() > 0 )
 			{
@@ -213,7 +214,7 @@ namespace {
 			}
 		}
 
-		else if ( cmd.cmd == config::writechat )
+		else if ( cmd.cmd == config.writechat )
 		{
 			if ( cmd.arguments.size() > 0 )
 			{
@@ -224,7 +225,7 @@ namespace {
 			}
 		}
 
-		else if ( cmd.cmd == config::activate_pcons )
+		else if ( cmd.cmd == config.activate_pcons )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "off" )
 			{
@@ -250,7 +251,7 @@ namespace {
 		}
 		
 		// TODO: CLI-Argument to specify persistence (--persistent?)
-		else if ( cmd.cmd == config::activate_persistent )
+		else if ( cmd.cmd == config.activate_persistent )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "off" )
 			{
@@ -274,7 +275,7 @@ namespace {
 			return true;
 		}
 
-		else if ( cmd.cmd == config::deactivate_pcons )
+		else if ( cmd.cmd == config.deactivate_pcons )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "all" )
 			{
@@ -299,7 +300,7 @@ namespace {
 		}
 		
 		// TODO: CLI-Argument to specify persistence (--persistent?)
-		else if ( cmd.cmd == config::deactivate_persistent )
+		else if ( cmd.cmd == config.deactivate_persistent )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "all" )
 			{
@@ -323,7 +324,7 @@ namespace {
 			return true;
 		}
 
-		else if ( cmd.cmd == config::set_deactivating_objective )
+		else if ( cmd.cmd == config.set_deactivating_objective )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "off" )
 			{
@@ -343,7 +344,7 @@ namespace {
 			return true;
 		}
 
-		else if ( cmd.cmd == config::openxunlai )
+		else if ( cmd.cmd == config.openxunlai )
 		{
 			if ( GW::GetInstanceType() != GW::InstanceType::Outpost )
 			{
@@ -370,9 +371,10 @@ namespace {
 	void on_message(
 		GW::HookStatus* status, 
 		std::string msg, 
-		ConsumablesMgr& consumables )
+		ConsumablesMgr& consumables, 
+		Config const& config )
 	{
-		expand_abbreviations( msg );
+		expand_abbreviations( msg, config );
 
 		for ( auto cmd_begin = msg.cbegin(); cmd_begin != msg.cend(); /**/ )
 		{
@@ -384,7 +386,7 @@ namespace {
 				cmd.remove_suffix( 1 );
 
 			auto const cli = parse_cmd( cmd );
-			if ( call_command( cli, consumables ) )
+			if ( call_command( cli, consumables, config ) )
 			{
 				status->blocked = true;
 			}
@@ -396,8 +398,10 @@ namespace {
 }
 
 
-April::ChatCommands::ChatCommands( std::shared_ptr<ConsumablesMgr> cons )
-	: consumables{ std::move( cons ) }
+April::ChatCommands::ChatCommands( 
+	std::shared_ptr<ConsumablesMgr> cons, Config const& config )
+	: 
+	consumables{ std::move( cons ) }, config{ config }
 {
 	// Callbacks will only be cleaned up during GWCA shutdown.
 	GW::Chat::RegisterSendChatCallback(
@@ -414,6 +418,64 @@ April::ChatCommands::ChatCommands( std::shared_ptr<ConsumablesMgr> cons )
 			}
 			buf[127] = '\0';
 
-			on_message( s, buf, *consumables ); 
+			on_message( s, buf, *consumables, this->config ); 
 		} );
+}
+
+auto April::ChatCommands::Config::LoadDefault() -> Config
+{
+	namespace ModelID = GW::Constants::ItemID;
+
+	auto abbreviations = std::vector<Abbreviation>{
+		// Consumables
+		{ "cupcake",		std::to_string( ModelID::Cupcakes ) },
+		{ "apple",			std::to_string( ModelID::Apples ) },
+		{ "corn",			std::to_string( ModelID::Corns ) },
+		{ "pie",			std::to_string( ModelID::Pies ) },
+		{ "egg",			std::to_string( ModelID::Eggs ) },
+		{ "warsupply",		std::to_string( ModelID::Warsupplies ) },
+		{ "lunars",			std::to_string( ModelID::LunarRooster ) },
+		{ "lunar",			"lunars" },
+		{ "soup",			std::to_string( ModelID::SkalefinSoup ) },
+		{ "kabob",			std::to_string( ModelID::Kabobs ) },
+		{ "salad",			std::to_string( ModelID::PahnaiSalad ) },
+		{ "bu",				std::to_string( ModelID::ConsEssence ) },
+		{ "grail",			std::to_string( ModelID::ConsGrail ) },
+		{ "armor",			std::to_string( ModelID::ConsArmor ) },
+		{ "rrc",			std::to_string( ModelID::RRC ) },
+		{ "brc",			std::to_string( ModelID::BRC ) },
+		{ "grc",			std::to_string( ModelID::GRC ) },
+		// Objectives
+		{ "restore",		"147" },
+		{ "escort",			"148" },
+		{ "uwg",			"149" },
+		{ "vale",			"150" },
+		{ "wastes",			"151" },
+		{ "pits",			"152" },
+		{ "plains",			"153" },
+		{ "mnts",			"154" },
+		{ "pools",			"155" },
+		{ "dhuum",			"157" },
+		// Util
+		{ "base",			"cupcake apple corn pie egg warsupply" },
+		{ "cons",			"bu grail armor" },
+		{ "miku",			std::to_string( ModelID::ELMiku ) },
+		{ "ident",			std::to_string( ModelID::IdentKit_Superior ) },
+		{ "perma",			"/sp miku ident" },
+		{ "/t4",			"/s base lunars /q plains" }
+	};
+
+	auto const config = Config{
+		std::move( abbreviations ),
+		"/sendchat",
+		"/writechat",
+		"/x",
+		"/s",
+		"/s_off",
+		"/sp",
+		"/sp_off",
+		"/q"
+	};
+
+	return config;
 }

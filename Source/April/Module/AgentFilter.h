@@ -10,12 +10,24 @@ namespace April {
 
 	class AgentFilter {
 	public:
-		AgentFilter();
+		struct Config {
+			bool active;
+			std::vector<GW::ItemID> visible_user_items;
+			std::vector<GW::Rarity> visible_user_rarities;
+			std::vector<GW::ItemID> visible_party_items;
+			std::vector<GW::Rarity> visible_party_rarities;
+
+			static auto LoadDefault() -> Config;
+		};
+
+
+		AgentFilter( Config const& );
 
 		void DisplaySuppressedItems();
 
-		
+
 	private:
+		Config const& config;
 		std::vector<GW::Packet::StoC::AgentAdd> suppressed_packets;
 		std::unordered_map<GW::ItemID, GW::AgentID> item_owners;
 				

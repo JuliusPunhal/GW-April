@@ -1,7 +1,6 @@
 
 #include "April/Gui/DhuumInfo.h"
 
-#include "April/Config/Gui/DhuumInfo.config.hpp"
 #include "April/Framework/WndProc.h"
 #include "April/Utility/TimeFormatting.h"
 
@@ -11,8 +10,6 @@
 #include <chrono>
 #include <string>
 #include <tuple>
-
-namespace config = April::Gui::DhuumInfoConfig;
 
 using namespace std::chrono;
 
@@ -55,9 +52,9 @@ namespace {
 
 
 April::Gui::DhuumInfo::DhuumInfo( 
-	std::shared_ptr<DhuumsJudgement const> judgement )
+	std::shared_ptr<DhuumsJudgement const> judgement, Config const& config )
 	: 
-	judgement{ std::move( judgement ) }
+	judgement{ std::move( judgement ) }, config{ config }
 {
 }
 
@@ -67,7 +64,7 @@ void April::Gui::DhuumInfo::Display() const
 	auto const label_rest = rest_to_string( rest );
 	auto const label_judgement = judgement_to_string( *judgement );
 
-	ImGui::Begin( config::window_name, config::window_flags );
+	ImGui::Begin( config.window_name, config.window_flags );
 	{
 		if ( ImGui::IsWindowHovered() )
 		{
@@ -85,4 +82,14 @@ void April::Gui::DhuumInfo::Display() const
 		}
 	}
 	ImGui::End();
+}
+
+auto April::Gui::DhuumInfo::Config::LoadDefault() -> Config
+{
+	auto const config = Config{
+		"Dhuum Info",
+		ImGuiWindowFlags_None
+	};
+
+	return config;
 }

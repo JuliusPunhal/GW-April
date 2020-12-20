@@ -1,18 +1,16 @@
 
 #include "April/Gui/HealthEnergy.h"
 
-#include "April/Config/Gui/HealthEnergy.Config.hpp"
-
 #include "Dependencies/GWCA.hpp"
 #include "Dependencies/ImGui.hpp"
 
 #include <string>
 
-namespace config = April::Gui::HealthEnergyConfig;
-
 using April::RGBA;
 using April::XY;
 using April::WH;
+using April::Gui::Healthbar;
+using April::Gui::Energybar;
 
 
 namespace {
@@ -20,17 +18,18 @@ namespace {
 	struct Label {
 		std::string curr_max;
 		std::string pips;
-
-		ImFont* font;
-		XY		pips_alignment;
-		RGBA	color;
-		float	percent_filled; // 0 < percent_filled < 1
 	};
 
 	struct Style {
-		RGBA	font_color;
+		ImFont* font;
+
+		RGBA	bar_color;
 		RGBA	background_color;
-		RGBA    border_color;
+		RGBA	border_color;
+
+		float	percent_filled; // 0 < percent_filled < 1
+		
+		XY		pips_alignment;
 	};
 	
 
@@ -38,8 +37,7 @@ namespace {
 	{
 		using namespace April;
 
-		ImGui::PushFont( label.font );
-		ImGui::PushStyleColor( ImGuiCol_Text, style.font_color );
+		ImGui::PushFont( style.font );
 		ImGui::PushStyleColor( ImGuiCol_ButtonActive, Invisible() );
 		ImGui::PushStyleColor( ImGuiCol_ButtonHovered, Invisible() );
 
@@ -47,10 +45,10 @@ namespace {
 		auto const cursor = ImGui::GetCursorPos();
 		ImGui::PushStyleColor( ImGuiCol_Border, style.border_color );
 		ImGui::PushStyleColor( ImGuiCol_FrameBg, style.background_color );
-		ImGui::PushStyleColor( ImGuiCol_PlotHistogram, label.color );
+		ImGui::PushStyleColor( ImGuiCol_PlotHistogram, style.bar_color );
 		ImGui::PushStyleVar( ImGuiStyleVar_FrameBorderSize, 1 );
 		{
-			ImGui::ProgressBar( label.percent_filled, { -1, -1 }, "" );
+			ImGui::ProgressBar( style.percent_filled, { -1, -1 }, "" );
 		}
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor( 3 );
@@ -67,14 +65,14 @@ namespace {
 		ImGui::SetCursorPos( cursor );
 		ImGui::PushStyleColor( ImGuiCol_Button, Invisible() );
 		ImGui::PushStyleVar( 
-			ImGuiStyleVar_ButtonTextAlign, label.pips_alignment );
+			ImGuiStyleVar_ButtonTextAlign, style.pips_alignment );
 		{
 			ImGui::Button( label.pips.c_str(), { -1, -1 } );
 		}
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
 
-		ImGui::PopStyleColor( 3 );
+		ImGui::PopStyleColor( 2 );
 		ImGui::PopFont();
 	}
 
@@ -107,10 +105,10 @@ namespace {
 		return "";
 	}
 	
-	constexpr auto color_by_effect( unsigned const effects ) noexcept
+	constexpr auto color_by_effect( 
+		uint32_t const effects, 
+		Healthbar::Config::Colors const& colors ) noexcept
 	{
-		using namespace config::health;
-
 		if ( (effects & 0x0400) == 0x0400 ) return colors.degen_hexed;
 		if ( (effects & 0x0020) == 0x0020 ) return colors.deep_wounded;
 		if ( (effects & 0x0001) == 0x0001 ) return colors.bleeding;
@@ -122,8 +120,8 @@ namespace {
 }
 
 
-April::Gui::Healthbar::Healthbar()
-	: font{ LoadFont( config::health::font_path, config::health::font_size ) }
+April::Gui::Healthbar::Healthbar( Config const& config )
+	: config{ config }
 {
 }
 
@@ -136,28 +134,65 @@ void April::Gui::Healthbar::Display() const
 	auto const pips_f = std::round( loss_per_sec * 0.5f );
 	auto const pips = static_cast<int>( pips_f );
 
-	auto label = Label{};
-	label.curr_max = get_label( player->hp, player->max_hp );
-	label.pips = pips_to_string( pips );
-	label.font = font;
-	label.pips_alignment = { pips < 0 ? 0.1f : 0.9f, 0.5f };
-	label.color = color_by_effect( player->effects );
-	label.percent_filled = player->hp;
+	auto const label = Label{
+		get_label( player->hp, player->max_hp ),
+		pips_to_string( pips )
+	};
+	auto const draw_style = ::Style{
+		config.font,
 
-	ImGui::Begin( config::health::window_name, config::health::window_flags );
+		color_by_effect( player->effects, config.colors ),
+		config.background_color,
+		config.border_color,
+
+		player->hp,
+		pips < 0 ? config.alignment.left : config.alignment.right
+	};
+
+	ImGui::Begin( config.window_name, config.window_flags );
 	{
-		auto const style = Style{
-			config::health::text_color,
-			config::health::background,
-			config::health::border_color
-		};
-		Draw( label, style );
+		Draw( label, draw_style );
 	}
 	ImGui::End();
 }
 
-April::Gui::Energybar::Energybar()
-	: font{ LoadFont( config::energy::font_path, config::energy::font_size ) }
+auto April::Gui::Healthbar::Config::LoadDefault() -> Config
+{
+	constexpr auto window_flags = 
+		ImGuiWindowFlags_NoTitleBar
+		| ImGuiWindowFlags_NoResize
+		| ImGuiWindowFlags_NoMove
+		| ImGuiWindowFlags_NoScrollbar
+		| ImGuiWindowFlags_NoScrollWithMouse
+		| ImGuiWindowFlags_NoCollapse
+		| ImGuiWindowFlags_NoBackground
+		| ImGuiWindowFlags_NoMouseInputs
+		| ImGuiWindowFlags_NoFocusOnAppearing
+		| ImGuiWindowFlags_NoBringToFrontOnFocus
+		| ImGuiWindowFlags_NoNavInputs
+		| ImGuiWindowFlags_NoNavFocus;
+
+	auto const config = Config{
+		White(),
+		{ 0.1f, 0.1f, 0.1f, 1 },
+		{
+			{ 0.70f, 0.00f, 0.00f, 1 },
+			{ 0.55f, 0.00f, 0.55f, 1 },
+			{ 0.50f, 0.50f, 0.50f, 1 },
+			{ 0.77f, 0.57f, 0.38f, 1 },
+			{ 0.50f, 0.50f, 0.00f, 1 }
+		},
+		{ { 0.1f, 0.5f }, { 0.9f, 0.5f } },
+		LoadFont( "C:\\Windows\\Fonts\\Consola.ttf", 14 ),
+		"Healthbar",
+		window_flags
+	};
+
+	return config;
+}
+
+April::Gui::Energybar::Energybar( Config const& config )
+	: config{ config }
 {
 }
 
@@ -170,22 +205,53 @@ void April::Gui::Energybar::Display() const
 	auto const pips_f = std::round( loss_per_sec * 3 );
 	auto const pips = static_cast<int>( pips_f );
 
-	auto label = Label{};
-	label.curr_max = get_label( player->energy, player->max_energy );
-	label.pips = pips_to_string( pips );
-	label.font = font;
-	label.pips_alignment = { pips < 0 ? 0.1f : 0.9f, 0.5f };
-	label.color = config::energy::color;
-	label.percent_filled = player->energy;
+	auto label = Label{
+		get_label( player->energy, player->max_energy ),
+		pips_to_string( pips )
+	};
+	auto const draw_style = ::Style{
+		config.font,
 
-	ImGui::Begin( config::energy::window_name, config::energy::window_flags );
+		config.colors.standard,
+		config.background_color,
+		config.border_color,
+
+		player->energy,
+		pips < 0 ? config.alignment.left : config.alignment.right
+	};
+
+	ImGui::Begin( config.window_name, config.window_flags );
 	{
-		auto const style = Style{
-			config::energy::text_color,
-			config::energy::background,
-			config::energy::border_color
-		};
-		Draw( label, style  );
+		Draw( label, draw_style );
 	}
 	ImGui::End();
+}
+
+auto April::Gui::Energybar::Config::LoadDefault() -> Config
+{
+	constexpr auto window_flags = 
+		ImGuiWindowFlags_NoTitleBar
+		| ImGuiWindowFlags_NoResize
+		| ImGuiWindowFlags_NoMove
+		| ImGuiWindowFlags_NoScrollbar
+		| ImGuiWindowFlags_NoScrollWithMouse
+		| ImGuiWindowFlags_NoCollapse
+		| ImGuiWindowFlags_NoBackground
+		| ImGuiWindowFlags_NoMouseInputs
+		| ImGuiWindowFlags_NoFocusOnAppearing
+		| ImGuiWindowFlags_NoBringToFrontOnFocus
+		| ImGuiWindowFlags_NoNavInputs
+		| ImGuiWindowFlags_NoNavFocus;
+
+	auto const config = Config{
+		White(),
+		{ 0.1f, 0.1f, 0.1f, 1 },
+		{ 0, 0, 0.7f, 1 },
+		{ { 0.1f, 0.5f }, { 0.9f, 0.5f } },
+		LoadFont( "C:\\Windows\\Fonts\\Consola.ttf", 14 ),
+		"Energybar",
+		window_flags
+	};
+
+	return config;
 }

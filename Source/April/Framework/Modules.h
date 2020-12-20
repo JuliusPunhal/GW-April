@@ -31,6 +31,38 @@
 
 
 namespace April {
+	
+	struct ModuleConfigurations {
+		using Active = std::tuple<ConsumablesMgr::Config>;
+		using Passive = 
+			std::tuple<
+				AgentFilter::Config,
+				ChatCommands::Config,
+				ChatFilter::Config,
+				NotifyEffectLoss::Config,
+				ReturnToOutpost::Config,
+				ShowKitUses::Config,
+				SuppressSpeechBubbles::Config>;
+		using Gui =
+			std::tuple<
+				Gui::ChainedSoulGui::Config,
+				Gui::DhuumBotGui::Config,
+				Gui::DhuumInfo::Config,
+				Gui::Dialogs::Config,
+				Gui::Energybar::Config,
+				Gui::Healthbar::Config,
+				Gui::InstanceTimer::Config,
+				Gui::Inventory::Config,
+				Gui::Settings::Config,
+				Gui::Skillbar::Config,
+				Gui::TargetInfo::Config,
+				Gui::UwTimesGui::Config>;
+
+		Active active;
+		Passive passive;
+		Gui gui;
+	};
+
 
 	class Modules {
 	public:
@@ -77,7 +109,7 @@ namespace April {
 				std::unique_ptr<Gui::TargetInfo>,
 				std::unique_ptr<Gui::UwTimesGui>>;
 
-
+		ModuleConfigurations config;
 		Active active;
 		Passive passive;
 		Guis gui;

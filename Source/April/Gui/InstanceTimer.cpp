@@ -1,29 +1,26 @@
 
 #include "April/Gui/InstanceTimer.h"
 
-#include "April/Config/Gui/InstanceTimer.config.hpp"
 #include "April/Framework/WndProc.h"
 #include "April/Utility/TimeFormatting.h"
 
 #include "Dependencies/GWCA.hpp"
 #include "Dependencies/ImGui.hpp"
 
-namespace config = April::Config::Gui::InstanceTimer;
 
-
-April::Gui::InstanceTimer::InstanceTimer()
-	: font{ LoadFont( config::font_path, config::font_size ) }
+April::Gui::InstanceTimer::InstanceTimer( Config const& config )
+	: config{ config }
 {
 }
 
 void April::Gui::InstanceTimer::Display() const
 {
 	// Update
-	auto const label = to_string( GW::GetInstanceTime(), config::time_format );
+	auto const label = to_string( GW::GetInstanceTime(), HMMSS );
 	
 	// Draw
-	ImGui::Begin( config::window_name, config::window_flags );
-	ImGui::PushFont( font );
+	ImGui::Begin( config.window_name, config.window_flags );
+	ImGui::PushFont( config.font );
 	{
 		if ( ImGui::IsWindowHovered() )
 		{
@@ -33,8 +30,8 @@ void April::Gui::InstanceTimer::Display() const
 		auto const cursor = ImGui::GetCursorPos();
 
 		// Shadow
-		ImGui::SetCursorPos( cursor + config::shadow_offset );
-		ImGui::PushStyleColor( ImGuiCol_Text, config::shadow_color );
+		ImGui::SetCursorPos( cursor + config.shadow_offset );
+		ImGui::PushStyleColor( ImGuiCol_Text, config.shadow_color );
 		{
 			ImGui::Text( label );
 		}
@@ -42,7 +39,7 @@ void April::Gui::InstanceTimer::Display() const
 
 		// Button 
 		ImGui::SetCursorPos( cursor );
-		ImGui::PushStyleColor( ImGuiCol_Text, config::text_color );
+		ImGui::PushStyleColor( ImGuiCol_Text, config.text_color );
 		ImGui::PushStyleColor( ImGuiCol_Button, Invisible() );
 		ImGui::PushStyleColor( ImGuiCol_ButtonActive, Invisible() );
 		ImGui::PushStyleColor( ImGuiCol_ButtonHovered, Invisible() );
@@ -56,4 +53,29 @@ void April::Gui::InstanceTimer::Display() const
 	}
 	ImGui::PopFont();
 	ImGui::End();
+}
+
+auto April::Gui::InstanceTimer::Config::LoadDefault() -> Config
+{
+	constexpr auto wnd_flags = 
+		ImGuiWindowFlags_NoTitleBar 
+		| ImGuiWindowFlags_NoResize
+		| ImGuiWindowFlags_NoMove
+		| ImGuiWindowFlags_NoScrollbar
+		| ImGuiWindowFlags_NoScrollWithMouse
+		| ImGuiWindowFlags_NoCollapse
+		| ImGuiWindowFlags_AlwaysAutoResize
+		| ImGuiWindowFlags_NoBackground
+		| ImGuiWindowFlags_NoFocusOnAppearing
+		| ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+	auto const config = Config{ 
+		LoadFont( "C:\\Windows\\Fonts\\Consola.ttf", 30 ),
+		White(),
+		Black(),
+		XY{ 1, 1 },
+		"Instance Time",
+		wnd_flags
+	};
+	return config;
 }

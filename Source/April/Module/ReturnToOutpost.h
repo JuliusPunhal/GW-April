@@ -5,8 +5,18 @@ namespace April {
 
 	class ReturnToOutpost {
 	public:
-		ReturnToOutpost();
+		struct Config {
+			bool active;
 
+			static auto LoadDefault() -> Config;
+		};
+
+
+		ReturnToOutpost( Config const& );
+
+
+	private:
+		Config const& config;
 	};
 
 }

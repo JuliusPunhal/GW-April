@@ -77,15 +77,15 @@ namespace {
 			case WM_SYSKEYDOWN:
 				if ( wParam < 256 )
 					io.KeysDown[wParam] = 1;
-				return false;
+				return io.WantTextInput;
 			case WM_KEYUP:
 			case WM_SYSKEYUP:
 				if ( wParam < 256 )
 					io.KeysDown[wParam] = 0;
-				return false;
+				return io.WantTextInput;
 			case WM_CHAR:
 				io.AddInputCharacter( (unsigned int)wParam );
-				return false;
+				return io.WantTextInput;
 		}
 		return false;
 	}

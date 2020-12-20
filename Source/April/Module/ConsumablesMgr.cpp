@@ -2,7 +2,6 @@
 #include "April/Module/ConsumablesMgr.h"
 #include "April/Module/ConsumablesMgr.AllowUse.hpp"
 
-#include "April/Config/Module/ConsumablesMgr.config.hpp"
 #include "April/Utility/ConsumableState.h"
 #include "April/Utility/stl.h"
 
@@ -12,8 +11,6 @@
 #include <algorithm>
 #include <optional>
 #include <variant>
-
-namespace config = April::ConsumablesMgrConfig;
 
 using namespace std::chrono;
 
@@ -77,7 +74,8 @@ namespace {
 }
 
 
-April::ConsumablesMgr::ConsumablesMgr()
+April::ConsumablesMgr::ConsumablesMgr( Config const& config )
+	: config{ config }
 {
 	using namespace GW::Packet::StoC;
 
@@ -101,7 +99,7 @@ April::ConsumablesMgr::ConsumablesMgr()
 
 void April::ConsumablesMgr::Update()
 {
-	if ( steady_clock::now() - last_use < config::timeout ) 
+	if ( steady_clock::now() - last_use < config.timeout ) 
 		return;
 
 	auto const* player = GW::Agents::GetCharacter();
@@ -163,4 +161,13 @@ auto April::ConsumablesMgr::IsActive( GW::ItemID const id ) const
 		return ActiveState{ Persistent{} };
 
 	return ActiveState{ Inactive{} };
+}
+
+auto April::ConsumablesMgr::Config::LoadDefault() -> Config
+{
+	auto const config = Config{
+		250ms
+	};
+
+	return config;
 }
