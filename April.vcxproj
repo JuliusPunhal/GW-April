@@ -127,6 +127,7 @@
     <ClCompile Include="Source\April\Utility\Consumable.cpp" />
     <ClCompile Include="Source\April\Utility\ConsumableState.cpp" />
     <ClCompile Include="Source\April\Utility\DrawStructures.cpp" />
+    <ClCompile Include="Source\April\Utility\FileIO.cpp" />
     <ClCompile Include="Source\April\Utility\stl.cpp" />
     <ClCompile Include="Source\April\Utility\TimeFormatting.cpp" />
     <ClCompile Include="Source\April\Utility\unique_vector.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Source\April\Utility\Consumable.h" />
     <ClInclude Include="Source\April\Utility\ConsumableState.h" />
     <ClInclude Include="Source\April\Utility\DrawStructures.h" />
+    <ClInclude Include="Source\April\Utility\FileIO.h" />
     <ClInclude Include="Source\April\Utility\stl.h" />
     <ClInclude Include="Source\April\Utility\TimeFormatting.h" />
     <ClInclude Include="Source\April\Utility\unique_vector.h" />

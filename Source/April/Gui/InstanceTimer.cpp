@@ -9,7 +9,7 @@
 
 
 April::Gui::InstanceTimer::InstanceTimer( Config const& config )
-	: config{ config }
+	: config{ config }, font{ LoadFont( config.font ) }
 {
 }
 
@@ -19,9 +19,9 @@ void April::Gui::InstanceTimer::Display() const
 	auto const label = to_string( GW::GetInstanceTime(), HMMSS );
 	
 	// Draw
-	ImGui::Begin( config.window_name, config.window_flags );
-	ImGui::PushFont( config.font );
+	if ( ImGui::Begin( config.window ) )
 	{
+		ImGui::PushFont( font );
 		if ( ImGui::IsWindowHovered() )
 		{
 			WndProc::BlockMouseInput();
@@ -50,8 +50,8 @@ void April::Gui::InstanceTimer::Display() const
 		}
 		ImGui::PopStyleColor( 4 );
 		ImGui::PopStyleVar();
+		ImGui::PopFont();
 	}
-	ImGui::PopFont();
 	ImGui::End();
 }
 
@@ -70,12 +70,11 @@ auto April::Gui::InstanceTimer::Config::LoadDefault() -> Config
 		| ImGuiWindowFlags_NoBringToFrontOnFocus;
 
 	auto const config = Config{ 
-		LoadFont( "C:\\Windows\\Fonts\\Consola.ttf", 30 ),
+		{ "C:\\Windows\\Fonts\\Consola.ttf", 30 },
 		White(),
 		Black(),
 		XY{ 1, 1 },
-		"Instance Time",
-		wnd_flags
+		{ "Instance Time", true, wnd_flags }
 	};
 	return config;
 }

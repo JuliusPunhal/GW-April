@@ -2,8 +2,6 @@
 
 #include "April/Utility/DrawStructures.h"
 
-#include "Dependencies/ImGui.hpp"
-
 #include <chrono>
 #include <optional>
 #include <string>
@@ -24,10 +22,10 @@ namespace April::Gui {
 			std::chrono::milliseconds	confirm_time;
 			RGBA						confirm_color;
 
-			std::string			window_name;
-			ImGuiWindowFlags	window_flags;
+			Window window;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\Gui_Dialogs.ini";
 		};
 
 

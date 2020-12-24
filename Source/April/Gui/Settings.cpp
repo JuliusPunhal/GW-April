@@ -3,6 +3,7 @@
 
 #include "April/Framework/Modules.h"
 #include "April/Framework/WndProc.h"
+#include "April/Utility/FileIO.h"
 
 #include "Dependencies/ImGui.hpp"
 
@@ -16,58 +17,47 @@ using namespace std::chrono;
 
 namespace {
 
-	bool is_visible( ImGuiWindow& window )
+	void draw_visibility( April::Window& window )
 	{
-		return window.HiddenFramesCanSkipItems == 0;
-	}
-
-	void hide( ImGuiWindow& window )
-	{
-		using T = decltype(ImGuiWindow::HiddenFramesCanSkipItems);
-		window.HiddenFramesCanSkipItems = std::numeric_limits<T>::max();
-	}
-
-	void show( ImGuiWindow& window )
-	{
-		window.HiddenFramesCanSkipItems = 0;
-	}
-
-	void draw_visibility( ImGuiWindow& window )
-	{
-		ImGui::PushID( window.Name );
-		auto checked = is_visible( window );
-		if ( ImGui::Checkbox( "##visibility", &checked ) )
-		{
-			checked ? show( window ) : hide( window );
-		}
+		ImGui::PushID( &window );
+		ImGui::Checkbox( "##visibility", &window.visible );
 		ImGui::PopID();
 	}
 
-	void draw_settings( ImGuiWindow& window )
+	void draw_settings( April::Window& window )
 	{
-		ImGui::PushID( window.Name );
+		ImGui::PushID( &window );
 
-		// Window Position
-		ImGui::AlignTextToFramePadding();
-		ImGui::DragFloat2( "Position", &window.Pos.x, 1, 0, 0, "%.0f" );
-
-		// Window Size
-		if ( (window.Flags & ImGuiWindowFlags_AlwaysAutoResize) == 0 )
+		if ( auto* wnd = ImGui::FindWindowByName( window.name.c_str() ); wnd )
 		{
+			// Window Position
 			ImGui::AlignTextToFramePadding();
-			ImGui::DragFloat2( "Size", &window.SizeFull.x, 1, 0, 0, "%.0f" );
+			ImGui::DragFloat2( "Position", &wnd->Pos.x, 1, 0, 0, "%.0f" );
+
+			// Window Size
+			if ( (window.flags & ImGuiWindowFlags_AlwaysAutoResize) == 0 )
+			{
+				ImGui::AlignTextToFramePadding();
+				ImGui::DragFloat2( "Size", &wnd->SizeFull.x, 1, 0, 0, "%.0f" );
+			}
+			else ImGui::Text( "Turn off Auto Resize to define size" );
 		}
-		else ImGui::Text( "Turn off Auto Resize to define size" );
+		else 
+		{
+			ImGui::Text( 
+				"Cannot find Size- and Position-Info for Window %s!",
+				window.name.c_str() );
+		}
 
 		// Window Flags
 		auto const draw = [&window]( const char* str, unsigned const flag )
 		{
-			auto const is_set = (window.Flags & flag) == flag;
+			auto const is_set = (window.flags & flag) == flag;
 
 			auto checked = is_set;
 			if ( ImGui::Checkbox( str, &checked ) )
 			{
-				is_set ? window.Flags &= ~flag : window.Flags |= flag;
+				is_set ? window.flags &= ~flag : window.flags |= flag;
 			}
 		};
 
@@ -90,7 +80,7 @@ namespace {
 		ImGui::PopID();
 	}
 
-	void draw_window_settings_collapsing_header( ImGuiWindow& window )
+	void draw_window_settings_collapsing_header( April::Window& window )
 	{
 		ImGui::PushID( &window );
 		if ( ImGui::CollapsingHeader( "Window Settings" ) )
@@ -102,18 +92,47 @@ namespace {
 		ImGui::PopID();
 	}
 
-	void draw_window_settings( std::string const& name )
+	template<typename Config_t>
+	void draw_save_discard( Config_t& config )
 	{
-		auto* window = ImGui::FindWindowByName( name.c_str() );
-		if ( window == nullptr ) return;
-		
-		ImGui::PushID( &window );
-		draw_visibility( *window );
+		ImGui::PushID( &config );
+
+		if ( ImGui::Button( "Save" ) )
+		{
+			April::IO::to_file( config, config.path );
+		}
+
 		ImGui::SameLine();
-		if ( ImGui::CollapsingHeader( window->Name ) )
+
+		if ( ImGui::Button( "Discard" ) )
+		{
+			if ( auto cfg = April::IO::from_file<Config_t>( config.path ); cfg )
+			{
+				config = *std::move( cfg );
+			}
+		}
+
+		ImGui::SameLine();
+
+		if ( ImGui::Button( "Restore Default" ) )
+		{
+			config = Config_t::LoadDefault();
+		}
+
+		ImGui::PopID();
+	}
+	
+	template<typename Config_t>
+	void draw_window_settings( Config_t& config )
+	{
+		ImGui::PushID( &config );
+		draw_visibility( config.window );
+		ImGui::SameLine();
+		if ( ImGui::CollapsingHeader( config.window.name.c_str() ) )
 		{
 			ImGui::Indent();
-			draw_window_settings_collapsing_header( *window );
+			draw_save_discard( config );
+			draw_window_settings_collapsing_header( config.window );
 			ImGui::Unindent();
 		}
 		ImGui::PopID();
@@ -141,6 +160,8 @@ namespace {
 		if ( ImGui::CollapsingHeader( "Consumables" ) )
 		{
 			ImGui::Indent();
+			draw_save_discard( config );
+
 			auto buf = static_cast<int>( config.timeout.count() );
 			if ( ImGui::InputInt( "Timeout (ms)", &buf ) )
 			{
@@ -215,6 +236,8 @@ namespace {
 		{
 			ImGui::Indent();
 
+			draw_save_discard( config );
+
 			ImGui::Checkbox( "Activate Agent Filter", &config.active );
 
 			if ( ImGui::CollapsingHeader( "Visible Player Items" ) )
@@ -259,6 +282,9 @@ namespace {
 		if ( ImGui::CollapsingHeader( "Chat Commands" ) )
 		{
 			ImGui::Indent();
+
+			draw_save_discard( config );
+
 			ImGui::PushItemWidth( ImGui::GetContentRegionAvail().x * 0.25f );
 
 			auto const draw_cmd = []( char const* label, auto& str )
@@ -283,7 +309,8 @@ namespace {
 			draw_cmd( "Deactivate Consumables", config.deactivate_pcons );
 			draw_cmd( "Activate permanently", config.activate_persistent );
 			draw_cmd( "Dectivate permanently", config.deactivate_persistent );
-			draw_cmd( "Set objective", config.set_deactivating_objective);
+			draw_cmd( "Set objective", config.set_deactivating_objective );
+			draw_cmd( "Toggle Gui", config.toggle_gui );
 
 			ImGui::Separator();
 
@@ -354,6 +381,8 @@ namespace {
 		if ( ImGui::CollapsingHeader( "Chat Filter" ) )
 		{
 			ImGui::Indent();
+
+			draw_save_discard( config );
 			
 			ImGui::Text( "Block checked messages" );
 			ImGui::Checkbox( "Rare drops for player", &config.self_drop_rare );
@@ -413,6 +442,8 @@ namespace {
 		if ( ImGui::CollapsingHeader( "Notify Effect Lost" ) )
 		{
 			ImGui::Indent();
+			
+			draw_save_discard( config );
 
 			for ( 
 				auto it = config.notifications.begin();
@@ -474,6 +505,8 @@ namespace {
 		if ( ImGui::CollapsingHeader( "Return to Outpost" ) )
 		{
 			ImGui::Indent();
+			draw_save_discard( config );
+
 			ImGui::Checkbox( 
 				"Automatically return to outpost when party is defeated",
 				&config.active );
@@ -498,6 +531,8 @@ namespace {
 		if ( ImGui::CollapsingHeader( "Show Kit Uses" ) )
 		{
 			ImGui::Indent();
+			draw_save_discard( config );
+
 			ImGui::Checkbox( 
 				"Show remaining uses of Ident- & Salvage-Kits as quantity", 
 				&config.active );
@@ -509,9 +544,10 @@ namespace {
 
 	void draw( April::SuppressSpeechBubbles::Config& config )
 	{
-		if ( ImGui::CollapsingHeader( "Speed Bubbles" ) )
+		if ( ImGui::CollapsingHeader( "Speech Bubbles" ) )
 		{
 			ImGui::Indent();
+			draw_save_discard( config );
 			ImGui::Checkbox( "Suppress Speech Bubbles", &config.active );
 			ImGui::Unindent();
 		}
@@ -519,31 +555,29 @@ namespace {
 
 	void draw( April::Gui::ChainedSoulGui::Config& config )
 	{
-		draw_window_settings( config.window_name );
+		draw_window_settings( config );
 	}
 
 	void draw( April::Gui::DhuumBotGui::Config& config )
 	{
-		draw_window_settings( config.window_name );
+		draw_window_settings( config );
 	}
 
 	void draw( April::Gui::DhuumInfo::Config& config )
 	{
-		draw_window_settings( config.window_name );
+		draw_window_settings( config );
 	}
 
 	void draw( April::Gui::Dialogs::Config& config )
 	{
-		auto* window = ImGui::FindWindowByName( config.window_name.c_str() );
-		if ( window == nullptr ) return;
-
 		ImGui::PushID( &config );
-		draw_visibility( *window );
+		draw_visibility( config.window );
 		ImGui::SameLine();
-		if ( ImGui::CollapsingHeader( window->Name ) )
+		if ( ImGui::CollapsingHeader( config.window.name.c_str() ) )
 		{
 			ImGui::Indent();
-			draw_window_settings_collapsing_header( *window );
+			draw_save_discard( config );
+			draw_window_settings_collapsing_header( config.window );
 			
 			ImGui::PushID( 1 );
 			if ( ImGui::CollapsingHeader( "Dialogs" ) )
@@ -617,17 +651,16 @@ namespace {
 
 	void draw( April::Gui::Energybar::Config& config )
 	{
-		auto* window = ImGui::FindWindowByName( config.window_name.c_str() );
-		if ( window == nullptr ) return;
-
 		ImGui::PushID( &config );
-		draw_visibility( *window );
+		draw_visibility( config.window );
 		ImGui::SameLine();
-		if ( ImGui::CollapsingHeader( window->Name ) )
+		if ( ImGui::CollapsingHeader( config.window.name.c_str() ) )
 		{
 			ImGui::Indent();
 
-			draw_window_settings_collapsing_header( *window );
+			draw_save_discard( config );
+
+			draw_window_settings_collapsing_header( config.window );
 
 			if ( ImGui::CollapsingHeader( "Style Settings" ) )
 			{
@@ -665,17 +698,16 @@ namespace {
 
 	void draw( April::Gui::Healthbar::Config& config )
 	{
-		auto* window = ImGui::FindWindowByName( config.window_name.c_str() );
-		if ( window == nullptr ) return;
-
 		ImGui::PushID( &config );
-		draw_visibility( *window );
+		draw_visibility( config.window );
 		ImGui::SameLine();
-		if ( ImGui::CollapsingHeader( window->Name ) )
+		if ( ImGui::CollapsingHeader( config.window.name.c_str() ) )
 		{
 			ImGui::Indent();
 
-			draw_window_settings_collapsing_header( *window );
+			draw_save_discard( config );
+
+			draw_window_settings_collapsing_header( config.window );
 
 			if ( ImGui::CollapsingHeader( "Style Settings" ) )
 			{
@@ -733,17 +765,16 @@ namespace {
 
 	void draw( April::Gui::InstanceTimer::Config& config )
 	{
-		auto* window = ImGui::FindWindowByName( config.window_name.c_str() );
-		if ( window == nullptr ) return;
-
 		ImGui::PushID( &config );
-		draw_visibility( *window );
+		draw_visibility( config.window );
 		ImGui::SameLine();
-		if ( ImGui::CollapsingHeader( window->Name ) )
+		if ( ImGui::CollapsingHeader( config.window.name.c_str() ) )
 		{
 			ImGui::Indent();
 
-			draw_window_settings_collapsing_header( *window );
+			draw_save_discard( config );
+
+			draw_window_settings_collapsing_header( config.window );
 
 			if ( ImGui::CollapsingHeader( "Style" ) )
 			{
@@ -769,17 +800,16 @@ namespace {
 
 	void draw( April::Gui::Inventory::Config& config )
 	{
-		auto* window = ImGui::FindWindowByName( config.window_name.c_str() );
-		if ( window == nullptr ) return;
-		
 		ImGui::PushID( &config );
-		draw_visibility( *window );
+		draw_visibility( config.window );
 		ImGui::SameLine();
-		if ( ImGui::CollapsingHeader( window->Name ) )
+		if ( ImGui::CollapsingHeader( config.window.name.c_str() ) )
 		{
 			ImGui::Indent();
 
-			draw_window_settings_collapsing_header( *window );
+			draw_save_discard( config );
+
+			draw_window_settings_collapsing_header( config.window );
 
 			if ( ImGui::CollapsingHeader( "Style" ) )
 			{
@@ -799,7 +829,7 @@ namespace {
 				{
 					config.button_alpha = percent / 100;
 				}
-				ImGui::Checkbox( "Show Border", &config.show_border );
+				ImGui::Checkbox( "Show Border", &config.border );
 				
 				ImGui::ColorEdit4( 
 					"Empty Slot", 
@@ -878,22 +908,21 @@ namespace {
 
 	void draw( April::Gui::Settings::Config& config )
 	{
-		draw_window_settings( config.window_name );
+		draw_window_settings( config );
 	}
 
 	void draw( April::Gui::Skillbar::Config& config )
 	{
-		auto* window = ImGui::FindWindowByName( config.window_name.c_str() );
-		if ( window == nullptr ) return;
-		
 		ImGui::PushID( &config );
-		draw_visibility( *window );
+		draw_visibility( config.window );
 		ImGui::SameLine();
-		if ( ImGui::CollapsingHeader( window->Name ) )
+		if ( ImGui::CollapsingHeader( config.window.name.c_str() ) )
 		{
 			ImGui::Indent();
 
-			draw_window_settings_collapsing_header( *window );
+			draw_save_discard( config );
+
+			draw_window_settings_collapsing_header( config.window );
 
 			if ( ImGui::CollapsingHeader( "Style" ) )
 			{
@@ -979,12 +1008,12 @@ namespace {
 
 	void draw( April::Gui::TargetInfo::Config& config )
 	{
-		draw_window_settings( config.window_name );
+		draw_window_settings( config );
 	}
 
 	void draw( April::Gui::UwTimesGui::Config& config )
 	{
-		draw_window_settings( config.window_name );
+		draw_window_settings( config );
 	}
 
 
@@ -1011,7 +1040,7 @@ void April::Gui::Settings::Display() const
 {
 	auto& config = std::get<Config>( configurations.gui );
 
-	ImGui::Begin( config.window_name, config.window_flags );
+	if ( ImGui::Begin( config.window ) )
 	{
 		ImGui::PushStyleVar( ImGuiStyleVar_IndentSpacing, 28 );
 
@@ -1041,8 +1070,7 @@ void April::Gui::Settings::Display() const
 auto April::Gui::Settings::Config::LoadDefault() -> Config
 {
 	auto const config = Config{
-		"Settings",
-		ImGuiWindowFlags_None
+		{ "Settings", true, ImGuiWindowFlags_None }
 	};
 
 	return config;

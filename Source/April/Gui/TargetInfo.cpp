@@ -15,14 +15,16 @@ void April::Gui::TargetInfo::Display() const
 	auto const* target = GW::Agents::GetTarget();
 	if ( target == nullptr )
 	{
-		ImGui::Begin( config.window_name, config.window_flags );
-		ImGui::Text( "No target found!" );
+		if ( ImGui::Begin( config.window ) )
+		{
+			ImGui::Text( "No target found!" );
+		}
 		ImGui::End();
 		return;
 	}
 	
 	auto const* player = GW::Agents::GetPlayer();
-	ImGui::Begin( config.window_name, config.window_flags );
+	if ( ImGui::Begin( config.window ) )
 	{
 		auto const x = static_cast<int>( target->pos.x );
 		auto const y = static_cast<int>( target->pos.y );
@@ -60,8 +62,7 @@ void April::Gui::TargetInfo::Display() const
 auto April::Gui::TargetInfo::Config::LoadDefault() -> Config
 {
 	auto const config = Config{
-		"Target Info",
-		ImGuiWindowFlags_None
+		{ "Target Info", false, ImGuiWindowFlags_None }
 	};
 
 	return config;

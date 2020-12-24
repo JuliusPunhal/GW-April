@@ -1,11 +1,9 @@
 #pragma once
 
 #include "April/Module/DhuumsJudgement.h"
-
-#include "Dependencies/ImGui.hpp"
+#include "April/Utility/DrawStructures.h"
 
 #include <memory>
-#include <string>
 
 
 namespace April::Gui {
@@ -13,10 +11,10 @@ namespace April::Gui {
 	class DhuumInfo {
 	public:
 		struct Config {
-			std::string			window_name;
-			ImGuiWindowFlags	window_flags;
+			Window window;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\Gui_DhuumInfo.ini";
 		};
 
 

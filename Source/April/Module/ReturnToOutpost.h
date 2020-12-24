@@ -9,6 +9,7 @@ namespace April {
 			bool active;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\ReturnToOutpost.ini";
 		};
 
 

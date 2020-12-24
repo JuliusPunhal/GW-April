@@ -121,7 +121,7 @@ namespace {
 
 
 April::Gui::Healthbar::Healthbar( Config const& config )
-	: config{ config }
+	: config{ config }, font{ LoadFont( config.font ) }
 {
 }
 
@@ -139,7 +139,7 @@ void April::Gui::Healthbar::Display() const
 		pips_to_string( pips )
 	};
 	auto const draw_style = ::Style{
-		config.font,
+		font,
 
 		color_by_effect( player->effects, config.colors ),
 		config.background_color,
@@ -149,7 +149,7 @@ void April::Gui::Healthbar::Display() const
 		pips < 0 ? config.alignment.left : config.alignment.right
 	};
 
-	ImGui::Begin( config.window_name, config.window_flags );
+	if ( ImGui::Begin( config.window ) )
 	{
 		Draw( label, draw_style );
 	}
@@ -183,16 +183,15 @@ auto April::Gui::Healthbar::Config::LoadDefault() -> Config
 			{ 0.50f, 0.50f, 0.00f, 1 }
 		},
 		{ { 0.1f, 0.5f }, { 0.9f, 0.5f } },
-		LoadFont( "C:\\Windows\\Fonts\\Consola.ttf", 14 ),
-		"Healthbar",
-		window_flags
+		{ "C:\\Windows\\Fonts\\Consola.ttf", 14 },
+		{ "Healthbar", true, window_flags }
 	};
 
 	return config;
 }
 
 April::Gui::Energybar::Energybar( Config const& config )
-	: config{ config }
+	: config{ config }, font{ LoadFont( config.font ) }
 {
 }
 
@@ -210,7 +209,7 @@ void April::Gui::Energybar::Display() const
 		pips_to_string( pips )
 	};
 	auto const draw_style = ::Style{
-		config.font,
+		font,
 
 		config.colors.standard,
 		config.background_color,
@@ -220,7 +219,7 @@ void April::Gui::Energybar::Display() const
 		pips < 0 ? config.alignment.left : config.alignment.right
 	};
 
-	ImGui::Begin( config.window_name, config.window_flags );
+	if ( ImGui::Begin( config.window ) )
 	{
 		Draw( label, draw_style );
 	}
@@ -248,9 +247,8 @@ auto April::Gui::Energybar::Config::LoadDefault() -> Config
 		{ 0.1f, 0.1f, 0.1f, 1 },
 		{ 0, 0, 0.7f, 1 },
 		{ { 0.1f, 0.5f }, { 0.9f, 0.5f } },
-		LoadFont( "C:\\Windows\\Fonts\\Consola.ttf", 14 ),
-		"Energybar",
-		window_flags
+		{ "C:\\Windows\\Fonts\\Consola.ttf", 14 },
+		{ "Energybar", true, window_flags }
 	};
 
 	return config;

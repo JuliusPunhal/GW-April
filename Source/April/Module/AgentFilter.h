@@ -18,6 +18,7 @@ namespace April {
 			std::vector<GW::Rarity> visible_party_rarities;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\AgentFilter.ini";
 		};
 
 

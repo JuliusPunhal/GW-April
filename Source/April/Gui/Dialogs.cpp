@@ -23,7 +23,7 @@ void April::Gui::Dialogs::Dialogs::Display()
 		awaiting_confirmation = std::nullopt;
 	}
 
-	ImGui::Begin( config.window_name, config.window_flags );
+	if ( ImGui::Begin( config.window ) )
 	{
 		if ( ImGui::IsWindowHovered() )
 		{
@@ -81,8 +81,7 @@ auto April::Gui::Dialogs::Config::LoadDefault() -> Config
 		std::move( dialogs ),
 		3s,
 		{ 0.7f, 0, 0, 1 },
-		"Dialogs",
-		ImGuiWindowFlags_None
+		{ "Dialogs", false, ImGuiWindowFlags_None }
 	};
 
 	return config;

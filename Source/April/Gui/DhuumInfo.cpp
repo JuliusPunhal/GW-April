@@ -64,7 +64,7 @@ void April::Gui::DhuumInfo::Display() const
 	auto const label_rest = rest_to_string( rest );
 	auto const label_judgement = judgement_to_string( *judgement );
 
-	ImGui::Begin( config.window_name, config.window_flags );
+	if ( ImGui::Begin( config.window ) )
 	{
 		if ( ImGui::IsWindowHovered() )
 		{
@@ -87,8 +87,7 @@ void April::Gui::DhuumInfo::Display() const
 auto April::Gui::DhuumInfo::Config::LoadDefault() -> Config
 {
 	auto const config = Config{
-		"Dhuum Info",
-		ImGuiWindowFlags_None
+		{ "Dhuum Info", false, ImGuiWindowFlags_None }
 	};
 
 	return config;

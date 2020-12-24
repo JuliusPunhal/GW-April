@@ -60,6 +60,7 @@ namespace April {
 			bool ninerings;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\ChatFilter.ini";
 		};
 
 

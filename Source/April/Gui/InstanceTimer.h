@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Dependencies/ImGui.hpp"
+#include "April/Utility/DrawStructures.h"
 
 
 namespace April::Gui {
@@ -8,14 +8,15 @@ namespace April::Gui {
 	class InstanceTimer {
 	public:
 		struct Config {
-			ImFont*				font;
+			FontInfo			font;
 			RGBA				text_color;
 			RGBA				shadow_color;
 			XY					shadow_offset;
-			std::string			window_name;
-			ImGuiWindowFlags	window_flags;
+
+			Window window;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\Gui_InstanceTimer.ini";
 		};
 
 
@@ -25,7 +26,8 @@ namespace April::Gui {
 
 
 	private:
-		Config const& config;
+		Config const&	config;
+		ImFont*			font;
 	};
 
 }

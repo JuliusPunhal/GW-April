@@ -1,6 +1,7 @@
 
 #include "April/Module/ChatCommands.h"
 
+#include "April/Framework/Modules.h"
 #include "April/Utility/stl.h"
 
 #include "Dependencies/GWCA.hpp"
@@ -14,6 +15,7 @@ using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 using April::ConsumablesMgr;
+using Guis = April::ModuleConfigurations::Gui;
 using Config = April::ChatCommands::Config;
 
 
@@ -198,8 +200,35 @@ namespace {
 		str.erase( std::remove( str.begin(), str.end(), '"' ), str.end() );
 	}
 
+	template<typename T, auto... I>
+	void toggle_window_impl( 
+		std::string_view name, T&& tup, std::index_sequence<I...> )
+	{
+		auto try_toggle = [name]( auto const& gui )
+		{
+			if ( gui.window.name == name )
+				gui.window.visible = !gui.window.visible;
+		};
+
+		( try_toggle( std::get<I>( tup ) ), ... );
+	}
+
+
+	template<typename T>
+	void toggle_window_by_name( std::string_view name, T&& tup )
+	{
+		toggle_window_impl( 
+			name, 
+			std::forward<T>( tup ), 
+			std::make_index_sequence<
+				std::tuple_size_v<stl::remove_cvref_t<T>>>{} );
+	}
+
 	bool call_command( 
-		cli const& cmd, ConsumablesMgr& consumables, Config const& config )
+		cli const& cmd, 
+		ConsumablesMgr& consumables, 
+		Guis& guis, 
+		Config const& config )
 	{
 		using namespace April;
 
@@ -365,6 +394,12 @@ namespace {
 			return true;
 		}
 
+		else if ( cmd.cmd == config.toggle_gui )
+		{
+			toggle_window_by_name( cmd.arguments, guis );
+			return true;
+		}
+
 		return false;
 	}
 
@@ -372,6 +407,7 @@ namespace {
 		GW::HookStatus* status, 
 		std::string msg, 
 		ConsumablesMgr& consumables, 
+		Guis& guis, 
 		Config const& config )
 	{
 		expand_abbreviations( msg, config );
@@ -386,7 +422,7 @@ namespace {
 				cmd.remove_suffix( 1 );
 
 			auto const cli = parse_cmd( cmd );
-			if ( call_command( cli, consumables, config ) )
+			if ( call_command( cli, consumables, guis, config ) )
 			{
 				status->blocked = true;
 			}
@@ -399,9 +435,11 @@ namespace {
 
 
 April::ChatCommands::ChatCommands( 
-	std::shared_ptr<ConsumablesMgr> cons, Config const& config )
+	std::shared_ptr<ConsumablesMgr> cons,
+	ModuleConfigurations& configs,
+	Config const& config )
 	: 
-	consumables{ std::move( cons ) }, config{ config }
+	consumables{ std::move( cons ) }, configs{ configs }, config{ config }
 {
 	// Callbacks will only be cleaned up during GWCA shutdown.
 	GW::Chat::RegisterSendChatCallback(
@@ -418,7 +456,7 @@ April::ChatCommands::ChatCommands(
 			}
 			buf[127] = '\0';
 
-			on_message( s, buf, *consumables, this->config ); 
+			on_message( s, buf, *consumables, this->configs.gui, this->config ); 
 		} );
 }
 
@@ -474,7 +512,8 @@ auto April::ChatCommands::Config::LoadDefault() -> Config
 		"/s_off",
 		"/sp",
 		"/sp_off",
-		"/q"
+		"/q",
+		"/gui"
 	};
 
 	return config;

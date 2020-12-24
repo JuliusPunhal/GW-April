@@ -83,7 +83,8 @@ April::Modules::Modules( std::shared_ptr<UwTimes> uw_times )
 			std::get<AgentFilter::Config>( config.passive ) ),
 
 		std::make_unique<ChatCommands>( 
-			std::get<std::shared_ptr<ConsumablesMgr>>( active ), 
+			std::get<std::shared_ptr<ConsumablesMgr>>( active ),
+			config,
 			std::get<ChatCommands::Config>( config.passive ) ),
 		
 		std::make_unique<ChatFilter>( 

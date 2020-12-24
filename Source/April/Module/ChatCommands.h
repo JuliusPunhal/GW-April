@@ -1,6 +1,7 @@
 #pragma once
 
 #include "April/Module/ConsumablesMgr.h"
+namespace April { struct ModuleConfigurations; }
 
 #include "Dependencies/GWCA.hpp"
 
@@ -27,16 +28,22 @@ namespace April {
 			std::string activate_persistent;
 			std::string deactivate_persistent;
 			std::string set_deactivating_objective;
+			std::string toggle_gui;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\ChatCommands.ini";
 		};
 
 
-		ChatCommands( std::shared_ptr<ConsumablesMgr>, Config const& );
+		ChatCommands( 
+			std::shared_ptr<ConsumablesMgr>, 
+			ModuleConfigurations&,
+			Config const& );
 
 
 	private:
 		std::shared_ptr<ConsumablesMgr> consumables;
+		ModuleConfigurations& configs;
 		Config const& config;
 	};
 

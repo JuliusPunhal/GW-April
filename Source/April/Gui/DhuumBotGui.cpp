@@ -15,7 +15,7 @@ April::Gui::DhuumBotGui::DhuumBotGui(
 
 void April::Gui::DhuumBotGui::Display() const
 {
-	ImGui::Begin( config.window_name, config.window_flags );
+	if ( ImGui::Begin( config.window ) )
 	{
 		if ( ImGui::IsWindowHovered() )
 		{
@@ -34,8 +34,7 @@ void April::Gui::DhuumBotGui::Display() const
 auto April::Gui::DhuumBotGui::Config::LoadDefault() -> Config
 {
 	auto const config = Config{
-		"Dhuum Bot",
-		ImGuiWindowFlags_None
+		{ "Dhuum Bot", false, ImGuiWindowFlags_None }
 	};
 
 	return config;

@@ -124,7 +124,7 @@ namespace {
 
 
 April::Gui::Skillbar::Skillbar( Config const& config )
-	: config{ config }
+	: config{ config }, font{ LoadFont( config.font ) }
 {
 }
 
@@ -162,13 +162,14 @@ void April::Gui::Skillbar::Display() const
 	}
 
 	// Draw
-	ImGui::Begin( config.window_name, config.window_flags );
-	ImGui::PushFont( config.font );
-	ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, config.spacing );
-	ImGui::PushStyleVar( ImGuiStyleVar_FrameBorderSize, 1 );
-	ImGui::PushStyleColor( ImGuiCol_Text, config.text_color );
-	ImGui::PushStyleColor( ImGuiCol_Border, config.border_color );
+	if ( ImGui::Begin( config.window ) )
 	{
+		ImGui::PushFont( font );
+		ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, config.spacing );
+		ImGui::PushStyleVar( ImGuiStyleVar_FrameBorderSize, 1 );
+		ImGui::PushStyleColor( ImGuiCol_Text, config.text_color );
+		ImGui::PushStyleColor( ImGuiCol_Border, config.border_color );
+
 		auto const height = ImGui::GetContentRegionAvail().y;
 		for ( auto const& skill : skills )
 		{
@@ -183,10 +184,10 @@ void April::Gui::Skillbar::Display() const
 			ImGui::PopStyleColor( 3 );
 			ImGui::PopID();
 		}
+		ImGui::PopStyleColor( 2 );
+		ImGui::PopStyleVar( 2 );
+		ImGui::PopFont();
 	}
-	ImGui::PopStyleColor( 2 );
-	ImGui::PopStyleVar( 2 );
-	ImGui::PopFont();
 	ImGui::End();
 }
 
@@ -207,7 +208,7 @@ auto April::Gui::Skillbar::Config::LoadDefault() -> Config
 		| ImGuiWindowFlags_NoNavFocus;
 
 	auto const config = Config{
-		LoadFont( "C:\\Windows\\Fonts\\Gothic.ttf", 30 ),
+		{ "C:\\Windows\\Fonts\\Gothic.ttf", 30 },
 		White(),
 		White(),
 		{ -1, -1 },
@@ -220,8 +221,7 @@ auto April::Gui::Skillbar::Config::LoadDefault() -> Config
 		},
 		Invisible(),
 
-		"Skillbar",
-		window_flags
+		{ "Skillbar", true, window_flags }
 	};
 
 	return config;

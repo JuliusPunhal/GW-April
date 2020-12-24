@@ -2,10 +2,7 @@
 
 #include "April/Utility/DrawStructures.h"
 
-#include "Dependencies/ImGui.hpp"
-
 #include <chrono>
-#include <string>
 #include <vector>
 
 
@@ -19,7 +16,7 @@ namespace April::Gui {
 				RGBA						color;
 			};
 
-			ImFont*					font;
+			FontInfo				font;
 			RGBA					text_color;
 			RGBA					border_color;
 			XY						spacing;
@@ -27,10 +24,10 @@ namespace April::Gui {
 			std::vector<Threshold>	thresholds;
 			RGBA					color_inactive;
 
-			std::string				window_name;
-			ImGuiWindowFlags		window_flags;
+			Window window;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\Gui_Skillbar.ini";
 		};
 
 
@@ -41,6 +38,7 @@ namespace April::Gui {
 
 	private:
 		Config const& config;
+		ImFont* font;
 	};
 
 }

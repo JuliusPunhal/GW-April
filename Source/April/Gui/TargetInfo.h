@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Dependencies/ImGui.hpp"
-
-#include <string>
+#include "April/Utility/DrawStructures.h"
 
 
 namespace April::Gui {
@@ -10,10 +8,10 @@ namespace April::Gui {
 	class TargetInfo {
 	public:
 		struct Config {
-			std::string			window_name;
-			ImGuiWindowFlags	window_flags;
+			Window window;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\Gui_TargetInfo.ini";
 		};
 
 

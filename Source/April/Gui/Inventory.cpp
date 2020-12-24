@@ -92,7 +92,8 @@ April::Gui::Inventory::Inventory(
 	std::shared_ptr<ConsumablesMgr> mgr, Config const& style )
 	:
 	cons_mgr{ std::move( mgr ) },
-	config{ style }
+	config{ style },
+	font{ LoadFont( config.font ) }
 {
 }
 
@@ -101,50 +102,52 @@ void April::Gui::Inventory::Display() const
 	auto const bags = GW::Items::GetBagArray();
 	if ( bags == nullptr ) return;
 
-	ImGui::Begin( config.window_name, config.window_flags );
-	ImGui::PushFont( config.font );
-	ImGui::PushStyleVar( ImGuiStyleVar_FrameBorderSize, config.show_border );
-	ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, config.item_spacing );
-	for ( auto bag_it = 1; bag_it < 5; ++bag_it )
+	if ( ImGui::Begin( config.window ) )
 	{
-		if ( bags[bag_it] == nullptr ) continue;
-
-		for ( auto const* item : bags[bag_it]->items )
+		ImGui::PushFont( font );
+		ImGui::PushStyleVar( ImGuiStyleVar_FrameBorderSize, config.border );
+		ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, config.item_spacing );
+		for ( auto bag_it = 1; bag_it < 5; ++bag_it )
 		{
-			auto const color = item_color( item, config );
-			auto const surface = surface_color( color, config );
-			auto const label = get_label( item, *cons_mgr, config );
+			if ( bags[bag_it] == nullptr ) continue;
 
-			ImGui::PushID( item );
-			ImGui::PushStyleColor( ImGuiCol_Border, color );
-			ImGui::PushStyleColor( ImGuiCol_Button, surface );
-			ImGui::PushStyleColor( ImGuiCol_ButtonActive, surface );
-			ImGui::PushStyleColor( ImGuiCol_ButtonHovered, surface );
+			for ( auto const* item : bags[bag_it]->items )
 			{
-				char buf[2] = { label, '\0' };
-				ImGui::Button( buf, config.slot_size );
-				if ( ImGui::IsItemHovered() && leader_pressed() )
+				auto const color = item_color( item, config );
+				auto const surface = surface_color( color, config );
+				auto const label = get_label( item, *cons_mgr, config );
+
+				ImGui::PushID( item );
+				ImGui::PushStyleColor( ImGuiCol_Border, color );
+				ImGui::PushStyleColor( ImGuiCol_Button, surface );
+				ImGui::PushStyleColor( ImGuiCol_ButtonActive, surface );
+				ImGui::PushStyleColor( ImGuiCol_ButtonHovered, surface );
 				{
-					WndProc::BlockMouseInput();
-					if ( ImGui::GetIO().MouseClicked[0] && item )
+					char buf[2] = { label, '\0' };
+					ImGui::Button( buf, config.slot_size );
+					if ( ImGui::IsItemHovered() && leader_pressed() )
 					{
-						cons_mgr->Activate( item->model_id );
-					}
-					else if ( ImGui::GetIO().MouseClicked[1] && item )
-					{
-						cons_mgr->Deactivate( item->model_id );
+						WndProc::BlockMouseInput();
+						if ( ImGui::GetIO().MouseClicked[0] && item )
+						{
+							cons_mgr->Activate( item->model_id );
+						}
+						else if ( ImGui::GetIO().MouseClicked[1] && item )
+						{
+							cons_mgr->Deactivate( item->model_id );
+						}
 					}
 				}
-			}
-			ImGui::PopStyleColor( 4 );
-			ImGui::PopID();
+				ImGui::PopStyleColor( 4 );
+				ImGui::PopID();
 
-            if ( next_slot_fits_on_same_line( config.slot_size ) )
-				ImGui::SameLine();
+				if ( next_slot_fits_on_same_line( config.slot_size ) )
+					ImGui::SameLine();
+			}
 		}
+		ImGui::PopStyleVar( 2 );
+		ImGui::PopFont();
 	}
-	ImGui::PopStyleVar( 2 );
-	ImGui::PopFont();
 	ImGui::End();
 }
 
@@ -164,7 +167,7 @@ auto April::Gui::Inventory::Config::LoadDefault() -> Config
 		| ImGuiWindowFlags_NoNavFocus;
 
 	auto const config = Config{
-		LoadFont( "C:\\Windows\\Fonts\\Gothic.ttf", 30 ),
+		{ "C:\\Windows\\Fonts\\Gothic.ttf", 30 },
 
 		WH{ 36, 44 },
 		XY{ 1, 1 },
@@ -181,8 +184,7 @@ auto April::Gui::Inventory::Config::LoadDefault() -> Config
 
 		'\0', '\0', 'P', 'L', 'Q', '\0',
 
-		"Inventory",
-		window_flags
+		{ "Inventory", true, window_flags }
 	};
 
 	return config;

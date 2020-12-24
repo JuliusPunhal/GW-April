@@ -80,7 +80,7 @@ void April::Gui::ChainedSoulGui::Display() const
 {
 	auto const label = parse_chained_soul_state( *state );
 
-	ImGui::Begin( config.window_name, config.window_flags );
+	if ( ImGui::Begin( config.window ) )
 	{
 		if ( ImGui::IsWindowHovered() )
 		{
@@ -98,8 +98,7 @@ void April::Gui::ChainedSoulGui::Display() const
 auto April::Gui::ChainedSoulGui::Config::LoadDefault() -> Config
 {
 	auto const config = Config{
-		"Chained Soul Info",
-		ImGuiWindowFlags_None
+		{ "Chained Soul Info", false, ImGuiWindowFlags_None }
 	};
 
 	return config;

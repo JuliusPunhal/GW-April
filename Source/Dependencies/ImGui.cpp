@@ -2,18 +2,26 @@
 #include "Dependencies/ImGui.hpp"
 
 
-void ImGui::Begin( char const* name, ImGuiWindowFlags const flags )
+bool ImGui::Begin( April::Window const& wnd )
 {
-	auto const* wnd = FindWindowByName( name );
-	if ( wnd )
-		Begin( name, nullptr, wnd->Flags );
-	else
-		Begin( name, nullptr, flags );
-}
+	if ( wnd.visible )
+	{
+		ImGui::Begin( wnd.name.c_str(), &wnd.visible, wnd.flags );
+		return true;
+	}
+	else 
+	{
+		constexpr auto dummy_flags = 
+			ImGuiWindowFlags_NoTitleBar 
+			| ImGuiWindowFlags_NoResize
+			| ImGuiWindowFlags_NoMove
+			| ImGuiWindowFlags_NoBackground
+			| ImGuiWindowFlags_NoMouseInputs;
 
-void ImGui::Begin( std::string const& name, ImGuiWindowFlags const flags )
-{
-	Begin( name.c_str(), flags );
+		ImGui::SetNextWindowPos( { -1000, -1000 } );
+		ImGui::Begin( "##AprilEmptyDummy", nullptr, dummy_flags );
+		return false;
+	}
 }
 
 void ImGui::Text( std::string const& str )

@@ -151,63 +151,65 @@ void April::Gui::UwTimesGui::Display() const
 	auto const instance_time_str = 
 		to_string( times->instance_time, instance_time_fmt );
 
-	ImGui::Begin( config.window_name, config.window_flags );
-	if ( ImGui::IsWindowHovered() )
+	if ( ImGui::Begin( config.window ) )
 	{
-		WndProc::BlockMouseInput();
-	}
-	ImGui::PushStyleColor( ImGuiCol_Button, Invisible() );
-	ImGui::PushStyleColor( ImGuiCol_ButtonActive, White( 0.5f ) );
-	ImGui::PushStyleColor( ImGuiCol_ButtonHovered, White( 0.2f ) );
-	ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, { 0, 0 } );
-	ImGui::Columns( 5 );
-	{
-		// Current Time
-		if ( ImGui::SmallButton( instance_time_str ) )
+		if ( ImGui::IsWindowHovered() )
 		{
-			GW::SendChat( '#', "[/age] " + instance_time_str );
+			WndProc::BlockMouseInput();
 		}
-		ImGui::NextColumn();
-
-		// Headers
-		for ( auto it = pops; it <= durations; ++it )
+		ImGui::PushStyleColor( ImGuiCol_Button, Invisible() );
+		ImGui::PushStyleColor( ImGuiCol_ButtonActive, White( 0.5f ) );
+		ImGui::PushStyleColor( ImGuiCol_ButtonHovered, White( 0.2f ) );
+		ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, { 0, 0 } );
+		ImGui::Columns( 5 );
 		{
-			ImGui::Text( config.column_names[it] ); 
-			ImGui::NextColumn();
-		}
-		ImGui::Separator();
-
-		// Quests
-		for ( auto objective = chamber; objective <= dhuum; ++objective )
-		{
-			// Quest Name -> full column on click
-			ImGui::PushID( objective * -1 );
-			if ( ImGui::SmallButton( config.quest_names[objective] ) )
+			// Current Time
+			if ( ImGui::SmallButton( instance_time_str ) )
 			{
-				auto const str = full_info( objective, strings, config );
-				GW::SendChat( '#', str );
+				GW::SendChat( '#', "[/age] " + instance_time_str );
 			}
-			ImGui::PopID();
 			ImGui::NextColumn();
 
-			// Indiviadual times
-			for ( auto column = pops; column <= durations; ++column )
+			// Headers
+			for ( auto it = pops; it <= durations; ++it )
 			{
-				ImGui::PushID( objective * columns + column );
-				if ( ImGui::SmallButton( strings[column][objective] ) )
+				ImGui::Text( config.column_names[it] ); 
+				ImGui::NextColumn();
+			}
+			ImGui::Separator();
+
+			// Quests
+			for ( auto objective = chamber; objective <= dhuum; ++objective )
+			{
+				// Quest Name -> full column on click
+				ImGui::PushID( objective * -1 );
+				if ( ImGui::SmallButton( config.quest_names[objective] ) )
 				{
-					auto const str = 
-						chat_str( objective, column, strings, config );
+					auto const str = full_info( objective, strings, config );
 					GW::SendChat( '#', str );
 				}
 				ImGui::PopID();
 				ImGui::NextColumn();
-			}
-		}				
+
+				// Indiviadual times
+				for ( auto column = pops; column <= durations; ++column )
+				{
+					ImGui::PushID( objective * columns + column );
+					if ( ImGui::SmallButton( strings[column][objective] ) )
+					{
+						auto const str = 
+							chat_str( objective, column, strings, config );
+						GW::SendChat( '#', str );
+					}
+					ImGui::PopID();
+					ImGui::NextColumn();
+				}
+			}				
+		}
+		ImGui::Columns( 1 );
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor( 3 );
 	}
-	ImGui::Columns( 1 );
-	ImGui::PopStyleVar();
-	ImGui::PopStyleColor( 3 );
 	ImGui::End();
 }
 

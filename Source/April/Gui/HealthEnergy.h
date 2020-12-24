@@ -2,10 +2,6 @@
 
 #include "April/Utility/DrawStructures.h"
 
-#include "Dependencies/ImGui.hpp"
-
-#include <string>
-
 
 namespace April::Gui {
 
@@ -28,11 +24,11 @@ namespace April::Gui {
 			RGBA				background_color;
 			Colors				colors;
 			PipsAlignment		alignment;
-			ImFont*				font;
-			std::string			window_name;
-			ImGuiWindowFlags	window_flags;
+			FontInfo			font;
+			Window				window;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\Gui_Healthbar.ini";
 		};
 
 
@@ -43,6 +39,7 @@ namespace April::Gui {
 
 	private:
 		Config const& config;
+		ImFont* font;
 	};
 
 
@@ -62,11 +59,11 @@ namespace April::Gui {
 			RGBA				background_color;
 			Colors				colors;
 			PipsAlignment		alignment;
-			ImFont*				font;
-			std::string			window_name;
-			ImGuiWindowFlags	window_flags;
+			FontInfo			font;
+			Window				window;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\Gui_Energybar.ini";
 		};
 
 
@@ -77,6 +74,7 @@ namespace April::Gui {
 
 	private:
 		Config const& config;
+		ImFont* font;
 	};
 
 }

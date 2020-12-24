@@ -18,6 +18,7 @@ namespace April {
 			std::chrono::milliseconds timeout;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\ConsumablesManager.ini";
 		};
 
 

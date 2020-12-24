@@ -2,6 +2,8 @@
 
 struct ImFont;
 
+#include <string>
+
 
 namespace April {
 
@@ -36,7 +38,22 @@ namespace April {
 
 		return XY{ x, y };
 	}
+	
+
+	struct FontInfo {
+		std::string path;
+		int			size;
+	};
 
 	auto LoadFont( const char* path, int size ) -> ImFont*;
+	auto LoadFont( FontInfo const& ) -> ImFont*;
+
+
+	struct Window {
+		std::string		name;
+		bool mutable	visible;
+		int				flags; // see ImGuiWindowFlags; cannot circular include
+	};
+
 
 }

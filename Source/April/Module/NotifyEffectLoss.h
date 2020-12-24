@@ -19,6 +19,7 @@ namespace April {
 			std::vector<Notification> notifications;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\NotifyEffectLoss.ini";
 		};
 
 

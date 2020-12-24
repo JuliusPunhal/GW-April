@@ -1,8 +1,7 @@
 #pragma once
 
 #include "April/Module/UwTimer.h"
-
-#include "Dependencies/ImGui.hpp"
+#include "April/Utility/DrawStructures.h"
 
 #include <array>
 #include <memory>
@@ -17,10 +16,10 @@ namespace April::Gui {
 			std::array<std::string, 11> quest_names;
 			std::array<std::string, 4>	column_names;
 
-			std::string			window_name;
-			ImGuiWindowFlags	window_flags;
+			Window window;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\Gui_UwTimes.ini";
 		};
 
 

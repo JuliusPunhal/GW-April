@@ -4,10 +4,7 @@
 
 #include "April/Utility/DrawStructures.h"
 
-#include "Dependencies/ImGui.hpp"
-
 #include <memory>
-#include <string>
 
 
 namespace April::Gui {
@@ -15,11 +12,11 @@ namespace April::Gui {
 	class Inventory {
 	public:
 		struct Config {
-			ImFont* font;
+			FontInfo font;
 			
 			WH		slot_size;
 			XY		item_spacing;
-			bool	show_border;
+			bool	border;
 			float	button_alpha;
 			
 			RGBA no_item;
@@ -37,10 +34,10 @@ namespace April::Gui {
 			char label_until_objective;
 			char label_inactive;
 
-			std::string			window_name;
-			ImGuiWindowFlags	window_flags;
+			Window window;
 
 			static auto LoadDefault() -> Config;
+			static constexpr auto path = "April\\Gui_Inventory.ini";
 		};
 
 
@@ -52,6 +49,7 @@ namespace April::Gui {
 	private:
 		std::shared_ptr<ConsumablesMgr> cons_mgr;
 		Config const& config;
+		ImFont* font;
 	};
 
 }
