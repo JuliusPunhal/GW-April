@@ -1,6 +1,8 @@
 
 #include "April/Framework/Modules.h"
 
+#include "April/Utility/FileIO.h"
+
 #include <cstddef>
 #include <memory>
 #include <tuple>
@@ -10,6 +12,16 @@ using namespace std::chrono;
 
 
 namespace {
+
+	template<typename T>
+	auto load_config()
+	{
+		auto const config = April::IO::from_file<T>( T::path );
+		if ( config == std::nullopt )
+			return T::LoadDefault();
+
+		return *config;
+	}
 
 	template<auto N = 0, typename... Args>
 	#pragma warning( suppress: 4100 )
@@ -40,30 +52,30 @@ April::Modules::Modules( std::shared_ptr<UwTimes> uw_times )
 	:
 	config{
 		{
-			ConsumablesMgr::Config::LoadDefault(),
+			load_config<ConsumablesMgr::Config>(),
 		},
 		{
-			AgentFilter::Config::LoadDefault(),
-			ChatCommands::Config::LoadDefault(),
-			ChatFilter::Config::LoadDefault(),
-			NotifyEffectLoss::Config::LoadDefault(),
-			ReturnToOutpost::Config::LoadDefault(),
-			ShowKitUses::Config::LoadDefault(),
-			SuppressSpeechBubbles::Config::LoadDefault(),
+			load_config<AgentFilter::Config>(),
+			load_config<ChatCommands::Config>(),
+			load_config<ChatFilter::Config>(),
+			load_config<NotifyEffectLoss::Config>(),
+			load_config<ReturnToOutpost::Config>(),
+			load_config<ShowKitUses::Config>(),
+			load_config<SuppressSpeechBubbles::Config>(),
 		},
 		{
-			Gui::ChainedSoulGui::Config::LoadDefault(),
-			Gui::DhuumBotGui::Config::LoadDefault(),
-			Gui::DhuumInfo::Config::LoadDefault(),
-			Gui::Dialogs::Config::LoadDefault(),
-			Gui::Energybar::Config::LoadDefault(),
-			Gui::Healthbar::Config::LoadDefault(),
-			Gui::InstanceTimer::Config::LoadDefault(),
-			Gui::Inventory::Config::LoadDefault(),
-			Gui::Settings::Config::LoadDefault(),
-			Gui::Skillbar::Config::LoadDefault(),
-			Gui::TargetInfo::Config::LoadDefault(),
-			Gui::UwTimesGui::Config::LoadDefault(),
+			load_config<Gui::ChainedSoulGui::Config>(),
+			load_config<Gui::DhuumBotGui::Config>(),
+			load_config<Gui::DhuumInfo::Config>(),
+			load_config<Gui::Dialogs::Config>(),
+			load_config<Gui::Energybar::Config>(),
+			load_config<Gui::Healthbar::Config>(),
+			load_config<Gui::InstanceTimer::Config>(),
+			load_config<Gui::Inventory::Config>(),
+			load_config<Gui::Settings::Config>(),
+			load_config<Gui::Skillbar::Config>(),
+			load_config<Gui::TargetInfo::Config>(),
+			load_config<Gui::UwTimesGui::Config>(),
 		}
 	},
 	active{ 
