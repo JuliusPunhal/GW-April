@@ -21,6 +21,7 @@ namespace {
 
 	auto modules = std::unique_ptr<April::Modules>{};
 
+	auto die = false;
 	auto running = true;
 
 
@@ -181,7 +182,7 @@ namespace {
 		ImGui_ImplDX9_RenderDrawData( ImGui::GetDrawData() );
 
 		// Terminate
-		if ( GetAsyncKeyState( VK_END ) )
+		if ( die || GetAsyncKeyState( VK_END ) )
 		{
 			ImGui_ImplDX9_Shutdown();
 			ImGui_ImplWin32_Shutdown();
@@ -238,4 +239,9 @@ void April::Run()
 
 	WndProc::Terminate();
 	GW::Terminate(); Sleep( 100 );
+}
+
+void April::Die()
+{
+	die = true;
 }

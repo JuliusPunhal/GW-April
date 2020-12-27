@@ -4,5 +4,6 @@
 namespace April {
 
 	void Run();
+	void Die();
 
 }

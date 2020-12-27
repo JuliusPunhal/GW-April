@@ -311,6 +311,7 @@ namespace {
 			draw_cmd( "Dectivate permanently", config.deactivate_persistent );
 			draw_cmd( "Set objective", config.set_deactivating_objective );
 			draw_cmd( "Toggle Gui", config.toggle_gui );
+			draw_cmd( "Shut Down", config.exit );
 
 			ImGui::Separator();
 

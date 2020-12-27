@@ -29,6 +29,7 @@ namespace April {
 			std::string deactivate_persistent;
 			std::string set_deactivating_objective;
 			std::string toggle_gui;
+			std::string exit;
 
 			static auto LoadDefault() -> Config;
 			static constexpr auto path = "April\\ChatCommands.ini";

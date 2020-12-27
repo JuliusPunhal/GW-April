@@ -218,7 +218,8 @@ auto April::IO::to_string( ChatCommands::Config const& config ) -> std::string
 		config.activate_persistent,
 		config.deactivate_persistent,
 		config.set_deactivating_objective,
-		config.toggle_gui );
+		config.toggle_gui,
+		config.exit );
 }
 
 auto April::IO::to_string( ChatFilter::Config const& config ) -> std::string
@@ -754,7 +755,7 @@ template<> auto April::IO::from_string( std::string_view str )
 			ChatCommands::Config,
 			std::vector<ChatCommands::Config::Abbreviation>, std::string,
 			std::string, std::string, std::string, std::string, std::string, 
-			std::string, std::string, std::string>( str );
+			std::string, std::string, std::string, std::string>( str );
 }
 
 template<> auto April::IO::from_string( std::string_view str )

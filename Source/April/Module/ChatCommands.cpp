@@ -1,6 +1,7 @@
 
 #include "April/Module/ChatCommands.h"
 
+#include "April/Framework/Initialization.h"
 #include "April/Framework/Modules.h"
 #include "April/Utility/stl.h"
 
@@ -400,6 +401,12 @@ namespace {
 			return true;
 		}
 
+		else if ( cmd.cmd == config.exit )
+		{
+			April::Die();
+			return true;
+		}
+
 		return false;
 	}
 
@@ -513,7 +520,8 @@ auto April::ChatCommands::Config::LoadDefault() -> Config
 		"/sp",
 		"/sp_off",
 		"/q",
-		"/gui"
+		"/gui",
+		"/exit"
 	};
 
 	return config;
