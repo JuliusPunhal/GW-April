@@ -479,13 +479,13 @@ namespace {
 	template<> auto val_from_string( std::string_view str )
 		-> std::optional<FontInfo>
 	{
-		return t_from_string_unchecked<FontInfo, std::string, int>( str );
+		return t_from_string<FontInfo, std::string, int>( str );
 	}
 
 	template<> auto val_from_string( std::string_view str )
 		-> std::optional<Window>
 	{
-		return t_from_string_unchecked<Window, std::string, bool, int>( str );
+		return t_from_string<Window, std::string, bool, int>( str );
 	}
 
 	template<> auto val_from_string( std::string_view str )
@@ -666,9 +666,11 @@ namespace {
 	}
 
 	template<typename T>
-	auto tup_from_string( std::string_view str ) -> std::optional<T>
+	auto tup_from_string( 
+		std::string_view str, char const first, char const last ) 
+		-> std::optional<T>
 	{
-		if ( str.size() < 2 || str.front() != '{' || str.back() != '}' )
+		if ( str.size() < 2 || str.front() != first || str.back() != last )
 			return std::nullopt;
 
 		auto const segments = find_segments( str.begin() + 1, str.end() - 1 );
@@ -703,11 +705,11 @@ namespace {
 		}
 		else if constexpr ( stl::is_std_array_v<T> )
 		{
-			return tup_from_string<T>( str_view );
+			return tup_from_string<T>( str_view, '[', ']' );
 		}
 		else if constexpr ( stl::is_std_tuple_v<T> )
 		{
-			return tup_from_string<T>( str_view );
+			return tup_from_string<T>( str_view, '{', '}' );
 		}
 		else return val_from_string<T>( str_view );
 	}
