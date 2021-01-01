@@ -15,7 +15,7 @@ using namespace std::chrono;
 
 
 namespace {
-	
+
 	inline constexpr auto fmt = std::tuple{
 		April::TimeFormat<std::chrono::minutes>{ "%1d:" },
 		April::TimeFormat<std::chrono::seconds>{ "%02d" }
@@ -26,11 +26,11 @@ namespace {
 	{
 		if ( percent < 0 or percent > 100 )
 		{
-			return "Dhuum's Rest: invalid";
+			return "";
 		}
 
 		char buf[32] = {};
-		snprintf( buf, sizeof( buf ), "Dhuum's Rest: %.2f%%", percent );
+		snprintf( buf, sizeof( buf ), "%.2f%%", percent );
 		return buf;
 	}
 
@@ -51,19 +51,15 @@ namespace {
 }
 
 
-April::Gui::DhuumInfo::DhuumInfo( 
+April::Gui::DhuumInfo::DhuumInfo(
 	std::shared_ptr<DhuumsJudgement const> judgement, Config const& config )
-	: 
+	:
 	judgement{ std::move( judgement ) }, config{ config }
 {
 }
 
 void April::Gui::DhuumInfo::Display() const
 {
-	auto const rest = GW::GetMissionProgress() * 100;
-	auto const label_rest = rest_to_string( rest );
-	auto const label_judgement = judgement_to_string( *judgement );
-
 	if ( ImGui::Begin( config.window ) )
 	{
 		if ( ImGui::IsWindowHovered() )
@@ -71,12 +67,24 @@ void April::Gui::DhuumInfo::Display() const
 			WndProc::BlockMouseInput();
 		}
 
-		if ( ImGui::Button( label_rest ) )
-		{
-			GW::SendChat( '#', label_rest );
-		}
+		ImGui::Text( "Dhuum's Rest" );
 
-		if ( ImGui::Button( label_judgement ) )
+		auto const rest = GW::GetMissionProgress();
+		auto const label_rest = rest_to_string( rest * 100 );
+		auto const label_judgement = judgement_to_string( *judgement );
+
+		auto const cursor = ImGui::GetCursorPos();
+		ImGui::ProgressBar( rest, { -1, 0 }, "" );
+
+		ImGui::SetCursorPos( cursor );
+		ImGui::PushStyleColor( ImGuiCol_Button, Invisible() );
+		if ( ImGui::Button( label_rest, { -1, 0 } ) )
+		{
+			GW::SendChat( '#', "Dhuum's Rest: " + label_rest );
+		}
+		ImGui::PopStyleColor();
+
+		if ( ImGui::Button( label_judgement, { -1, 0 } ) )
 		{
 			GW::SendChat( '#', label_judgement );
 		}
