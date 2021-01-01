@@ -13,6 +13,7 @@
 #include "April/Module/ShowKitUses.h"
 #include "April/Module/SuppressSpeechBubbles.h"
 #include "April/Module/UwTimer.h"
+#include "April/Module/WindowManager.h"
 
 #include "April/Gui/ChainedSoulInfo.h"
 #include "April/Gui/DhuumBotGui.h"
@@ -31,10 +32,10 @@
 
 
 namespace April {
-	
+
 	struct ModuleConfigurations {
 		using Active = std::tuple<ConsumablesMgr::Config>;
-		using Passive = 
+		using Passive =
 			std::tuple<
 				AgentFilter::Config,
 				ChatCommands::Config,
@@ -75,15 +76,16 @@ namespace April {
 
 
 	private:
-		using Active = 
+		using Active =
 			std::tuple<
 				std::shared_ptr<ConsumablesMgr>,
 				std::shared_ptr<ChainedSoul>,
 				std::shared_ptr<DhuumBot>,
 				std::shared_ptr<DhuumsJudgement>,
-				std::shared_ptr<UwTimer>>;
+				std::shared_ptr<UwTimer>,
+				std::unique_ptr<WindowMgr>>;
 
-		using Passive = 
+		using Passive =
 			std::tuple<
 				std::unique_ptr<AgentFilter>,
 				std::unique_ptr<ChatCommands>,
@@ -94,7 +96,7 @@ namespace April {
 				std::unique_ptr<ShowKitUses>,
 				std::unique_ptr<SuppressSpeechBubbles>>;
 
-		using Guis = 
+		using Guis =
 			std::tuple<
 				std::unique_ptr<Gui::ChainedSoulGui>,
 				std::unique_ptr<Gui::Energybar>,
