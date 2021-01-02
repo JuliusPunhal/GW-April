@@ -69,6 +69,21 @@ namespace {
 		return ImGui::GetIO().KeyCtrl || ImGui::GetIO().KeyShift;
 	}
 
+	void activate_or_promote( GW::ItemID const id, ConsumablesMgr& mgr )
+	{
+		auto const active = mgr.is_active( id );
+		if ( active.temporary )
+			mgr.activate_persistent( id );
+		else if ( not active.persistent )
+			mgr.activate_temporary( id );
+	}
+
+	void deactivate( GW::ItemID const id, ConsumablesMgr& mgr )
+	{
+		mgr.deactivate_persistent( id );
+		mgr.deactivate_temporary( id );
+	}
+
 	bool next_slot_fits_on_same_line( WH const& slot_size )
 	{
 		auto const last_slot_end = ImGui::GetItemRectMax().x;
@@ -124,11 +139,11 @@ void April::Gui::Inventory::Display() const
 						WndProc::BlockMouseInput();
 						if ( ImGui::GetIO().MouseClicked[0] && item )
 						{
-							cons_mgr->activate_temporary( item->model_id );
+							activate_or_promote( item->model_id, *cons_mgr );
 						}
 						else if ( ImGui::GetIO().MouseClicked[1] && item )
 						{
-							cons_mgr->deactivate_temporary( item->model_id );
+							deactivate( item->model_id, *cons_mgr );
 						}
 					}
 				}
