@@ -6,7 +6,8 @@
 #include "Dependencies/GWCA.hpp"
 
 #include <chrono>
-#include <variant>
+#include <cstdint>
+#include <utility>
 #include <vector>
 
 
@@ -26,23 +27,27 @@ namespace April {
 
 		void Update();
 
-		void Activate( GW::ItemID, bool persistent = false );
-		void Deactivate( GW::ItemID, bool persistent = false );
-		void DeactivateAll( bool persistent = false );
+		struct Active {
+			bool temporary;
+			bool persistent;
+		};
+		auto is_active( GW::ItemID ) const -> Active;
+
+		void activate_temporary( GW::ItemID );
+		void deactivate_temporary( GW::ItemID );
+		void deactivate_all_temporary();
+
+		void activate_persistent( GW::ItemID );
+		void deactivate_persistent( GW::ItemID );
+		void deactivate_all_persistent();
 
 
-		struct Inactive {}; struct Persistent {}; struct UntilLoad {};
-		using ActiveState = std::variant<Inactive, Persistent, UntilLoad>;
-		auto IsActive( GW::ItemID ) const -> ActiveState;
-
-		
-		using Quest = decltype(GW::Packet::StoC::ObjectiveDone::objective_id);
-		Quest deactivating_quest = 0;
+		uint32_t deactivating_quest = 0;
 
 
 	private:
 		std::chrono::steady_clock::time_point last_use{};
-		unique_vector<Consumable> until_load{};
+		unique_vector<Consumable> temporary{};
 		unique_vector<Consumable> persistent{};
 
 		Config const& config;

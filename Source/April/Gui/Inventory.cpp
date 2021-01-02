@@ -41,33 +41,27 @@ namespace {
 	auto get_label(
 		GW::Item const* item, ConsumablesMgr const& mgr, Config const& config )
 	{
-		using April::ConsumablesMgr;
-
-		if ( item == nullptr ) 
+		if ( item == nullptr )
 			return config.label_no_item;
 
-		auto const visitor = std::overloaded{ 
-			[&mgr, &config]( ConsumablesMgr::UntilLoad )
-			{ 
-				return mgr.deactivating_quest == 0
-					? config.label_until_load 
-					: config.label_until_objective;
-			},
-			[&config]( ConsumablesMgr::Persistent )
-			{
-				return config.label_persistent; 
-			},
-			[&config, item]( ConsumablesMgr::Inactive ) 
-			{ 
-				if ( config.label_inactive == config.label_unknown_item )
-					return config.label_inactive;
+		auto const active = mgr.is_active( item->model_id );
+		if ( active.persistent )
+		{
+			return config.label_persistent;
+		}
+		else if ( active.temporary )
+		{
+			return mgr.deactivating_quest == 0
+				? config.label_until_load : config.label_until_objective;
+		}
+		else
+		{
+			if ( config.label_inactive == config.label_unknown_item )
+				return config.label_inactive;
 
-				return April::is_consumable( item->model_id )
-					? config.label_inactive : config.label_unknown_item;
-			}
-		};
-		
-		return std::visit( visitor, mgr.IsActive( item->model_id ) );
+			return April::is_consumable( item->model_id )
+				? config.label_inactive : config.label_unknown_item;
+		}
 	}
 
 	bool leader_pressed()
@@ -78,7 +72,7 @@ namespace {
 	bool next_slot_fits_on_same_line( WH const& slot_size )
 	{
 		auto const last_slot_end = ImGui::GetItemRectMax().x;
-		auto const window_size = 
+		auto const window_size =
 			ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
 		auto const next_slot_end = last_slot_end + slot_size.w;
 
@@ -88,7 +82,7 @@ namespace {
 }
 
 
-April::Gui::Inventory::Inventory( 
+April::Gui::Inventory::Inventory(
 	std::shared_ptr<ConsumablesMgr> mgr, Config const& style )
 	:
 	cons_mgr{ std::move( mgr ) },
@@ -130,11 +124,11 @@ void April::Gui::Inventory::Display() const
 						WndProc::BlockMouseInput();
 						if ( ImGui::GetIO().MouseClicked[0] && item )
 						{
-							cons_mgr->Activate( item->model_id );
+							cons_mgr->activate_temporary( item->model_id );
 						}
 						else if ( ImGui::GetIO().MouseClicked[1] && item )
 						{
-							cons_mgr->Deactivate( item->model_id );
+							cons_mgr->deactivate_temporary( item->model_id );
 						}
 					}
 				}
@@ -153,7 +147,7 @@ void April::Gui::Inventory::Display() const
 
 auto April::Gui::Inventory::Config::LoadDefault() -> Config
 {
-	constexpr auto window_flags = 
+	constexpr auto window_flags =
 		ImGuiWindowFlags_NoTitleBar
 		| ImGuiWindowFlags_NoResize
 		| ImGuiWindowFlags_NoMove

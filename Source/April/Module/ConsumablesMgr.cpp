@@ -25,7 +25,7 @@ namespace {
 		using namespace April;
 
 		auto const visitor = std::overloaded{
-			[=]( Trivial const& )			{ return GW::UseItem( item ); }, 
+			[=]( Trivial const& )			{ return GW::UseItem( item ); },
 			[=]( RockCandy const& )			{ return GW::UseItem( item ); },
 			[=]( Conset const& )			{ return GW::UseItem( item ); },
 			[=]( LunarFortune const& )		{ return GW::UseItem( item ); },
@@ -50,7 +50,7 @@ namespace {
 		return std::visit( get_id, cons );
 	}
 
-	bool use_consumables( 
+	bool use_consumables(
 		April::unique_vector<April::Consumable> const& container )
 	{
 		for ( auto const& consumable : container )
@@ -85,82 +85,79 @@ April::ConsumablesMgr::ConsumablesMgr( Config const& config )
 		[this]( auto*, auto* packet )
 		{
 			if ( packet->objective_id == deactivating_quest )
-				DeactivateAll();
+				deactivate_all_temporary();
 		} );
-	
+
 	GW::StoC::RegisterPacketCallback<MapLoaded>(
 		&entry,
 		[this]( auto*, auto* )
 		{
 			if ( GW::GetInstanceType() == GW::InstanceType::Outpost )
-				DeactivateAll();
+				deactivate_all_temporary();
 		} );
 }
 
 void April::ConsumablesMgr::Update()
 {
-	if ( steady_clock::now() - last_use < config.timeout ) 
+	if ( steady_clock::now() - last_use < config.timeout )
 		return;
 
 	auto const* player = GW::Agents::GetCharacter();
 	if ( player == nullptr || player->GetIsDead() )
 		return;
 
-	if ( use_consumables( persistent ) || use_consumables( until_load ) )
+	if ( use_consumables( persistent ) || use_consumables( temporary ) )
 	{
 		last_use = steady_clock::now();
 	}
 }
 
-void April::ConsumablesMgr::Activate( GW::ItemID const id, bool const perma )
+auto April::ConsumablesMgr::is_active( GW::ItemID const id ) const -> Active
 {
-	if ( not std::holds_alternative<Inactive>( IsActive( id ) ) )
+	return {
+		std::find( temporary, id ) != temporary.end(),
+		std::find( persistent, id ) != persistent.end()
+	};
+}
+
+void April::ConsumablesMgr::activate_temporary( GW::ItemID const id )
+{
+	auto const found = is_consumable( id );
+	if ( not found )
 		return;
-	
-	auto const found = std::find( consumables, id );
-	if ( found == consumables.end() )
+
+	temporary.push_back( *found );
+}
+
+void April::ConsumablesMgr::deactivate_temporary( GW::ItemID const id )
+{
+	if ( auto const it = std::find( temporary, id ); it != temporary.end() )
+		temporary.erase( it );
+}
+
+void April::ConsumablesMgr::deactivate_all_temporary()
+{
+	temporary.clear();
+}
+
+void April::ConsumablesMgr::activate_persistent( GW::ItemID const id )
+{
+	auto const found = is_consumable( id );
+	if ( not found )
 		return;
 
-	if ( perma )
-		persistent.push_back( *found );
-	else
-		until_load.push_back( *found );
+	persistent.push_back( *found );
 }
 
-void April::ConsumablesMgr::Deactivate( GW::ItemID const id, bool const perma )
+void April::ConsumablesMgr::deactivate_persistent( GW::ItemID const id )
 {
-	// unconditionally remove from until_load
-	{
-		auto const iter = std::find( until_load, id );
-		if ( iter != until_load.end() )
-			until_load.erase( iter );
-	}
-
-	// if flag is set, also remove from persistent
-	if ( perma )
-	{
-		auto const iter = std::find( persistent, id );
-		if ( iter != persistent.end() )
-			persistent.erase( iter );
-	}
+	if ( auto const it = std::find( persistent, id ); it != persistent.end() )
+		persistent.erase( it );
 }
 
-void April::ConsumablesMgr::DeactivateAll( bool const perma )
+void April::ConsumablesMgr::deactivate_all_persistent()
 {
-	until_load.clear();
-	if ( perma ) persistent.clear();
-}
-
-auto April::ConsumablesMgr::IsActive( GW::ItemID const id ) const
-	-> ActiveState
-{
-	if ( std::find( until_load, id ) != until_load.end() )
-		return ActiveState{ UntilLoad{} };
-	
-	if ( std::find( persistent, id ) != persistent.end() )
-		return ActiveState{ Persistent{} };
-
-	return ActiveState{ Inactive{} };
+	persistent.clear();
 }
 
 auto April::ConsumablesMgr::Config::LoadDefault() -> Config

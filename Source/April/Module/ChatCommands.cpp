@@ -44,13 +44,13 @@ namespace {
 	{
 		return not is_word( ch );
 	}
-	
+
 	template<class Iter_t, typename T>
 	auto find_unquoted( Iter_t const begin, Iter_t const end, T const val )
 	{
 		auto const val_start = std::find( begin, end, val );
 		auto const quote_start = std::find( begin, end, '"' );
-	
+
 		if ( val_start == end || quote_start == end || val_start < quote_start )
 			return val_start;
 
@@ -86,10 +86,10 @@ namespace {
 				std::begin( container ), std::end( container ), pred );
 	}
 
-	auto find_original( std::string_view const word, Config const& config ) 
+	auto find_original( std::string_view const word, Config const& config )
 		-> std::optional<std::string>
 	{
-		auto const iter = 
+		auto const iter =
 			std::find_if(
 				config.abbreviations,
 				[word]( auto const& alias )
@@ -105,14 +105,14 @@ namespace {
 
 	void expand_abbreviations( std::string& str, Config const& config )
 	{
-		for ( 
+		for (
 			auto word_begin = find_if_unquoted( str, is_word );
 			word_begin != str.end();
 			/**/ )
 		{
 			auto const word_end =
 				find_if_unquoted( word_begin, str.end(), is_not_word );
-			
+
 			auto const abbrev = make_sv( word_begin, word_end );
 			auto const original = find_original( abbrev, config );
 			if ( original )
@@ -122,7 +122,7 @@ namespace {
 				word_begin = str.begin() + word_pos;
 				continue;
 			}
-			
+
 			word_begin = find_if_unquoted( word_end, str.end(), is_word );
 		}
 	}
@@ -174,7 +174,7 @@ namespace {
 	{
 		return str_to_ids( std::begin( container ), std::end( container ) );
 	}
-	
+
 	struct cli {
 		std::string_view cmd;
 		std::string_view arguments;
@@ -182,7 +182,7 @@ namespace {
 	};
 
 	auto parse_cmd( std::string_view const message ) -> cli
-	{	
+	{
 		auto const space_pos = message.find( L' ' );
 		if ( space_pos == std::string::npos )
 			return cli{ message, ""sv, message };
@@ -202,7 +202,7 @@ namespace {
 	}
 
 	template<typename T, auto... I>
-	void toggle_window_impl( 
+	void toggle_window_impl(
 		std::string_view name, T&& tup, std::index_sequence<I...> )
 	{
 		auto try_toggle = [name]( auto const& gui )
@@ -218,17 +218,17 @@ namespace {
 	template<typename T>
 	void toggle_window_by_name( std::string_view name, T&& tup )
 	{
-		toggle_window_impl( 
-			name, 
-			std::forward<T>( tup ), 
+		toggle_window_impl(
+			name,
+			std::forward<T>( tup ),
 			std::make_index_sequence<
 				std::tuple_size_v<stl::remove_cvref_t<T>>>{} );
 	}
 
-	bool call_command( 
-		cli const& cmd, 
-		ConsumablesMgr& consumables, 
-		Guis& guis, 
+	bool call_command(
+		cli const& cmd,
+		ConsumablesMgr& consumables,
+		Guis& guis,
 		Config const& config )
 	{
 		using namespace April;
@@ -259,7 +259,7 @@ namespace {
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "off" )
 			{
-				consumables.DeactivateAll( false );
+				consumables.deactivate_all_temporary();
 				return true;
 			}
 
@@ -271,21 +271,21 @@ namespace {
 				GW::WriteChat( PARTY, error + std::string{ cmd.message } );
 				return true;
 			}
-			
+
 			for ( auto const id : ids )
 			{
-				consumables.Activate( id, false );
+				consumables.activate_temporary( id );
 			}
 
 			return true;
 		}
-		
+
 		// TODO: CLI-Argument to specify persistence (--persistent?)
 		else if ( cmd.cmd == config.activate_persistent )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "off" )
 			{
-				consumables.DeactivateAll( true );
+				consumables.deactivate_all_persistent();
 				return true;
 			}
 
@@ -296,10 +296,10 @@ namespace {
 				GW::WriteChat( PARTY, error + std::string{ cmd.message } );
 				return true;
 			}
-			
+
 			for ( auto const id : ids )
 			{
-				consumables.Activate( id, true );
+				consumables.activate_persistent( id );
 			}
 
 			return true;
@@ -309,7 +309,7 @@ namespace {
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "all" )
 			{
-				consumables.DeactivateAll( false );
+				consumables.deactivate_all_temporary();
 				return true;
 			}
 
@@ -320,21 +320,21 @@ namespace {
 				GW::WriteChat( PARTY, error + std::string{ cmd.message } );
 				return true;
 			}
-			
+
 			for ( auto const& id : ids )
 			{
-				consumables.Deactivate( id, false );
+				consumables.deactivate_temporary( id );
 			}
 
 			return true;
 		}
-		
+
 		// TODO: CLI-Argument to specify persistence (--persistent?)
 		else if ( cmd.cmd == config.deactivate_persistent )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "all" )
 			{
-				consumables.DeactivateAll( true );
+				consumables.deactivate_all_persistent();
 				return true;
 			}
 
@@ -345,10 +345,10 @@ namespace {
 				GW::WriteChat( PARTY, error + std::string{ cmd.message } );
 				return true;
 			}
-			
+
 			for ( auto const& id : ids )
 			{
-				consumables.Deactivate( id, true );
+				consumables.deactivate_persistent( id );
 			}
 
 			return true;
@@ -378,7 +378,7 @@ namespace {
 		{
 			if ( GW::GetInstanceType() != GW::InstanceType::Outpost )
 			{
-				GW::WriteChat( 
+				GW::WriteChat(
 					PARTY, "Xunlai Chest can only be opened in Outposts!" );
 				return true;
 			}
@@ -411,17 +411,17 @@ namespace {
 	}
 
 	void on_message(
-		GW::HookStatus* status, 
-		std::string msg, 
-		ConsumablesMgr& consumables, 
-		Guis& guis, 
+		GW::HookStatus* status,
+		std::string msg,
+		ConsumablesMgr& consumables,
+		Guis& guis,
 		Config const& config )
 	{
 		expand_abbreviations( msg, config );
 
 		for ( auto cmd_begin = msg.cbegin(); cmd_begin != msg.cend(); /**/ )
 		{
-			auto const cmd_end = 
+			auto const cmd_end =
 				find_unquoted( cmd_begin + 1, msg.cend(), '/' );
 
 			auto cmd = make_sv( cmd_begin, cmd_end );
@@ -435,24 +435,24 @@ namespace {
 			}
 
 			cmd_begin = cmd_end;
-		}	
+		}
 	}
 
 }
 
 
-April::ChatCommands::ChatCommands( 
+April::ChatCommands::ChatCommands(
 	std::shared_ptr<ConsumablesMgr> cons,
 	ModuleConfigurations& configs,
 	Config const& config )
-	: 
+	:
 	consumables{ std::move( cons ) }, configs{ configs }, config{ config }
 {
 	// Callbacks will only be cleaned up during GWCA shutdown.
 	GW::Chat::RegisterSendChatCallback(
 		&entry,
 		[this]( GW::HookStatus* s, GW::Chat::Channel channel, wchar_t* msg )
-		{ 
+		{
 			if ( channel != GW::Chat::CHANNEL_COMMAND )
 				return;
 
@@ -463,7 +463,7 @@ April::ChatCommands::ChatCommands(
 			}
 			buf[127] = '\0';
 
-			on_message( s, buf, *consumables, this->configs.gui, this->config ); 
+			on_message( s, buf, *consumables, this->configs.gui, this->config );
 		} );
 }
 
