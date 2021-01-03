@@ -6,11 +6,11 @@
 
 
 namespace {
-	
+
 	auto hwnd = HWND{};
 	auto original = WNDPROC{};
 	auto block_mouse = false;
-	
+
 
 	bool ImGui_Proc( HWND, UINT msg, WPARAM wParam, LPARAM lParam )
 	{
@@ -82,14 +82,14 @@ namespace {
 			case WM_SYSKEYUP:
 				if ( wParam < 256 )
 					io.KeysDown[wParam] = 0;
-				return io.WantTextInput;
+				return false;
 			case WM_CHAR:
 				io.AddInputCharacter( (unsigned int)wParam );
 				return io.WantTextInput;
 		}
 		return false;
 	}
-	
+
 	auto WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) -> LRESULT
 	{
 		if ( ImGui_Proc( hWnd, msg, wParam, lParam ) )
