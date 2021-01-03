@@ -369,6 +369,7 @@ auto April::IO::to_string( Skillbar::Config const& config )
 		config.show_uptime,
 		config.uptime_offset,
 		config.text_color,
+		config.hsr_color,
 		config.border_color,
 		config.spacing,
 		config.skills_per_row,
@@ -893,7 +894,7 @@ template<> auto April::IO::from_string( std::string_view str )
 	return
 		t_from_string<
 			Skillbar::Config,
-			FontInfo, FontInfo, bool, XY, RGBA, RGBA, XY, int,
+			FontInfo, FontInfo, bool, XY, RGBA, RGBA, RGBA, XY, int,
 			std::vector<Config::Threshold>, RGBA, Window>( str );
 }
 

@@ -2,6 +2,7 @@
 
 #include "April/Utility/DrawStructures.h"
 
+#include <array>
 #include <chrono>
 #include <vector>
 
@@ -22,6 +23,7 @@ namespace April::Gui {
 			XY			uptime_offset;
 
 			RGBA	text_color;
+			RGBA	hsr_color;
 			RGBA	border_color;
 			XY		spacing;
 			int		skills_per_row;
@@ -45,6 +47,8 @@ namespace April::Gui {
 		Config const& config;
 		ImFont* font_cooldown;
 		ImFont* font_uptime;
+
+		std::array<bool, 8> hsr;
 	};
 
 }

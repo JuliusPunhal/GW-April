@@ -959,6 +959,11 @@ namespace {
 					ImGuiColorEditFlags_AlphaPreview );
 
 				ImGui::ColorEdit4(
+					"Cooldown with HSR",
+					&config.hsr_color.r,
+					ImGuiColorEditFlags_AlphaPreview );
+
+				ImGui::ColorEdit4(
 					"Border",
 					&config.border_color.r,
 					ImGuiColorEditFlags_AlphaPreview );

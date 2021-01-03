@@ -7,6 +7,9 @@
 #include "Dependencies/ImGui.hpp"
 
 #include <array>
+#include <chrono>
+#include <cstdint>
+#include <optional>
 
 using April::RGBA;
 using Config = April::Gui::Skillbar::Config;
@@ -14,6 +17,69 @@ using namespace std::chrono;
 
 
 namespace {
+
+	auto entry = GW::HookEntry{};
+
+
+	auto get_player_fast_casting( GW::AgentID const player_id )
+	{
+		auto const& attrs = GW::GameContext::instance()->world->attributes;
+
+		auto const player =
+			std::find_if(
+				attrs.begin(), attrs.end(),
+				[player_id]( GW::PartyAttribute const& attr )
+				{
+					return attr.agent_id == player_id;
+				} );
+		if ( player == std::end( attrs ) )
+			return 0u;
+
+		return player->attribute[0].level;
+	}
+
+	auto can_be_reduced_by_fast_casting( GW::Skill const& info )
+	{
+		auto const profession = static_cast<GW::Profession>( info.profession );
+		auto const type = static_cast<GW::SkillType>( info.type );
+
+		if ( profession != GW::Profession::Mesmer )
+			return false;
+
+		if ( type != GW::SkillType::Spell
+			&& type != GW::SkillType::Hex
+			&& type != GW::SkillType::Enchantment )
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	auto get_skill_slot( GW::SkillID const id, uint32_t const instance )
+		-> std::optional<unsigned>
+	{
+		auto const* skillbar = GW::SkillbarMgr::GetPlayerSkillbar();
+		if ( skillbar == nullptr )
+			return std::nullopt;
+
+		auto const& skills = skillbar->skills;
+		auto const found =
+			std::find_if(
+				std::begin( skills ),
+				std::end( skills ),
+				[id, instance]( GW::SkillbarSkill const& skill )
+				{
+					return static_cast<GW::SkillID>( skill.skill_id ) == id
+						&& skill.event == instance;
+				} );
+
+		if ( found == std::end( skills ) )
+			return std::nullopt;
+
+		auto const slot = std::distance( std::begin( skills ), found );
+		return slot;
+	}
 
 	auto ms_to_string_secf( milliseconds const time, const char* fmt = "%.1f" )
 		-> std::string
@@ -129,6 +195,71 @@ April::Gui::Skillbar::Skillbar( Config const& config )
 	font_cooldown{ LoadFont( config.font_cooldown ) },
 	font_uptime{ LoadFont( config.font_uptime ) }
 {
+	// Callbacks will only be cleaned up during GWCA shutdown.
+	GW::StoC::RegisterPacketCallback<GW::Packet::StoC::SkillRecharge>(
+		&entry,
+		[this]( auto*, auto* packet )
+		{
+			auto const* player = GW::Agents::GetCharacter();
+			if ( player == nullptr || player->agent_id != packet->agent_id )
+				return;
+
+			auto const& info = GW::SkillbarMgr::GetSkillConstantData( packet->skill_id );
+
+			auto const fc_reduction =
+				can_be_reduced_by_fast_casting( info )
+				? 1 - get_player_fast_casting( player->agent_id ) * 0.03f
+				: 1.f;
+
+			auto const essence =
+				GW::Effects::GetPlayerEffectById(
+					GW::SkillID::Essence_of_Celerity_item_effect );
+			auto const bu_reduction = essence ? 0.8f : 1.f;
+
+			// Only take FC and BU into account as expected modifier, all other
+			// effects (QZ, glyphs, etc) are considered unexpected.
+			auto const expected_recharge =
+				std::round( info.recharge * fc_reduction * bu_reduction );
+
+			auto const recharge_with_hsr =
+				std::round( info.recharge * fc_reduction * 0.5f );
+
+			if ( packet->recharge <= recharge_with_hsr
+				&& recharge_with_hsr < expected_recharge )
+			{
+				auto const slot =
+					get_skill_slot(
+						static_cast<GW::SkillID>( packet->skill_id ),
+						packet->skill_instance );
+
+				if ( slot == std::nullopt )
+					return;
+
+				hsr[*slot] = true;
+			}
+		} );
+
+	GW::StoC::RegisterPacketCallback<GW::Packet::StoC::SkillRecharged>(
+		&entry,
+		[this]( auto*, auto* packet )
+		{
+			auto const* player = GW::Agents::GetCharacter();
+			if ( player == nullptr || player->agent_id != packet->agent_id )
+				return;
+
+			auto const skill_id = static_cast<GW::SkillID>( packet->skill_id );
+			auto const slot =
+				get_skill_slot( skill_id, packet->skill_instance );
+
+			if ( slot == std::nullopt )
+				return;
+
+			hsr[*slot] = false;
+		} );
+
+	GW::StoC::RegisterPacketCallback<GW::Packet::StoC::MapLoaded>(
+		&entry, [this]( auto*, auto* ) { hsr = {}; } );
+
 }
 
 void April::Gui::Skillbar::Display() const
@@ -138,33 +269,33 @@ void April::Gui::Skillbar::Display() const
 	if ( skillbar == nullptr ) return;
 
 	// transform
-	struct Skill {
+	struct Slot {
 		std::string cooldown;
 		std::string uptime;
 		RGBA		color;
 	};
 
-	auto skills = std::array<Skill, 8>{};
+	auto slots = std::array<Slot, 8>{};
 	for ( auto it = 0; it < 8; ++it )
 	{
 		// cooldown
 		auto const cooldown = GetRecharge( skillbar->skills[it] );
-		skills[it].cooldown = cooldown_to_string( cooldown );
+		slots[it].cooldown = cooldown_to_string( cooldown );
 
 		// effect-uptime
 		auto const raw_id = skillbar->skills[it].skill_id;
 		auto const& data = GW::SkillbarMgr::GetSkillConstantData( raw_id );
 		if ( data.type == static_cast<uint32_t>( GW::SkillType::Hex ) )
 		{
-			skills[it].color = Invisible();
+			slots[it].color = Invisible();
 			continue;
 		}
 
 		auto const skill_id = static_cast<GW::SkillID>( raw_id );
 		auto const longest = get_longest_effect_duration( skill_id );
-		skills[it].uptime =
+		slots[it].uptime =
 			config.show_uptime ? cooldown_to_string( longest ) : "";
-		skills[it].color = get_color( longest, config );
+		slots[it].color = get_color( longest, config );
 	}
 
 	// Draw
@@ -179,7 +310,7 @@ void April::Gui::Skillbar::Display() const
 		auto const height = ImGui::GetContentRegionAvail().y / rows_per_col;
 		for ( auto it = 0; it < 8; ++it )
 		{
-			auto const& skill = skills[it];
+			auto const& skill = slots[it];
 
 			ImGui::PushID( &skill );
 			ImGui::PushStyleColor( ImGuiCol_Button, skill.color );
@@ -188,7 +319,22 @@ void April::Gui::Skillbar::Display() const
 			{
 				auto const cursor_start = ImGui::GetCursorPos();
 				ImGui::PushFont( font_cooldown );
+
+				// shadow
+				ImGui::SetCursorPos( cursor_start + XY{ 1, 1 } );
+				ImGui::PushStyleColor( ImGuiCol_Text, Black() );
 				ImGui::Button( skill.cooldown, { height, height } );
+				ImGui::PopStyleColor();
+				ImGui::SetCursorPos( cursor_start );
+
+				// label
+				if ( hsr[it] )
+				{
+					ImGui::PushStyleColor( ImGuiCol_Text, config.hsr_color );
+					ImGui::Button( skill.cooldown, { height, height } );
+					ImGui::PopStyleColor();
+				}
+				else ImGui::Button( skill.cooldown, { height, height } );
 				ImGui::PopFont();
 
 				if ( (it + 1) % config.skills_per_row != 0 )
@@ -238,6 +384,7 @@ auto April::Gui::Skillbar::Config::LoadDefault() -> Config
 		{ 3, -2 },
 
 		White(),
+		Green(),
 		White(),
 		{ -1, -1 },
 		8,

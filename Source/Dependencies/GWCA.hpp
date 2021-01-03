@@ -76,9 +76,10 @@
 
 
 namespace GW {
-	
+
 	using Constants::InstanceType;
 	using Constants::MapID;
+	using Constants::Profession;
 	using Constants::SkillID;
 	using Constants::SkillType;
 
@@ -88,7 +89,7 @@ namespace GW {
 	auto GetInstanceTime() -> std::chrono::milliseconds;
 	auto GetRecharge( GW::SkillbarSkill const& ) -> std::chrono::milliseconds;
 	auto GetTimeRemaining( GW::Effect const& ) -> std::chrono::milliseconds;
-	
+
 	// Only works for one active MissionProgress-Bar, either first or last.
 	// In areas where there is only one, this should be the correct one.
 	auto GetMissionProgress() -> float; // 0 <= progress <= 1
@@ -116,11 +117,11 @@ namespace GW {
 	void WriteChat( GW::Chat::Channel, const wchar_t* msg );
 	void WriteChat( GW::Chat::Channel, std::string const& msg );
 	void WriteChat( GW::Chat::Channel, std::wstring const& msg );
-	
+
 	void UseSkill( uint32_t slot_0, uint32_t target_id = 0, bool ping = false );
-	void UseSkill( 
+	void UseSkill(
 		uint32_t slot_0, GW::AgentLiving const& target, bool ping = false );
-	
+
 	template<typename Pred>
 	auto SearchBags( int const first, int const last, Pred predicate )
 		-> GW::Item*
@@ -142,14 +143,14 @@ namespace GW {
 
 		return nullptr;
 	}
-	
+
 	auto FindUnidentGold() -> GW::Item const*;
 
 
 	using ObjectiveID = int;
 
 	namespace Objectives {
-	
+
 		inline constexpr ObjectiveID Chamber = 146;
 		inline constexpr ObjectiveID Restore = 147;
 		inline constexpr ObjectiveID Escort = 148;
@@ -162,7 +163,7 @@ namespace GW {
 		inline constexpr ObjectiveID Pools = 155;
 		inline constexpr ObjectiveID NightmanCometh = 156;
 		inline constexpr ObjectiveID Dhuum = 157;
-	
+
 	}
 
 }
@@ -196,7 +197,7 @@ namespace GW::Constants::ItemID {
 
 
 namespace GW::Packet::StoC {
-	
+
 	struct RemoveEffect : Packet<RemoveEffect> {
 		// TODO: Confirm layout
 		GW::AgentID agent_id;
@@ -204,6 +205,14 @@ namespace GW::Packet::StoC {
 	};
 	unsigned const Packet<RemoveEffect>::STATIC_HEADER =
 		GAME_SMSG_EFFECT_REMOVED;
+
+	struct SkillRecharged : Packet<SkillRecharged> {
+		uint32_t agent_id;
+		uint32_t skill_id;
+		uint32_t skill_instance;
+	};
+	unsigned const Packet<SkillRecharged>::STATIC_HEADER =
+		GAME_SMSG_SKILL_RECHARGED;
 
 	struct UpdateItemOwner : Packet<UpdateItemOwner> {
 		GW::ItemID  item_id;
@@ -215,7 +224,7 @@ namespace GW::Packet::StoC {
 	struct ItemGeneral_ReuseID : ItemGeneral {};
 	unsigned const Packet<ItemGeneral_ReuseID>::STATIC_HEADER =
 		GAME_SMSG_ITEM_GENERAL_INFO + 1;
-	
+
 	struct CreateMissionProgress : Packet<CreateMissionProgress> {
 		uint8_t		id;
 		wchar_t		unk1[122];
