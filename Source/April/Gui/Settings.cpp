@@ -42,9 +42,9 @@ namespace {
 			}
 			else ImGui::Text( "Turn off Auto Resize to define size" );
 		}
-		else 
+		else
 		{
-			ImGui::Text( 
+			ImGui::Text(
 				"Cannot find Size- and Position-Info for Window %s!",
 				window.name.c_str() );
 		}
@@ -121,7 +121,7 @@ namespace {
 
 		ImGui::PopID();
 	}
-	
+
 	template<typename Config_t>
 	void draw_window_settings( Config_t& config )
 	{
@@ -141,7 +141,7 @@ namespace {
 
 	void draw( April::ConsumablesMgr::Config& config )
 	{
-		constexpr auto consumables_mgr_warning = 
+		constexpr auto consumables_mgr_warning =
 			"CAUTION! If this is defined as (close to) zero, April will "
 			"spam your consumable once per frame until the client recieves "
 			"the info from the server that the effect has been activated!"
@@ -204,7 +204,7 @@ namespace {
 
 				auto id = static_cast<int>( *it );
 				if ( ImGui::InputInt( "", &id ) )
-				{ 
+				{
 					*it = id;
 				}
 
@@ -244,15 +244,15 @@ namespace {
 			{
 				ImGui::Indent();
 				ImGui::PushID( "Player" );
-				draw( 
-					config.visible_user_rarities, 
+				draw(
+					config.visible_user_rarities,
 					config.visible_user_items );
 
 				auto const* item = GW::Items::GetItemBySlot( 1, 1 );
-				ImGui::Text( 
-					"ID in first Inventory Slot: %d", 
+				ImGui::Text(
+					"ID in first Inventory Slot: %d",
 					item ? item->model_id : 0 );
-			
+
 				ImGui::PopID();
 				ImGui::Unindent();
 			}
@@ -260,13 +260,13 @@ namespace {
 			{
 				ImGui::Indent();
 				ImGui::PushID( "Party" );
-				draw( 
-					config.visible_party_rarities, 
+				draw(
+					config.visible_party_rarities,
 					config.visible_party_items );
 
 				auto const* item = GW::Items::GetItemBySlot( 1, 1 );
-				ImGui::Text( 
-					"ID in first Inventory Slot: %d", 
+				ImGui::Text(
+					"ID in first Inventory Slot: %d",
 					item ? item->model_id : 0 );
 
 				ImGui::PopID();
@@ -293,9 +293,9 @@ namespace {
 				str.copy( buf, sizeof( buf ) );
 				buf[127] = '\0';
 
-				if ( ImGui::InputText( 
-					label, 
-					buf, sizeof( buf ), 
+				if ( ImGui::InputText(
+					label,
+					buf, sizeof( buf ),
 					ImGuiInputTextFlags_CharsNoBlank ) )
 				{
 					str = std::string{ std::begin( buf ), std::end( buf ) };
@@ -315,7 +315,7 @@ namespace {
 
 			ImGui::Separator();
 
-			for ( 
+			for (
 				auto it = config.abbreviations.begin();
 				it != config.abbreviations.end();
 				/**/ )
@@ -332,16 +332,16 @@ namespace {
 				if ( ImGui::InputText( "", abbrev, sizeof( abbrev ) ) )
 				{
 					it->abbreviation = abbrev;
-				}				
+				}
 
 				char original[128] = {};
 				it->original.copy( original, sizeof( original ) );
 				original[127] = '\0';
 
 				ImGui::SameLine();
-				if ( 
-					ImGui::InputText( 
-						"Abbreviation|Expanded", 
+				if (
+					ImGui::InputText(
+						"Abbreviation|Expanded",
 						original, sizeof( original ) ) )
 				{
 					it->original = original;
@@ -359,13 +359,13 @@ namespace {
 
 			ImGui::InputText( "", new_abbrev, sizeof( new_abbrev ) );
 			ImGui::SameLine();
-			ImGui::InputText( 
+			ImGui::InputText(
 				"Abbreviation|Expanded", new_original, sizeof( new_original ) );
 
 			if ( add )
 			{
 				using Abbrev = April::ChatCommands::Config::Abbreviation;
-				config.abbreviations.emplace_back( 
+				config.abbreviations.emplace_back(
 					Abbrev{ new_abbrev, new_original } );
 
 				std::fill_n( new_abbrev, sizeof( new_abbrev ), '\0' );
@@ -384,7 +384,7 @@ namespace {
 			ImGui::Indent();
 
 			draw_save_discard( config );
-			
+
 			ImGui::Text( "Block checked messages" );
 			ImGui::Checkbox( "Rare drops for player", &config.self_drop_rare );
 			ImGui::Checkbox( "Common drops for player", &config.self_drop_common );
@@ -398,7 +398,7 @@ namespace {
 			ImGui::Checkbox( "Player is away", &config.away );
 			ImGui::Checkbox( "Player is dnd", &config.dnd );
 			ImGui::Checkbox( "No one hears you", &config.noone_hears_you );
-	
+
 			ImGui::Checkbox( "Player joined the game", &config.player_joined );
 			ImGui::Checkbox( "Player achieved title", &config.player_achieved_title );
 			ImGui::Checkbox( "You have been playing for", &config.you_have_been_playing_for );
@@ -413,7 +413,7 @@ namespace {
 
 			ImGui::Checkbox( "Invalid Target", &config.invalid_target );
 			ImGui::Checkbox( "Not enough Energy", &config.not_enough_energy );
-	
+
 			ImGui::Checkbox( "Item cant be used", &config.item_cannot_be_used );
 			ImGui::Checkbox( "Summon already in instance", &config.summon_in_instance );
 			ImGui::Checkbox( "Inventory is full", &config.inventory_is_full );
@@ -424,7 +424,7 @@ namespace {
 			ImGui::Checkbox( "Faction gained", &config.faction_gain );
 			ImGui::Checkbox( "Skill updated for pvp", &config.skill_to_pvp );
 			ImGui::Checkbox( "XYZ won battle in hall of heros", &config.hall_of_heros );
-	
+
 			ImGui::Checkbox( "Emotes", &config.emotes );
 			ImGui::Checkbox( "Guild annoucement", &config.guild_announcement );
 
@@ -443,10 +443,10 @@ namespace {
 		if ( ImGui::CollapsingHeader( "Notify Effect Lost" ) )
 		{
 			ImGui::Indent();
-			
+
 			draw_save_discard( config );
 
-			for ( 
+			for (
 				auto it = config.notifications.begin();
 				it != config.notifications.end();
 				/**/ )
@@ -454,11 +454,11 @@ namespace {
 				ImGui::PushID( &*it );
 
 				char label[64] = {};
-				snprintf( 
-					label, sizeof( label ), 
+				snprintf(
+					label, sizeof( label ),
 					"%5d", static_cast<int>( it->skill_id ) );
 
-				ImGui::InputText( 
+				ImGui::InputText(
 					label, it->message.data(), it->message.capacity() );
 
 				ImGui::SameLine();
@@ -482,7 +482,7 @@ namespace {
 				using Notification =
 					April::NotifyEffectLoss::Config::Notification;
 
-				config.notifications.emplace_back( 
+				config.notifications.emplace_back(
 					Notification{ static_cast<GW::SkillID>( new_id ), msg } );
 
 				new_id = 0;
@@ -508,7 +508,7 @@ namespace {
 			ImGui::Indent();
 			draw_save_discard( config );
 
-			ImGui::Checkbox( 
+			ImGui::Checkbox(
 				"Automatically return to outpost when party is defeated",
 				&config.active );
 			ImGui::Unindent();
@@ -517,7 +517,7 @@ namespace {
 
 	void draw( April::ShowKitUses::Config& config )
 	{
-		constexpr auto kit_uses_warning = 
+		constexpr auto kit_uses_warning =
 			"Warning!\n"
 			"This changes the quantity the client assumes this item has. "
 			"Therefore, it will also show the incorrect quantity at e.g. a "
@@ -534,8 +534,8 @@ namespace {
 			ImGui::Indent();
 			draw_save_discard( config );
 
-			ImGui::Checkbox( 
-				"Show remaining uses of Ident- & Salvage-Kits as quantity", 
+			ImGui::Checkbox(
+				"Show remaining uses of Ident- & Salvage-Kits as quantity",
 				&config.active );
 
 			ImGui::TextWrapped( kit_uses_warning );
@@ -579,35 +579,35 @@ namespace {
 			ImGui::Indent();
 			draw_save_discard( config );
 			draw_window_settings_collapsing_header( config.window );
-			
+
 			ImGui::PushID( 1 );
 			if ( ImGui::CollapsingHeader( "Dialogs" ) )
 			{
 				ImGui::Indent();
-				for ( 
-					auto dialog = config.dialogs.begin(); 
+				for (
+					auto dialog = config.dialogs.begin();
 					dialog != config.dialogs.end();
 					/**/ )
 				{
 					ImGui::PushID( &*dialog );
 
 					char buf[128] = {};
-					sprintf_s( 
+					sprintf_s(
 						buf, sizeof( buf ), "%s", dialog->description.c_str() );
 
-					if ( ImGui::InputText( 
-						"Description", 
-						buf, 
+					if ( ImGui::InputText(
+						"Description",
+						buf,
 						sizeof( buf ) ) )
 					{
 						dialog->description = buf;
 					}
 
-					ImGui::InputInt( 
-						"DialogID (Hex)", 
-						&dialog->dialog, 
-						1, 
-						100, 
+					ImGui::InputInt(
+						"DialogID (Hex)",
+						&dialog->dialog,
+						1,
+						100,
 						ImGuiInputTextFlags_CharsHexadecimal );
 					if ( ImGui::Button( "Remove" ) )
 					{
@@ -620,16 +620,16 @@ namespace {
 				}
 
 				ImGui::PushID( "New Dialog" );
-				
+
 				static char description[128] = {};
 				static int	id = 0;
 
 				ImGui::Text( "Add new Dialog" );
-				ImGui::InputText( 
+				ImGui::InputText(
 					"Description", description, sizeof( description ) );
-				ImGui::InputInt( 
-					"Dialog (Hex)", 
-					&id, 1, 100, 
+				ImGui::InputInt(
+					"Dialog (Hex)",
+					&id, 1, 100,
 					ImGuiInputTextFlags_CharsHexadecimal );
 
 				if ( ImGui::Button( "Apply" ) )
@@ -667,27 +667,27 @@ namespace {
 			{
 				ImGui::Indent();
 
-				ImGui::ColorEdit4( 
-					"Border", 
-					&config.border_color.r, 
+				ImGui::ColorEdit4(
+					"Border",
+					&config.border_color.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::ColorEdit4( 
-					"Background", 
-					&config.background_color.r, 
+				ImGui::ColorEdit4(
+					"Background",
+					&config.background_color.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::ColorEdit4( 
-					"Energy", 
-					&config.colors.standard.r, 
+				ImGui::ColorEdit4(
+					"Energy",
+					&config.colors.standard.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::DragFloat2( 
-					"Left Pips Alignment", 
+				ImGui::DragFloat2(
+					"Left Pips Alignment",
 					&config.alignment.left.x, 0.01f, 0, 1, "%.2f" );
 
-				ImGui::DragFloat2( 
-					"Right Pips Alignment", 
+				ImGui::DragFloat2(
+					"Right Pips Alignment",
 					&config.alignment.right.x, 0.01f, 0, 1, "%.2f" );
 
 				ImGui::Unindent();
@@ -714,47 +714,47 @@ namespace {
 			{
 				ImGui::Indent();
 
-				ImGui::ColorEdit4( 
-					"Border", 
-					&config.border_color.r, 
+				ImGui::ColorEdit4(
+					"Border",
+					&config.border_color.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::ColorEdit4( 
-					"Background", 
-					&config.background_color.r, 
+				ImGui::ColorEdit4(
+					"Background",
+					&config.background_color.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::ColorEdit4( 
-					"Health", 
-					&config.colors.standard.r, 
+				ImGui::ColorEdit4(
+					"Health",
+					&config.colors.standard.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::ColorEdit4( 
-					"Health (Hexed)", 
-					&config.colors.degen_hexed.r, 
+				ImGui::ColorEdit4(
+					"Health (Hexed)",
+					&config.colors.degen_hexed.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::ColorEdit4( 
-					"Health (Deep Wound)", 
-					&config.colors.deep_wounded.r, 
+				ImGui::ColorEdit4(
+					"Health (Deep Wound)",
+					&config.colors.deep_wounded.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::ColorEdit4( 
-					"Health (Bleeding)", 
-					&config.colors.bleeding.r, 
+				ImGui::ColorEdit4(
+					"Health (Bleeding)",
+					&config.colors.bleeding.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::ColorEdit4( 
-					"Health (Poisoned)", 
-					&config.colors.poisoned.r, 
+				ImGui::ColorEdit4(
+					"Health (Poisoned)",
+					&config.colors.poisoned.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::DragFloat2( 
-					"Left Pips Alignment", 
+				ImGui::DragFloat2(
+					"Left Pips Alignment",
 					&config.alignment.left.x, 0.01f, 0, 1, "%.2f" );
 
-				ImGui::DragFloat2( 
-					"Right Pips Alignment", 
+				ImGui::DragFloat2(
+					"Right Pips Alignment",
 					&config.alignment.right.x, 0.01f, 0, 1, "%.2f" );
 
 				ImGui::Unindent();
@@ -779,18 +779,18 @@ namespace {
 
 			if ( ImGui::CollapsingHeader( "Style" ) )
 			{
-				ImGui::ColorEdit4( 
-					"Label", 
-					&config.text_color.r, 
+				ImGui::ColorEdit4(
+					"Label",
+					&config.text_color.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::ColorEdit4( 
-					"Shadow", 
-					&config.shadow_color.r, 
+				ImGui::ColorEdit4(
+					"Shadow",
+					&config.shadow_color.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::DragFloat2( 
-					"Shadow Offset", 
+				ImGui::DragFloat2(
+					"Shadow Offset",
 					&config.shadow_offset.x, 0.5f, -500, 500, "%.0f" );
 			}
 
@@ -815,58 +815,58 @@ namespace {
 			if ( ImGui::CollapsingHeader( "Style" ) )
 			{
 				ImGui::Indent();
-				ImGui::DragFloat2( 
-					"Slot Size", 
+				ImGui::DragFloat2(
+					"Slot Size",
 					&config.slot_size.w, 0.25f, 0, 0, "%.0f" );
 
-				ImGui::DragFloat2( 
-					"Spacing", 
+				ImGui::DragFloat2(
+					"Spacing",
 					&config.item_spacing.x, 0.25f, -10, 10, "%.0f" );
 
 				auto percent = config.button_alpha * 100;
-				if ( 
-					ImGui::DragFloat( 
+				if (
+					ImGui::DragFloat(
 						"Surface Alpha", &percent, 1, 0, 100, "%.f%%" ) )
 				{
 					config.button_alpha = percent / 100;
 				}
 				ImGui::Checkbox( "Show Border", &config.border );
-				
-				ImGui::ColorEdit4( 
-					"Empty Slot", 
-					&config.no_item.r, 
-					ImGuiColorEditFlags_AlphaPreview );
-				
-				ImGui::ColorEdit4( 
-					"Unknown Item", 
-					&config.unknown_item.r, 
-					ImGuiColorEditFlags_AlphaPreview );
-				
-				ImGui::ColorEdit4( 
-					"Wrong Instance Type", 
-					&config.wrong_instance_type.r, 
+
+				ImGui::ColorEdit4(
+					"Empty Slot",
+					&config.no_item.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::ColorEdit4( 
-					"Need not use", 
-					&config.need_not_use.r, 
+				ImGui::ColorEdit4(
+					"Unknown Item",
+					&config.unknown_item.r,
 					ImGuiColorEditFlags_AlphaPreview );
-				
-				ImGui::ColorEdit4( 
-					"Can not use", 
-					&config.can_not_use.r, 
+
+				ImGui::ColorEdit4(
+					"Wrong Instance Type",
+					&config.wrong_instance_type.r,
 					ImGuiColorEditFlags_AlphaPreview );
-				
-				ImGui::ColorEdit4( 
-					"Should Use", 
-					&config.suggest_use.r, 
+
+				ImGui::ColorEdit4(
+					"Need not use",
+					&config.need_not_use.r,
 					ImGuiColorEditFlags_AlphaPreview );
-				
-				ImGui::ColorEdit4( 
-					"Special State", 
-					&config.special_state.r, 
+
+				ImGui::ColorEdit4(
+					"Can not use",
+					&config.can_not_use.r,
 					ImGuiColorEditFlags_AlphaPreview );
-				
+
+				ImGui::ColorEdit4(
+					"Should Use",
+					&config.suggest_use.r,
+					ImGuiColorEditFlags_AlphaPreview );
+
+				ImGui::ColorEdit4(
+					"Special State",
+					&config.special_state.r,
+					ImGuiColorEditFlags_AlphaPreview );
+
 				static char buf_no_item[2] = { config.label_no_item };
 				static char buf_unknown[2] = { config.label_unknown_item };
 				static char buf_persistent[2] = { config.label_persistent };
@@ -898,7 +898,7 @@ namespace {
 				{
 					config.label_until_objective = buf_objective[0];
 				}
-				
+
 				ImGui::Unindent();
 			}
 
@@ -927,39 +927,39 @@ namespace {
 
 			if ( ImGui::CollapsingHeader( "Style" ) )
 			{
-				ImGui::ColorEdit4( 
-					"Cooldown", 
-					&config.text_color.r, 
+				ImGui::ColorEdit4(
+					"Cooldown",
+					&config.text_color.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::ColorEdit4( 
-					"Border", 
-					&config.border_color.r, 
+				ImGui::ColorEdit4(
+					"Border",
+					&config.border_color.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::DragFloat( 
+				ImGui::DragFloat(
 					"Spacing", &config.spacing.x, 0.5f, -10, 10, "%.0f" );
 
-				for ( 
+				for (
 					auto it = config.thresholds.begin();
 					it != config.thresholds.end();
 					/**/ )
 				{
 					ImGui::PushID( &*it );
 
-					char buf[16] = {}; 
-					sprintf_s( 
-						buf, sizeof( buf ), 
-						"%5.2fs", 
+					char buf[16] = {};
+					sprintf_s(
+						buf, sizeof( buf ),
+						"%5.2fs",
 						it->time.count() / 1000.f );
 
-					ImGui::ColorEdit4( 
-						buf, 
-						&it->color.r, 
+					ImGui::ColorEdit4(
+						buf,
+						&it->color.r,
 						ImGuiColorEditFlags_AlphaPreview );
 
 					ImGui::SameLine();
-					
+
 					if ( ImGui::Button( "Remove" ) )
 					{
 						it = config.thresholds.erase( it );
@@ -969,9 +969,9 @@ namespace {
 					ImGui::PopID();
 				}
 
-				ImGui::ColorEdit4( 
-					"Inactive", 
-					&config.color_inactive.r, 
+				ImGui::ColorEdit4(
+					"Inactive",
+					&config.color_inactive.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
 				ImGui::Text( "Add another threshold" );
@@ -979,25 +979,33 @@ namespace {
 				static auto color_buf = April::Invisible();
 
 				ImGui::InputInt( "Threshold (ms)", &input_buf );
-				ImGui::ColorEdit4( 
-					"Color", 
-					&color_buf.r, 
+				ImGui::ColorEdit4(
+					"Color",
+					&color_buf.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
 				if ( ImGui::Button( "Add" ) )
 				{
 					using Threshold = April::Gui::Skillbar::Config::Threshold;
 
-					config.thresholds.emplace_back( 
+					config.thresholds.emplace_back(
 						Threshold{ milliseconds{ input_buf }, color_buf } );
 
-					std::sort( 
+					std::sort(
 						config.thresholds.begin(),
 						config.thresholds.end(),
 						[]( auto const& lhs, auto const& rhs )
 						{
 							return lhs.time > rhs.time;
 						} );
+				}
+
+				ImGui::Checkbox( "Show Uptime", &config.show_uptime );
+				if ( config.show_uptime )
+				{
+					ImGui::DragFloat2(
+						"Uptime-Offset",
+						&config.uptime_offset.x, 0.2f, -100, 100, "%.0f" );
 				}
 
 			}

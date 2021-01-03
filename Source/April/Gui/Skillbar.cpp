@@ -14,7 +14,7 @@ using namespace std::chrono;
 
 
 namespace {
-		
+
 	auto ms_to_string_secf( milliseconds const time, const char* fmt = "%.1f" )
 		-> std::string
 	{
@@ -26,7 +26,7 @@ namespace {
 		snprintf(
 			buf, sizeof( buf ),
 			fmt, static_cast<int>(secs.count() * 10) / 10.f	);
-		
+
 		return buf;
 	}
 
@@ -45,7 +45,7 @@ namespace {
 			return "0.0";		// avoid negative numbers in overlay
 	}
 
-	auto get_longest_effect_duration( GW::SkillID const skill_id ) 
+	auto get_longest_effect_duration( GW::SkillID const skill_id )
 		-> milliseconds
 	{
 		auto longest = 0ms;
@@ -77,7 +77,7 @@ namespace {
 		return RGBA{ r, g, b, a };
 	}
 
-	auto get_color( milliseconds const time, Config const& config ) 
+	auto get_color( milliseconds const time, Config const& config )
 		-> RGBA
 	{
 		if ( config.thresholds.size() == 0 )
@@ -88,7 +88,7 @@ namespace {
 			return config.thresholds[0].color;
 
 		// account for negative cooldown; can happen due to ping
-		if ( time <= 0ms ) 
+		if ( time <= 0ms )
 			return config.color_inactive;
 
 		// uptime > max threshold
@@ -124,7 +124,10 @@ namespace {
 
 
 April::Gui::Skillbar::Skillbar( Config const& config )
-	: config{ config }, font{ LoadFont( config.font ) }
+	:
+	config{ config },
+	font_cooldown{ LoadFont( config.font_cooldown ) },
+	font_uptime{ LoadFont( config.font_uptime ) }
 {
 }
 
@@ -136,18 +139,19 @@ void April::Gui::Skillbar::Display() const
 
 	// transform
 	struct Skill {
-		std::string label;
+		std::string cooldown;
+		std::string uptime;
 		RGBA		color;
 	};
 
 	auto skills = std::array<Skill, 8>{};
 	for ( auto it = 0; it < 8; ++it )
 	{
-		// label (cooldown)
+		// cooldown
 		auto const cooldown = GetRecharge( skillbar->skills[it] );
-		skills[it].label = cooldown_to_string( cooldown );
+		skills[it].cooldown = cooldown_to_string( cooldown );
 
-		// color (effect-uptime)
+		// effect-uptime
 		auto const raw_id = skillbar->skills[it].skill_id;
 		auto const& data = GW::SkillbarMgr::GetSkillConstantData( raw_id );
 		if ( data.type == static_cast<uint32_t>( GW::SkillType::Hex ) )
@@ -158,13 +162,14 @@ void April::Gui::Skillbar::Display() const
 
 		auto const skill_id = static_cast<GW::SkillID>( raw_id );
 		auto const longest = get_longest_effect_duration( skill_id );
+		skills[it].uptime =
+			config.show_uptime ? cooldown_to_string( longest ) : "";
 		skills[it].color = get_color( longest, config );
 	}
 
 	// Draw
 	if ( ImGui::Begin( config.window ) )
 	{
-		ImGui::PushFont( font );
 		ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, config.spacing );
 		ImGui::PushStyleVar( ImGuiStyleVar_FrameBorderSize, 1 );
 		ImGui::PushStyleColor( ImGuiCol_Text, config.text_color );
@@ -178,22 +183,36 @@ void April::Gui::Skillbar::Display() const
 			ImGui::PushStyleColor( ImGuiCol_ButtonActive, skill.color );
 			ImGui::PushStyleColor( ImGuiCol_ButtonHovered, skill.color );
 			{
-				ImGui::Button( skill.label, { height, height } );
+				auto const cursor_start = ImGui::GetCursorPos();
+				ImGui::PushFont( font_cooldown );
+				ImGui::Button( skill.cooldown, { height, height } );
+				ImGui::PopFont();
 				ImGui::SameLine();
+
+				if ( config.show_uptime )
+				{
+					auto const cursor_next = ImGui::GetCursorPos();
+					ImGui::SetCursorPos( cursor_start );
+					ImGui::PushFont( font_uptime );
+					ImGui::SetCursorPos( cursor_start + config.uptime_offset );
+					ImGui::Text( skill.uptime );
+					ImGui::PopFont();
+
+					ImGui::SetCursorPos( cursor_next );
+				}
 			}
 			ImGui::PopStyleColor( 3 );
 			ImGui::PopID();
 		}
 		ImGui::PopStyleColor( 2 );
 		ImGui::PopStyleVar( 2 );
-		ImGui::PopFont();
 	}
 	ImGui::End();
 }
 
 auto April::Gui::Skillbar::Config::LoadDefault() -> Config
 {
-	constexpr auto window_flags = 
+	constexpr auto window_flags =
 		ImGuiWindowFlags_NoTitleBar
 		| ImGuiWindowFlags_NoResize
 		| ImGuiWindowFlags_NoMove
@@ -209,6 +228,10 @@ auto April::Gui::Skillbar::Config::LoadDefault() -> Config
 
 	auto const config = Config{
 		{ "C:\\Windows\\Fonts\\Gothic.ttf", 30 },
+		{ "C:\\Windows\\Fonts\\Gothic.ttf", 14 },
+		false,
+		{ 3, -2 },
+
 		White(),
 		White(),
 		{ -1, -1 },

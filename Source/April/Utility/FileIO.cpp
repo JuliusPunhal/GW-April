@@ -17,7 +17,7 @@ using Dialog = Dialogs::Config::Dialog;
 
 
 namespace {
-	
+
 	template<typename... Args>
 	auto tup_to_string( Args&&... args ) -> std::string;
 
@@ -96,11 +96,11 @@ namespace {
 		return tup_to_string( abbrev.abbreviation, abbrev.original );
 	}
 
-	auto val_to_string( Notification const& notification ) 
+	auto val_to_string( Notification const& notification )
 		-> std::string
 	{
-		return tup_to_string( 
-			static_cast<int>( notification.skill_id ), 
+		return tup_to_string(
+			static_cast<int>( notification.skill_id ),
 			notification.message );
 	}
 
@@ -121,11 +121,11 @@ namespace {
 
 	auto val_to_string( Healthbar::Config::Colors const& colors )
 	{
-		return tup_to_string( 
-			colors.standard, 
-			colors.degen_hexed, 
-			colors.deep_wounded, 
-			colors.bleeding, 
+		return tup_to_string(
+			colors.standard,
+			colors.degen_hexed,
+			colors.deep_wounded,
+			colors.bleeding,
 			colors.poisoned );
 	}
 
@@ -138,7 +138,7 @@ namespace {
 	{
 		return tup_to_string( config.time, config.color );
 	}
-	
+
 	template<typename T>
 	auto vec_to_string( T&& vec ) -> std::string;
 
@@ -181,7 +181,7 @@ namespace {
 	template<typename Arg, typename... Args>
 	auto tup_to_string_impl( Arg&& arg, Args&&... args )
 	{
-		return ::to_string( std::forward<Arg>( arg ) ) + ',' 
+		return ::to_string( std::forward<Arg>( arg ) ) + ','
 			+ tup_to_string_impl( std::forward<Args>( args )... );
 	}
 
@@ -198,7 +198,7 @@ namespace {
 
 auto April::IO::to_string( AgentFilter::Config const& config ) -> std::string
 {
-	return tup_to_string( 
+	return tup_to_string(
 		config.active,
 		config.visible_user_items,
 		config.visible_user_rarities,
@@ -237,19 +237,19 @@ auto April::IO::to_string( ChatFilter::Config const& config ) -> std::string
 	return result;
 }
 
-auto April::IO::to_string( ConsumablesMgr::Config const& config ) 
+auto April::IO::to_string( ConsumablesMgr::Config const& config )
 	-> std::string
 {
 	return tup_to_string( config.timeout );
 }
 
-auto April::IO::to_string( NotifyEffectLoss::Config const& config ) 
+auto April::IO::to_string( NotifyEffectLoss::Config const& config )
 	-> std::string
 {
 	return tup_to_string( config.notifications );
 }
 
-auto April::IO::to_string( ReturnToOutpost::Config const& config ) 
+auto April::IO::to_string( ReturnToOutpost::Config const& config )
 	-> std::string
 {
 	return tup_to_string( config.active );
@@ -260,44 +260,44 @@ auto April::IO::to_string( ShowKitUses::Config const& config ) -> std::string
 	return tup_to_string( config.active );
 }
 
-auto April::IO::to_string( SuppressSpeechBubbles::Config const& config ) 
+auto April::IO::to_string( SuppressSpeechBubbles::Config const& config )
 	-> std::string
 {
 	return tup_to_string( config.active );
 }
 
-auto April::IO::to_string( ChainedSoulGui::Config const& config ) 
+auto April::IO::to_string( ChainedSoulGui::Config const& config )
 	-> std::string
 {
 	return tup_to_string( config.window );
 }
 
-auto April::IO::to_string( DhuumBotGui::Config const& config ) 
+auto April::IO::to_string( DhuumBotGui::Config const& config )
 	-> std::string
 {
 	return tup_to_string( config.window );
 }
 
-auto April::IO::to_string( DhuumInfo::Config const& config ) 
+auto April::IO::to_string( DhuumInfo::Config const& config )
 	-> std::string
 {
 	return tup_to_string( config.window );
 }
 
-auto April::IO::to_string( Dialogs::Config const& config ) 
+auto April::IO::to_string( Dialogs::Config const& config )
 	-> std::string
 {
-	return tup_to_string( 
+	return tup_to_string(
 		config.dialogs,
 		config.confirm_time,
 		config.confirm_color,
 		config.window );
 }
 
-auto April::IO::to_string( Energybar::Config const& config ) 
+auto April::IO::to_string( Energybar::Config const& config )
 	-> std::string
 {
-	return tup_to_string( 
+	return tup_to_string(
 		config.border_color,
 		config.background_color,
 		config.colors,
@@ -306,10 +306,10 @@ auto April::IO::to_string( Energybar::Config const& config )
 		config.window );
 }
 
-auto April::IO::to_string( Healthbar::Config const& config ) 
+auto April::IO::to_string( Healthbar::Config const& config )
 	-> std::string
 {
-	return tup_to_string( 
+	return tup_to_string(
 		config.border_color,
 		config.background_color,
 		config.colors,
@@ -318,10 +318,10 @@ auto April::IO::to_string( Healthbar::Config const& config )
 		config.window );
 }
 
-auto April::IO::to_string( InstanceTimer::Config const& config ) 
+auto April::IO::to_string( InstanceTimer::Config const& config )
 	-> std::string
 {
-	return tup_to_string( 
+	return tup_to_string(
 		config.font,
 		config.text_color,
 		config.shadow_color,
@@ -329,10 +329,10 @@ auto April::IO::to_string( InstanceTimer::Config const& config )
 		config.window );
 }
 
-auto April::IO::to_string( Inventory::Config const& config ) 
+auto April::IO::to_string( Inventory::Config const& config )
 	-> std::string
 {
-	return tup_to_string( 
+	return tup_to_string(
 		config.font,
 		config.slot_size,
 		config.item_spacing,
@@ -354,16 +354,20 @@ auto April::IO::to_string( Inventory::Config const& config )
 		config.window );
 }
 
-auto April::IO::to_string( Settings::Config const& config ) 
+auto April::IO::to_string( Settings::Config const& config )
 	-> std::string
 {
 	return tup_to_string( config.window );
 }
 
-auto April::IO::to_string( Skillbar::Config const& config ) 
+auto April::IO::to_string( Skillbar::Config const& config )
 	-> std::string
 {
-	return tup_to_string( config.font,
+	return tup_to_string(
+		config.font_cooldown,
+		config.font_uptime,
+		config.show_uptime,
+		config.uptime_offset,
 		config.text_color,
 		config.border_color,
 		config.spacing,
@@ -372,16 +376,16 @@ auto April::IO::to_string( Skillbar::Config const& config )
 		config.window );
 }
 
-auto April::IO::to_string( TargetInfo::Config const& config ) 
+auto April::IO::to_string( TargetInfo::Config const& config )
 	-> std::string
 {
 	return tup_to_string( config.window );
 }
 
-auto April::IO::to_string( UwTimesGui::Config const& config ) 
+auto April::IO::to_string( UwTimesGui::Config const& config )
 	-> std::string
 {
-	return tup_to_string( 
+	return tup_to_string(
 		config.quest_names, config.column_names, config.window );
 }
 
@@ -400,13 +404,13 @@ namespace {
 
 	template<typename T>
 	auto val_from_string( std::string_view ) -> std::optional<T>;
-	
-	template<> auto val_from_string( std::string_view str ) 
+
+	template<> auto val_from_string( std::string_view str )
 		-> std::optional<bool>
 	{
 		return str == "0" ? false : true;
 	}
-	
+
 	template<> auto val_from_string( std::string_view str )
 		-> std::optional<char>
 	{
@@ -586,8 +590,8 @@ namespace {
 		else
 			return std::nullopt;
 	}
-	
-	
+
+
 	template<typename Iter>
 	auto find_segments( Iter begin, Iter const end )
 		-> std::optional<std::vector<std::string_view>>
@@ -635,14 +639,14 @@ namespace {
 			auto val = from_string_wrapper<T::value_type>( segment );
 			if ( val == std::nullopt )
 				return std::nullopt;
-			
+
 			result.emplace_back( *std::move( val ) );
 		}
 		return result;
 	}
 
 	template<typename T, auto... I>
-	auto tup_from_string_impl( 
+	auto tup_from_string_impl(
 		std::vector<std::string_view> const& segments,
 		std::index_sequence<I...> )
 	{
@@ -651,7 +655,7 @@ namespace {
 		{
 			return std::tuple{
 				from_string_wrapper<
-					std::tuple_element_t<I, T>>( 
+					std::tuple_element_t<I, T>>(
 						segments[I] )...
 			};
 		}
@@ -659,30 +663,30 @@ namespace {
 		{
 			return std::array{
 				from_string_wrapper<
-					std::tuple_element_t<I, T>>( 
+					std::tuple_element_t<I, T>>(
 						segments[I] )...
 			};
 		}
 	}
 
 	template<typename T>
-	auto tup_from_string( 
-		std::string_view str, char const first, char const last ) 
+	auto tup_from_string(
+		std::string_view str, char const first, char const last )
 		-> std::optional<T>
 	{
 		if ( str.size() < 2 || str.front() != first || str.back() != last )
 			return std::nullopt;
 
 		auto const segments = find_segments( str.begin() + 1, str.end() - 1 );
-		if ( segments == std::nullopt 
+		if ( segments == std::nullopt
 			|| segments->size() != std::tuple_size_v<T> )
 		{
 			return std::nullopt;
 		}
 
-		auto result = 
-			tup_from_string_impl<T>( 
-				*segments, 
+		auto result =
+			tup_from_string_impl<T>(
+				*segments,
 				std::make_index_sequence<std::tuple_size_v<T>>{} );
 
 		auto is_empty = []( auto&& opt ) { return not opt.has_value(); };
@@ -756,7 +760,7 @@ template<> auto April::IO::from_string( std::string_view str )
 		t_from_string<
 			ChatCommands::Config,
 			std::vector<ChatCommands::Config::Abbreviation>, std::string,
-			std::string, std::string, std::string, std::string, std::string, 
+			std::string, std::string, std::string, std::string, std::string,
 			std::string, std::string, std::string, std::string>( str );
 }
 
@@ -764,12 +768,12 @@ template<> auto April::IO::from_string( std::string_view str )
 	-> std::optional<ChatFilter::Config>
 {
 	constexpr auto x = sizeof( ChatFilter::Config );
-	return 
+	return
 		t_from_string<
 			ChatFilter::Config,
-			bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, 
-			bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, 
-			bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, 
+			bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool,
+			bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool,
+			bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool,
 			bool, bool, bool, bool>( str );
 }
 
@@ -782,7 +786,7 @@ template<> auto April::IO::from_string( std::string_view str )
 template<> auto April::IO::from_string( std::string_view str )
 	-> std::optional<NotifyEffectLoss::Config>
 {
-	return 
+	return
 		t_from_string<
 			NotifyEffectLoss::Config,
 			std::vector<NotifyEffectLoss::Config::Notification>>( str );
@@ -827,9 +831,9 @@ template<> auto April::IO::from_string( std::string_view str )
 template<> auto April::IO::from_string( std::string_view str )
 	-> std::optional<Dialogs::Config>
 {
-	return 
+	return
 		t_from_string<
-			Dialogs::Config, 
+			Dialogs::Config,
 			std::vector<Dialogs::Config::Dialog>, milliseconds, RGBA,
 			Window>( str );
 }
@@ -838,9 +842,9 @@ template<> auto April::IO::from_string( std::string_view str )
 	-> std::optional<Energybar::Config>
 {
 	using Config = Energybar::Config;
-	return 
+	return
 		t_from_string<
-			Config, 
+			Config,
 			RGBA, RGBA, Config::Colors, Config::PipsAlignment, FontInfo,
 			Window>( str );
 }
@@ -849,9 +853,9 @@ template<> auto April::IO::from_string( std::string_view str )
 	-> std::optional<Healthbar::Config>
 {
 	using Config = Healthbar::Config;
-	return 
+	return
 		t_from_string<
-			Config, 
+			Config,
 			RGBA, RGBA, Config::Colors, Config::PipsAlignment, FontInfo,
 			Window>( str );
 }
@@ -859,19 +863,19 @@ template<> auto April::IO::from_string( std::string_view str )
 template<> auto April::IO::from_string( std::string_view str )
 	-> std::optional<InstanceTimer::Config>
 {
-	return 
+	return
 		t_from_string<
-			InstanceTimer::Config, 
+			InstanceTimer::Config,
 			FontInfo, RGBA, RGBA, XY, Window>( str );
 }
 
 template<> auto April::IO::from_string( std::string_view str )
 	-> std::optional<Inventory::Config>
 {
-	return 
+	return
 		t_from_string_unchecked<
-			Inventory::Config, 
-			FontInfo, WH, XY, bool, float, RGBA, RGBA, RGBA, RGBA, RGBA, RGBA, 
+			Inventory::Config,
+			FontInfo, WH, XY, bool, float, RGBA, RGBA, RGBA, RGBA, RGBA, RGBA,
 			RGBA, char, char, char, char, char, char, Window>( str );
 }
 
@@ -885,11 +889,11 @@ template<> auto April::IO::from_string( std::string_view str )
 	-> std::optional<Skillbar::Config>
 {
 	using Config = Skillbar::Config;
-	return 
+	return
 		t_from_string<
-			Skillbar::Config, 
-			FontInfo, RGBA, RGBA, XY, std::vector<Config::Threshold>, RGBA,
-			Window>( str );
+			Skillbar::Config,
+			FontInfo, FontInfo, bool, XY, RGBA, RGBA, XY,
+			std::vector<Config::Threshold>, RGBA, Window>( str );
 }
 
 template<> auto April::IO::from_string( std::string_view str )
@@ -901,10 +905,10 @@ template<> auto April::IO::from_string( std::string_view str )
 template<> auto April::IO::from_string( std::string_view str )
 	-> std::optional<UwTimesGui::Config>
 {
-	return 
+	return
 		t_from_string<
-			UwTimesGui::Config, 
-			std::array<std::string, 11>, std::array<std::string, 4>, 
+			UwTimesGui::Config,
+			std::array<std::string, 11>, std::array<std::string, 4>,
 			Window>( str );
 }
 

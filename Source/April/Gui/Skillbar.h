@@ -16,10 +16,14 @@ namespace April::Gui {
 				RGBA						color;
 			};
 
-			FontInfo				font;
-			RGBA					text_color;
-			RGBA					border_color;
-			XY						spacing;
+			FontInfo	font_cooldown;
+			FontInfo	font_uptime;
+			bool		show_uptime;
+			XY			uptime_offset;
+
+			RGBA	text_color;
+			RGBA	border_color;
+			XY		spacing;
 
 			std::vector<Threshold>	thresholds;
 			RGBA					color_inactive;
@@ -38,7 +42,8 @@ namespace April::Gui {
 
 	private:
 		Config const& config;
-		ImFont* font;
+		ImFont* font_cooldown;
+		ImFont* font_uptime;
 	};
 
 }
