@@ -124,7 +124,6 @@
     <ClCompile Include="Source\April\Module\SuppressSpeechBubbles.cpp" />
     <ClCompile Include="Source\April\Module\UwTimer.cpp" />
     <ClCompile Include="Source\April\Module\WindowManager.cpp" />
-    <ClCompile Include="Source\April\Utility\ConfigAssert.cpp" />
     <ClCompile Include="Source\April\Utility\Consumable.cpp" />
     <ClCompile Include="Source\April\Utility\ConsumableState.cpp" />
     <ClCompile Include="Source\April\Utility\DrawStructures.cpp" />
@@ -176,7 +175,6 @@
     <ClInclude Include="Source\April\Module\SuppressSpeechBubbles.h" />
     <ClInclude Include="Source\April\Module\UwTimer.h" />
     <ClInclude Include="Source\April\Module\WindowManager.h" />
-    <ClInclude Include="Source\April\Utility\ConfigAssert.h" />
     <ClInclude Include="Source\April\Utility\Consumable.h" />
     <ClInclude Include="Source\April\Utility\ConsumableState.h" />
     <ClInclude Include="Source\April\Utility\DrawStructures.h" />
