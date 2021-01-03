@@ -927,6 +927,32 @@ namespace {
 
 			if ( ImGui::CollapsingHeader( "Style" ) )
 			{
+				static int layout =
+					config.skills_per_row == 8 ? 0
+					: config.skills_per_row == 4 ? 1
+					: config.skills_per_row == 2 ? 2
+					: config.skills_per_row == 1 ? 3
+					: 0;
+				constexpr const char* layouts[4] =
+					{ "1x8", "2x4", "4x2", "8x1" };
+
+				if ( ImGui::Combo( "Layout", &layout, layouts, 4 ) )
+				{
+					if ( layout == 0 )
+						config.skills_per_row = 8;
+					else if ( layout == 1 )
+						config.skills_per_row = 4;
+					else if ( layout == 2 )
+						config.skills_per_row = 2;
+					else if ( layout == 3 )
+						config.skills_per_row = 1;
+					else
+					{
+						layout = 0;
+						config.skills_per_row = 8;
+					}
+				}
+
 				ImGui::ColorEdit4(
 					"Cooldown",
 					&config.text_color.r,
@@ -937,7 +963,7 @@ namespace {
 					&config.border_color.r,
 					ImGuiColorEditFlags_AlphaPreview );
 
-				ImGui::DragFloat(
+				ImGui::DragFloat2(
 					"Spacing", &config.spacing.x, 0.5f, -10, 10, "%.0f" );
 
 				for (

@@ -175,9 +175,12 @@ void April::Gui::Skillbar::Display() const
 		ImGui::PushStyleColor( ImGuiCol_Text, config.text_color );
 		ImGui::PushStyleColor( ImGuiCol_Border, config.border_color );
 
-		auto const height = ImGui::GetContentRegionAvail().y;
-		for ( auto const& skill : skills )
+		auto const rows_per_col = 8/config.skills_per_row;
+		auto const height = ImGui::GetContentRegionAvail().y / rows_per_col;
+		for ( auto it = 0; it < 8; ++it )
 		{
+			auto const& skill = skills[it];
+
 			ImGui::PushID( &skill );
 			ImGui::PushStyleColor( ImGuiCol_Button, skill.color );
 			ImGui::PushStyleColor( ImGuiCol_ButtonActive, skill.color );
@@ -187,7 +190,9 @@ void April::Gui::Skillbar::Display() const
 				ImGui::PushFont( font_cooldown );
 				ImGui::Button( skill.cooldown, { height, height } );
 				ImGui::PopFont();
-				ImGui::SameLine();
+
+				if ( (it + 1) % config.skills_per_row != 0 )
+					ImGui::SameLine();
 
 				if ( config.show_uptime )
 				{
@@ -235,6 +240,7 @@ auto April::Gui::Skillbar::Config::LoadDefault() -> Config
 		White(),
 		White(),
 		{ -1, -1 },
+		8,
 
 		{
 			{ 4s, Green( 0.25f ) },

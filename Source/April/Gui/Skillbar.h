@@ -24,6 +24,7 @@ namespace April::Gui {
 			RGBA	text_color;
 			RGBA	border_color;
 			XY		spacing;
+			int		skills_per_row;
 
 			std::vector<Threshold>	thresholds;
 			RGBA					color_inactive;
