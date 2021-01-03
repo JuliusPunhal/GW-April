@@ -202,27 +202,34 @@ namespace {
 	}
 
 	template<typename T, auto... I>
-	void toggle_window_impl(
+	bool toggle_window_impl(
 		std::string_view name, T&& tup, std::index_sequence<I...> )
 	{
-		auto try_toggle = [name]( auto const& gui )
+		auto window_found = false;
+		auto try_toggle = [&window_found, name]( auto const& gui )
 		{
 			if ( gui.window.name == name )
+			{
 				gui.window.visible = !gui.window.visible;
+				window_found = true;
+			}
 		};
 
 		( try_toggle( std::get<I>( tup ) ), ... );
+
+		return window_found;
 	}
 
 
 	template<typename T>
-	void toggle_window_by_name( std::string_view name, T&& tup )
+	bool toggle_window_by_name( std::string_view name, T&& tup )
 	{
-		toggle_window_impl(
-			name,
-			std::forward<T>( tup ),
-			std::make_index_sequence<
-				std::tuple_size_v<stl::remove_cvref_t<T>>>{} );
+		return
+			toggle_window_impl(
+				name,
+				std::forward<T>( tup ),
+				std::make_index_sequence<
+					std::tuple_size_v<stl::remove_cvref_t<T>>>{} );
 	}
 
 	bool call_command(
@@ -267,7 +274,6 @@ namespace {
 			if ( ids.empty() )
 			{
 				auto const error = "Could not parse all arguments in: "s;
-
 				GW::WriteChat( PARTY, error + std::string{ cmd.message } );
 				return true;
 			}
@@ -397,7 +403,12 @@ namespace {
 
 		else if ( cmd.cmd == config.toggle_gui )
 		{
-			toggle_window_by_name( cmd.arguments, guis );
+			if ( toggle_window_by_name( cmd.arguments, guis ) == false )
+			{
+				auto const window_name = std::string{ cmd.arguments };
+				GW::WriteChat(
+					PARTY, "Window \"" + window_name + "\" not found!" );
+			}
 			return true;
 		}
 
