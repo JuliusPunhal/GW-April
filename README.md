@@ -7,7 +7,7 @@ with additional features for use in The Underworld.
 
 
 ## Installation
-Binaries can be found on the [Releases Page](https://github.com/JuliusPunhal/GwApril/releases).
+Binaries can be found on the [Releases Page](https://github.com/JuliusPunhal/GW-April/releases).
 
 
 ### Dependencies
