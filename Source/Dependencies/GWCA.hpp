@@ -161,7 +161,7 @@ namespace GW {
 		inline constexpr ObjectiveID Plains = 153;
 		inline constexpr ObjectiveID Mnts = 154;
 		inline constexpr ObjectiveID Pools = 155;
-		inline constexpr ObjectiveID NightmanCometh = 156;
+		inline constexpr ObjectiveID Completed_X_of_10_quests = 156;
 		inline constexpr ObjectiveID Dhuum = 157;
 
 	}
