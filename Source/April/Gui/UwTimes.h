@@ -9,7 +9,7 @@
 
 
 namespace April::Gui {
-	
+
 	class UwTimesGui {
 	public:
 		struct Config {
