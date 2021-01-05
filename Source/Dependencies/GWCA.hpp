@@ -122,6 +122,8 @@ namespace GW {
 	void UseSkill(
 		uint32_t slot_0, GW::AgentLiving const& target, bool ping = false );
 
+	auto GetSkillConstantData( GW::SkillID ) -> GW::Skill const&;
+
 	template<typename Pred>
 	auto SearchBags( int const first, int const last, Pred predicate )
 		-> GW::Item*

@@ -959,7 +959,7 @@ namespace {
 					ImGuiColorEditFlags_AlphaPreview );
 
 				ImGui::ColorEdit4(
-					"Cooldown with HSR",
+					"Reduced Cooldown",
 					&config.hsr_color.r,
 					ImGuiColorEditFlags_AlphaPreview );
 

@@ -8,6 +8,7 @@
 
 #include <array>
 #include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <optional>
 
@@ -20,6 +21,24 @@ namespace {
 
 	auto entry = GW::HookEntry{};
 
+
+	auto can_be_reduced_by_fast_casting( GW::Skill const& info )
+	{
+		auto const profession = static_cast<GW::Profession>( info.profession );
+		auto const type = static_cast<GW::SkillType>( info.type );
+
+		if ( profession != GW::Profession::Mesmer )
+			return false;
+
+		if ( type != GW::SkillType::Spell
+			&& type != GW::SkillType::Hex
+			&& type != GW::SkillType::Enchantment )
+		{
+			return false;
+		}
+
+		return true;
+	}
 
 	auto get_player_fast_casting( GW::AgentID const player_id )
 	{
@@ -38,22 +57,29 @@ namespace {
 		return player->attribute[0].level;
 	}
 
-	auto can_be_reduced_by_fast_casting( GW::Skill const& info )
+	auto expected_recharge(
+		GW::SkillID const skill_id, GW::AgentLiving const& player )
 	{
-		auto const profession = static_cast<GW::Profession>( info.profession );
-		auto const type = static_cast<GW::SkillType>( info.type );
+		auto const& info = GW::GetSkillConstantData( skill_id );
 
-		if ( profession != GW::Profession::Mesmer )
-			return false;
-
-		if ( type != GW::SkillType::Spell
-			&& type != GW::SkillType::Hex
-			&& type != GW::SkillType::Enchantment )
+		auto const fc_reduction = [&player, &info]()
 		{
-			return false;
-		}
+			auto const prof = static_cast<GW::Profession>( player.primary );
+			if ( prof != GW::Profession::Mesmer )
+				return 1.f;
 
-		return true;
+			if ( not can_be_reduced_by_fast_casting( info ) )
+				return 1.f;
+
+			return 1 - get_player_fast_casting( player.agent_id ) * 0.03f;
+		}();
+
+		auto const essence =
+			GW::Effects::GetPlayerEffectById(
+				GW::SkillID::Essence_of_Celerity_item_effect );
+		auto const bu_reduction = essence ? 0.8f : 1.f;
+
+		return std::round( info.recharge * fc_reduction * bu_reduction );
 	}
 
 	auto get_skill_slot( GW::SkillID const id, uint32_t const instance )
@@ -204,33 +230,11 @@ April::Gui::Skillbar::Skillbar( Config const& config )
 			if ( player == nullptr || player->agent_id != packet->agent_id )
 				return;
 
-			auto const& info = GW::SkillbarMgr::GetSkillConstantData( packet->skill_id );
-
-			auto const fc_reduction =
-				can_be_reduced_by_fast_casting( info )
-				? 1 - get_player_fast_casting( player->agent_id ) * 0.03f
-				: 1.f;
-
-			auto const essence =
-				GW::Effects::GetPlayerEffectById(
-					GW::SkillID::Essence_of_Celerity_item_effect );
-			auto const bu_reduction = essence ? 0.8f : 1.f;
-
-			// Only take FC and BU into account as expected modifier, all other
-			// effects (QZ, glyphs, etc) are considered unexpected.
-			auto const expected_recharge =
-				std::round( info.recharge * fc_reduction * bu_reduction );
-
-			auto const recharge_with_hsr =
-				std::round( info.recharge * fc_reduction * 0.5f );
-
-			if ( packet->recharge <= recharge_with_hsr
-				&& recharge_with_hsr < expected_recharge )
+			auto const skill_id = static_cast<GW::SkillID>( packet->skill_id );
+			if ( packet->recharge < expected_recharge( skill_id, *player ) )
 			{
 				auto const slot =
-					get_skill_slot(
-						static_cast<GW::SkillID>( packet->skill_id ),
-						packet->skill_instance );
+					get_skill_slot( skill_id, packet->skill_instance );
 
 				if ( slot == std::nullopt )
 					return;

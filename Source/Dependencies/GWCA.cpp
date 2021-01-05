@@ -36,8 +36,8 @@ auto GW::GetMissionProgress() -> float
 		float					progress;
 		int						unk2[4];	// possibly fewer
 	};
-	
-	auto* bar = 
+
+	auto* bar =
 		reinterpret_cast<ProgressBar*>(
 			GW::GameContext::instance()->character->progress_bar);
 
@@ -55,9 +55,9 @@ auto GW::GetMorale( GW::AgentID const agent_id ) -> Morale
 		Sub* sub;
 	};
 
-	// world->h62c does not seems to ever be nullptr, 
+	// world->h62c does not seems to ever be nullptr,
 	// garbage values when loading
-	auto const* p_array = 
+	auto const* p_array =
 		reinterpret_cast<GW::Array<Unk>*>(
 			&GW::GameContext::instance()->world->h062C );
 
@@ -161,6 +161,12 @@ void GW::UseSkill(uint32_t slot_0, GW::AgentLiving const& target, bool ping)
 		{
 			GW::SkillbarMgr::UseSkill( slot_0, target_id, ping );
 		} );
+}
+
+auto GW::GetSkillConstantData( GW::SkillID const id ) -> GW::Skill const&
+{
+	auto const raw_id = static_cast<uint32_t>( id );
+	return GW::SkillbarMgr::GetSkillConstantData( raw_id );
 }
 
 auto GW::FindUnidentGold() -> GW::Item const*
