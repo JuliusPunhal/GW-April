@@ -9,7 +9,6 @@
 
 #include <array>
 #include <chrono>
-#include <exception>
 #include <optional>
 #include <string>
 
@@ -31,7 +30,8 @@ namespace {
 		dhuum = 10;
 	inline constexpr auto rows = 11;
 
-	inline constexpr auto pops = 0, takes = 1, dones = 2, durations = 3;
+	inline constexpr auto name = -1, pops = 0, takes = 1, dones = 2,
+		durations = 3;
 	inline constexpr auto columns = 4;
 
 	inline constexpr auto lab_reaper = 0;
@@ -103,6 +103,38 @@ namespace {
 		return strings;
 	}
 
+	auto draw_objective(
+		int const objective, TimeStrings const& strings, Config const& config )
+		-> std::optional<int>
+	{
+		assert( objective >= chamber && objective <= dhuum );
+
+		auto send_chat = std::optional<int>{};
+
+		// Quest Name -> full column on click
+		ImGui::PushID( objective * -1 );
+		if ( ImGui::SmallButton( config.quest_names[objective] ) )
+		{
+			send_chat = name;
+		}
+		ImGui::PopID();
+		ImGui::NextColumn();
+
+		// Indiviadual times
+		for ( auto column = pops; column <= durations; ++column )
+		{
+			ImGui::PushID( objective * columns + column );
+			if ( ImGui::SmallButton( strings[column][objective] ) )
+			{
+				send_chat = column;
+			}
+			ImGui::PopID();
+			ImGui::NextColumn();
+		}
+
+		return send_chat;
+	}
+
 	auto full_info(
 		int const objective, TimeStrings const& strings, Config const& config )
 	{
@@ -136,33 +168,44 @@ namespace {
 		return "["s + quest_name + '|' + column_name + "] " + time_str;
 	}
 
-	void draw_objective_row(
-		int const objective, TimeStrings const& strings, Config const& config )
+	auto chat_message(
+		int const objective,
+		int const column,
+		TimeStrings const& strings,
+		Config const& config )
 	{
 		assert( objective >= chamber && objective <= dhuum );
+		assert( column >= name && column <= durations );
 
-		// Quest Name -> full column on click
-		ImGui::PushID( objective * -1 );
-		if ( ImGui::SmallButton( config.quest_names[objective] ) )
-		{
-			auto const str = full_info( objective, strings, config );
-			GW::SendChat( '#', str );
-		}
-		ImGui::PopID();
-		ImGui::NextColumn();
+		if ( column == name )
+			return full_info( objective, strings, config );
 
-		// Indiviadual times
-		for ( auto column = pops; column <= durations; ++column )
+		return chat_str( objective, column, strings, config );
+	}
+
+	auto dhuum_message(
+		int const column, TimeStrings const& strings, Config const& config )
+	{
+		assert( column >= name && column <= durations );
+
+		if ( column == name )
 		{
-			ImGui::PushID( objective * columns + column );
-			if ( ImGui::SmallButton( strings[column][objective] ) )
-			{
-				auto const str = chat_str( objective, column, strings, config );
-				GW::SendChat( '#', str );
-			}
-			ImGui::PopID();
-			ImGui::NextColumn();
+			return "["s + config.quest_names[dhuum] + "] "
+				+ "10/10 " + strings[pops][dhuum] + " | "
+				+ "Hostile " + strings[takes][dhuum] + " | "
+				+ "Done " + strings[dones][dhuum] + " | "
+				+ "Time " + strings[durations][dhuum];
 		}
+		else if ( column == pops )
+		{
+			return "[10/10] " + strings[pops][dhuum];
+		}
+		else if ( column == takes )
+		{
+			return "["s + config.quest_names[dhuum] + "|Hostile] "
+				+ strings[column][dhuum];
+		}
+		else return chat_str( dhuum, column, strings, config );
 	}
 
 }
@@ -191,30 +234,39 @@ void April::Gui::UwTimesGui::Display() const
 		ImGui::PushStyleColor( ImGuiCol_ButtonHovered, White( 0.2f ) );
 		ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, { 0, 0 } );
 		ImGui::Columns( 5 );
+
+		// Current Time
+		if ( ImGui::SmallButton( instance_time_str ) )
 		{
-			// Current Time
-			if ( ImGui::SmallButton( instance_time_str ) )
-			{
-				GW::SendChat( '#', "[/age] " + instance_time_str );
-			}
-			ImGui::NextColumn();
-
-			// Headers
-			for ( auto it = pops; it <= durations; ++it )
-			{
-				ImGui::Text( config.column_names[it] );
-				ImGui::NextColumn();
-			}
-			ImGui::Separator();
-
-			// Quests
-			for ( auto objective = chamber; objective <= pools; ++objective )
-			{
-				draw_objective_row( objective, strings, config );
-			}
-			ImGui::Separator();
-			draw_objective_row( dhuum, strings, config );
+			GW::SendChat( '#', "[/age] " + instance_time_str );
 		}
+		ImGui::NextColumn();
+
+		// Headers
+		for ( auto it = pops; it <= durations; ++it )
+		{
+			ImGui::Text( config.column_names[it] );
+			ImGui::NextColumn();
+		}
+		ImGui::Separator();
+
+		// Quests
+		for ( auto objective = chamber; objective <= pools; ++objective )
+		{
+			auto const clicked = draw_objective( objective, strings, config );
+			if ( clicked == std::nullopt )
+				continue;
+
+			GW::SendChat(
+				'#', chat_message( objective, *clicked, strings, config ) );
+		}
+		ImGui::Separator();
+		if ( auto const clicked = draw_objective( dhuum, strings, config );
+			clicked )
+		{
+			GW::SendChat( '#', dhuum_message( *clicked, strings, config ) );
+		}
+
 		ImGui::Columns( 1 );
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor( 3 );
