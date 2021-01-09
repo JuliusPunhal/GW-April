@@ -67,15 +67,6 @@ namespace April {
 
 	class Modules {
 	public:
-		Modules( std::shared_ptr<UwTimes> );
-
-		void Update();
-		void Display();
-
-		void Shutdown();
-
-
-	private:
 		using Active =
 			std::tuple<
 				std::shared_ptr<ConsumablesMgr>,
@@ -111,10 +102,24 @@ namespace April {
 				std::unique_ptr<Gui::TargetInfo>,
 				std::unique_ptr<Gui::UwTimesGui>>;
 
-		ModuleConfigurations config;
+
+		Modules(
+			Active&&,
+			Passive&&,
+			Guis&&,
+			std::unique_ptr<ModuleConfigurations> );
+
+		void Update();
+		void Display();
+
+		void Shutdown();
+
+
+	private:
 		Active active;
 		Passive passive;
 		Guis gui;
+		std::unique_ptr<ModuleConfigurations> config;
 	};
 
 }

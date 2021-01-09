@@ -3,6 +3,7 @@
 
 #include "April/Framework/Modules.h"
 #include "April/Framework/WndProc.h"
+#include "April/Utility/FileIO.h"
 
 #include "Dependencies/GWCA.hpp"
 #include "Dependencies/ImGui.hpp"
@@ -159,6 +160,17 @@ namespace {
 		//col[ImGuiCol_ModalWindowDimBg]      = { 0.80f, 0.80f, 0.80f, 0.35f };
 	}
 
+	template<typename T>
+	auto load_config()
+	{
+		auto const config = April::IO::from_file<T>( T::path );
+		if ( config == std::nullopt )
+			return T::LoadDefault();
+
+		return *config;
+	}
+
+
 	void RenderCallback_Shutdown( IDirect3DDevice9* )
 	{
 		GW::DisableHooks();
@@ -210,8 +222,131 @@ namespace {
 		io.IniFilename = "April\\imgui.ini";
 		default_style( ImGui::GetStyle() );
 
-		auto uw_times = std::make_shared<April::UwTimes>();
-		modules = std::make_unique<April::Modules>( std::move( uw_times ) );
+
+		using namespace April;
+		auto uw_times = std::make_shared<UwTimes>();
+
+		auto config = std::make_unique<ModuleConfigurations>(
+			ModuleConfigurations{
+				{
+					load_config<ConsumablesMgr::Config>(),
+				},
+				{
+					load_config<AgentFilter::Config>(),
+					load_config<ChatCommands::Config>(),
+					load_config<ChatFilter::Config>(),
+					load_config<NotifyEffectLoss::Config>(),
+					load_config<ReturnToOutpost::Config>(),
+					load_config<ShowKitUses::Config>(),
+					load_config<SuppressSpeechBubbles::Config>(),
+				},
+				{
+					load_config<Gui::ChainedSoulGui::Config>(),
+					load_config<Gui::DhuumBotGui::Config>(),
+					load_config<Gui::DhuumInfo::Config>(),
+					load_config<Gui::Dialogs::Config>(),
+					load_config<Gui::Energybar::Config>(),
+					load_config<Gui::Healthbar::Config>(),
+					load_config<Gui::InstanceTimer::Config>(),
+					load_config<Gui::Inventory::Config>(),
+					load_config<Gui::Settings::Config>(),
+					load_config<Gui::Skillbar::Config>(),
+					load_config<Gui::TargetInfo::Config>(),
+					load_config<Gui::UwTimesGui::Config>(),
+				}
+			} );
+
+		auto active = Modules::Active{
+			std::make_shared<ConsumablesMgr>(
+				std::get<ConsumablesMgr::Config>( config->active ) ),
+
+			std::make_shared<ChainedSoul>(),
+
+			std::make_shared<DhuumBot>(),
+
+			std::make_shared<DhuumsJudgement>(),
+
+			std::make_shared<UwTimer>( uw_times ),
+
+			std::make_unique<WindowMgr>( *config )
+		};
+
+		auto passive = Modules::Passive{
+			std::make_unique<AgentFilter>(
+				std::get<AgentFilter::Config>( config->passive ) ),
+
+			std::make_unique<ChatCommands>(
+				std::get<std::shared_ptr<ConsumablesMgr>>( active ),
+				*config,
+				std::get<ChatCommands::Config>( config->passive ) ),
+
+			std::make_unique<ChatFilter>(
+				std::get<ChatFilter::Config>( config->passive ) ),
+
+			std::make_unique<CursorFix>(),
+
+			std::make_unique<NotifyEffectLoss>(
+				std::get<NotifyEffectLoss::Config>( config->passive ) ),
+
+			std::make_unique<ReturnToOutpost>(
+				std::get<ReturnToOutpost::Config>( config->passive ) ),
+
+			std::make_unique<ShowKitUses>(
+				std::get<ShowKitUses::Config>( config->passive ) ),
+
+			std::make_unique<SuppressSpeechBubbles>(
+				std::get<SuppressSpeechBubbles::Config>( config->passive ) )
+		};
+
+		auto gui = Modules::Guis{
+			std::make_unique<Gui::ChainedSoulGui>(
+				std::get<std::shared_ptr<ChainedSoul>>( active ),
+				std::get<Gui::ChainedSoulGui::Config>( config->gui ) ),
+
+			std::make_unique<Gui::Energybar>(
+				std::get<Gui::Energybar::Config>( config->gui ) ),
+
+			std::make_unique<Gui::DhuumBotGui>(
+				std::get<std::shared_ptr<DhuumBot>>( active ),
+				std::get<Gui::DhuumBotGui::Config>( config->gui ) ),
+
+			std::make_unique<Gui::DhuumInfo>(
+				std::get<std::shared_ptr<DhuumsJudgement>>( active ),
+				std::get<Gui::DhuumInfo::Config>( config->gui ) ),
+
+			std::make_unique<Gui::Dialogs>(
+				std::get<Gui::Dialogs::Config>( config->gui ) ),
+
+			std::make_unique<Gui::Healthbar>(
+				std::get<Gui::Healthbar::Config>( config->gui ) ),
+
+			std::make_unique<Gui::InstanceTimer>(
+				std::get<Gui::InstanceTimer::Config>( config->gui ) ),
+
+			std::make_unique<Gui::Inventory>(
+				std::get<std::shared_ptr<ConsumablesMgr>>( active ),
+				std::get<Gui::Inventory::Config>( config->gui ) ),
+
+			std::make_unique<Gui::Settings>( *config ),
+
+			std::make_unique<Gui::Skillbar>(
+				std::get<Gui::Skillbar::Config>( config->gui ) ),
+
+			std::make_unique<Gui::TargetInfo>(
+				std::get<Gui::TargetInfo::Config>( config->gui ) ),
+
+			std::make_unique<Gui::UwTimesGui>(
+				uw_times,
+				std::get<Gui::UwTimesGui::Config>( config->gui ) )
+		};
+
+		modules =
+			std::make_unique<Modules>(
+				std::move( active ),
+				std::move( passive ),
+				std::move( gui ),
+				std::move( config ) );
+
 
 		GW::Render::SetRenderCallback( RenderCallback );
 	}
