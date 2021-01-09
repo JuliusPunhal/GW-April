@@ -208,19 +208,7 @@ auto April::IO::to_string( AgentFilter::Config const& config ) -> std::string
 
 auto April::IO::to_string( ChatCommands::Config const& config ) -> std::string
 {
-	return tup_to_string(
-		config.abbreviations,
-		config.sendchat,
-		config.writechat,
-		config.openxunlai,
-		config.activate_pcons,
-		config.deactivate_pcons,
-		config.activate_persistent,
-		config.deactivate_persistent,
-		config.set_deactivating_objective,
-		config.toggle_gui,
-		config.show_suppressed_items,
-		config.exit );
+	return tup_to_string( config.abbreviations );
 }
 
 auto April::IO::to_string( ChatFilter::Config const& config ) -> std::string
@@ -762,10 +750,7 @@ template<> auto April::IO::from_string( std::string_view str )
 	return
 		t_from_string<
 			ChatCommands::Config,
-			std::vector<ChatCommands::Config::Abbreviation>, std::string,
-			std::string, std::string, std::string, std::string, std::string,
-			std::string, std::string, std::string, std::string, std::string>(
-				str );
+			std::vector<ChatCommands::Config::Abbreviation>>( str );
 }
 
 template<> auto April::IO::from_string( std::string_view str )

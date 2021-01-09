@@ -16,6 +16,7 @@ using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 using April::AgentFilter;
+using April::ChatCommands;
 using April::ConsumablesMgr;
 using Guis = April::ModuleConfigurations::Gui;
 using Config = April::ChatCommands::Config;
@@ -237,12 +238,11 @@ namespace {
 		cli const& cmd,
 		AgentFilter& agent_filter,
 		ConsumablesMgr& consumables,
-		Guis& guis,
-		Config const& config )
+		Guis& guis )
 	{
 		using namespace April;
 
-		if ( cmd.cmd == config.sendchat )
+		if ( cmd.cmd == ChatCommands::cmd_sendchat )
 		{
 			if ( cmd.arguments.size() > 0 )
 			{
@@ -253,7 +253,7 @@ namespace {
 			}
 		}
 
-		else if ( cmd.cmd == config.writechat )
+		else if ( cmd.cmd == ChatCommands::cmd_writechat )
 		{
 			if ( cmd.arguments.size() > 0 )
 			{
@@ -264,7 +264,7 @@ namespace {
 			}
 		}
 
-		else if ( cmd.cmd == config.activate_pcons )
+		else if ( cmd.cmd == ChatCommands::cmd_pcons_on )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "off" )
 			{
@@ -289,7 +289,7 @@ namespace {
 		}
 
 		// TODO: CLI-Argument to specify persistence (--persistent?)
-		else if ( cmd.cmd == config.activate_persistent )
+		else if ( cmd.cmd == ChatCommands::cmd_persistent_on )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "off" )
 			{
@@ -313,7 +313,7 @@ namespace {
 			return true;
 		}
 
-		else if ( cmd.cmd == config.deactivate_pcons )
+		else if ( cmd.cmd == ChatCommands::cmd_pcons_off )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "all" )
 			{
@@ -338,7 +338,7 @@ namespace {
 		}
 
 		// TODO: CLI-Argument to specify persistence (--persistent?)
-		else if ( cmd.cmd == config.deactivate_persistent )
+		else if ( cmd.cmd == ChatCommands::cmd_persistent_off )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "all" )
 			{
@@ -362,7 +362,7 @@ namespace {
 			return true;
 		}
 
-		else if ( cmd.cmd == config.set_deactivating_objective )
+		else if ( cmd.cmd == ChatCommands::cmd_pcons_objective )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "off" )
 			{
@@ -382,7 +382,7 @@ namespace {
 			return true;
 		}
 
-		else if ( cmd.cmd == config.openxunlai )
+		else if ( cmd.cmd == ChatCommands::cmd_openxunlai )
 		{
 			if ( GW::GetInstanceType() != GW::InstanceType::Outpost )
 			{
@@ -403,7 +403,7 @@ namespace {
 			return true;
 		}
 
-		else if ( cmd.cmd == config.toggle_gui )
+		else if ( cmd.cmd == ChatCommands::cmd_toggle_gui )
 		{
 			if ( toggle_window_by_name( cmd.arguments, guis ) == false )
 			{
@@ -414,7 +414,7 @@ namespace {
 			return true;
 		}
 
-		else if ( cmd.cmd == config.show_suppressed_items )
+		else if ( cmd.cmd == ChatCommands::cmd_show_suppressed )
 		{
 			auto const size = agent_filter.size();
 			agent_filter.DisplaySuppressedItems();
@@ -424,7 +424,7 @@ namespace {
 			return true;
 		}
 
-		else if ( cmd.cmd == config.exit )
+		else if ( cmd.cmd == ChatCommands::cmd_exit )
 		{
 			April::Die();
 			return true;
@@ -453,7 +453,7 @@ namespace {
 				cmd.remove_suffix( 1 );
 
 			auto const cli = parse_cmd( cmd );
-			if ( call_command( cli, agent_filter, consumables, guis, config ) )
+			if ( call_command( cli, agent_filter, consumables, guis ) )
 			{
 				status->blocked = true;
 			}
@@ -499,7 +499,14 @@ auto April::ChatCommands::Config::LoadDefault() -> Config
 {
 	namespace ModelID = GW::Constants::ItemID;
 
-	auto abbreviations = std::vector<Abbreviation>{
+	return Config{{
+		// Commands
+		{ "/x",				cmd_openxunlai },
+		{ "/s",				cmd_pcons_on },
+		{ "/s_off",			cmd_pcons_off },
+		{ "/sp",			cmd_persistent_on },
+		{ "/sp_off",		cmd_persistent_off },
+		{ "/q",				cmd_pcons_objective },
 		// Consumables
 		{ "cupcake",		std::to_string( ModelID::Cupcakes ) },
 		{ "apple",			std::to_string( ModelID::Apples ) },
@@ -536,22 +543,5 @@ auto April::ChatCommands::Config::LoadDefault() -> Config
 		{ "ident",			std::to_string( ModelID::IdentKit_Superior ) },
 		{ "perma",			"/sp miku ident" },
 		{ "/t4",			"/s base lunars /q plains" }
-	};
-
-	auto const config = Config{
-		std::move( abbreviations ),
-		"/sendchat",
-		"/writechat",
-		"/x",
-		"/s",
-		"/s_off",
-		"/sp",
-		"/sp_off",
-		"/q",
-		"/gui",
-		"/show_suppressed",
-		"/exit"
-	};
-
-	return config;
+	}};
 }

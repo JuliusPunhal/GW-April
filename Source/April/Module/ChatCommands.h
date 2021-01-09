@@ -21,18 +21,6 @@ namespace April {
 
 			std::vector<Abbreviation> abbreviations;
 
-			std::string sendchat;		// send to teamchat
-			std::string writechat;		// only for user
-			std::string openxunlai;
-			std::string activate_pcons;
-			std::string deactivate_pcons;
-			std::string activate_persistent;
-			std::string deactivate_persistent;
-			std::string set_deactivating_objective;
-			std::string toggle_gui;
-			std::string show_suppressed_items;
-			std::string exit;
-
 			static auto LoadDefault() -> Config;
 			static constexpr auto path = "April\\ChatCommands.ini";
 		};
@@ -43,6 +31,19 @@ namespace April {
 			std::shared_ptr<ConsumablesMgr>,
 			ModuleConfigurations&,
 			Config const& );
+
+
+		static constexpr auto cmd_sendchat =		"/sendchat";
+		static constexpr auto cmd_writechat =		"/writechat";
+		static constexpr auto cmd_openxunlai =		"/xunlai";
+		static constexpr auto cmd_pcons_on =		"/pcons_on";
+		static constexpr auto cmd_pcons_off =		"/pcons_off";
+		static constexpr auto cmd_persistent_on =	"/persistent_on";
+		static constexpr auto cmd_persistent_off =	"/persistent_off";
+		static constexpr auto cmd_pcons_objective = "/objective";
+		static constexpr auto cmd_toggle_gui =		"/gui";
+		static constexpr auto cmd_show_suppressed = "/show_suppressed";
+		static constexpr auto cmd_exit =			"/exit";
 
 
 	private:

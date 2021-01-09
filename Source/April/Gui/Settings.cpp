@@ -287,35 +287,6 @@ namespace {
 
 			ImGui::PushItemWidth( ImGui::GetContentRegionAvail().x * 0.25f );
 
-			auto const draw_cmd = []( char const* label, auto& str )
-			{
-				char buf[128] = {};
-				str.copy( buf, sizeof( buf ) );
-				buf[127] = '\0';
-
-				if ( ImGui::InputText(
-					label,
-					buf, sizeof( buf ),
-					ImGuiInputTextFlags_CharsNoBlank ) )
-				{
-					str = std::string{ std::begin( buf ), std::end( buf ) };
-				}
-			};
-
-			draw_cmd( "Sent to Teamchat", config.sendchat );
-			draw_cmd( "Write to Chat", config.writechat );
-			draw_cmd( "Open Xunlai", config.openxunlai );
-			draw_cmd( "Activate Consumables", config.activate_pcons );
-			draw_cmd( "Deactivate Consumables", config.deactivate_pcons );
-			draw_cmd( "Activate permanently", config.activate_persistent );
-			draw_cmd( "Dectivate permanently", config.deactivate_persistent );
-			draw_cmd( "Set objective", config.set_deactivating_objective );
-			draw_cmd( "Toggle Gui", config.toggle_gui );
-			draw_cmd( "Show suppressed items", config.show_suppressed_items );
-			draw_cmd( "Shut Down", config.exit );
-
-			ImGui::Separator();
-
 			for (
 				auto it = config.abbreviations.begin();
 				it != config.abbreviations.end();
