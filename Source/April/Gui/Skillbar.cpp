@@ -66,20 +66,21 @@ namespace {
 		{
 			auto const prof = static_cast<GW::Profession>( player.primary );
 			if ( prof != GW::Profession::Mesmer )
-				return 1.f;
+				return 1.0;
 
 			if ( not can_be_reduced_by_fast_casting( info ) )
-				return 1.f;
+				return 1.0;
 
-			return 1 - get_player_fast_casting( player.agent_id ) * 0.03f;
+			return 1 - get_player_fast_casting( player.agent_id ) * 0.03;
 		}();
 
 		auto const essence =
 			GW::Effects::GetPlayerEffectById(
 				GW::SkillID::Essence_of_Celerity_item_effect );
-		auto const bu_reduction = essence ? 0.8f : 1.f;
+		auto const bu_reduction = essence ? 0.8 : 1.0;
 
-		return std::round( info.recharge * fc_reduction * bu_reduction );
+		// std::nearbyint() rounds half-even like GW; requires double here
+		return std::nearbyint( info.recharge * fc_reduction * bu_reduction );
 	}
 
 	auto get_skill_slot( GW::SkillID const id, uint32_t const instance )
