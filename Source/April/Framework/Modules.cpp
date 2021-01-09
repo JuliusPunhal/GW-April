@@ -60,5 +60,5 @@ void April::Modules::Display()
 
 void April::Modules::Shutdown()
 {
-	std::get<std::unique_ptr<AgentFilter>>( passive )->DisplaySuppressedItems();
+	std::get<std::shared_ptr<AgentFilter>>( passive )->DisplaySuppressedItems();
 }

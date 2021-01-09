@@ -26,12 +26,14 @@ namespace April {
 
 		void DisplaySuppressedItems();
 
+		auto size() const noexcept { return suppressed_packets.size(); }
+
 
 	private:
 		Config const& config;
 		std::vector<GW::Packet::StoC::AgentAdd> suppressed_packets;
 		std::unordered_map<GW::ItemID, GW::AgentID> item_owners;
-				
+
 		void OnSpawn( GW::HookStatus*, GW::Packet::StoC::AgentAdd const& );
 		void OnDespawn( GW::HookStatus*, GW::Packet::StoC::AgentRemove const& );
 		void UpdateOwner( GW::Packet::StoC::UpdateItemOwner const& );

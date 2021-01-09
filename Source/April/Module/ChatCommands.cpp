@@ -15,6 +15,7 @@
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
+using April::AgentFilter;
 using April::ConsumablesMgr;
 using Guis = April::ModuleConfigurations::Gui;
 using Config = April::ChatCommands::Config;
@@ -234,6 +235,7 @@ namespace {
 
 	bool call_command(
 		cli const& cmd,
+		AgentFilter& agent_filter,
 		ConsumablesMgr& consumables,
 		Guis& guis,
 		Config const& config )
@@ -412,6 +414,16 @@ namespace {
 			return true;
 		}
 
+		else if ( cmd.cmd == config.show_suppressed_items )
+		{
+			auto const size = agent_filter.size();
+			agent_filter.DisplaySuppressedItems();
+			GW::WriteChat(
+				PARTY, "Revealed " + std::to_string( size ) + " items." );
+
+			return true;
+		}
+
 		else if ( cmd.cmd == config.exit )
 		{
 			April::Die();
@@ -424,6 +436,7 @@ namespace {
 	void on_message(
 		GW::HookStatus* status,
 		std::string msg,
+		AgentFilter& agent_filter,
 		ConsumablesMgr& consumables,
 		Guis& guis,
 		Config const& config )
@@ -440,7 +453,7 @@ namespace {
 				cmd.remove_suffix( 1 );
 
 			auto const cli = parse_cmd( cmd );
-			if ( call_command( cli, consumables, guis, config ) )
+			if ( call_command( cli, agent_filter, consumables, guis, config ) )
 			{
 				status->blocked = true;
 			}
@@ -453,11 +466,15 @@ namespace {
 
 
 April::ChatCommands::ChatCommands(
+	std::shared_ptr<AgentFilter> filter,
 	std::shared_ptr<ConsumablesMgr> cons,
 	ModuleConfigurations& configs,
 	Config const& config )
 	:
-	consumables{ std::move( cons ) }, configs{ configs }, config{ config }
+	agent_filter{ std::move( filter ) },
+	consumables{ std::move( cons ) },
+	configs{ configs },
+	config{ config }
 {
 	// Callbacks will only be cleaned up during GWCA shutdown.
 	GW::Chat::RegisterSendChatCallback(
@@ -474,7 +491,7 @@ April::ChatCommands::ChatCommands(
 			}
 			buf[127] = '\0';
 
-			on_message( s, buf, *consumables, this->configs.gui, this->config );
+			on_message( s, buf, *agent_filter, *consumables, this->configs.gui, this->config );
 		} );
 }
 
@@ -532,6 +549,7 @@ auto April::ChatCommands::Config::LoadDefault() -> Config
 		"/sp_off",
 		"/q",
 		"/gui",
+		"/show_suppressed",
 		"/exit"
 	};
 

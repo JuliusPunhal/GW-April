@@ -78,7 +78,7 @@ namespace April {
 
 		using Passive =
 			std::tuple<
-				std::unique_ptr<AgentFilter>,
+				std::shared_ptr<AgentFilter>,
 				std::unique_ptr<ChatCommands>,
 				std::unique_ptr<ChatFilter>,
 				std::unique_ptr<CursorFix>,

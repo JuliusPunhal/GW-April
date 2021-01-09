@@ -271,11 +271,15 @@ namespace {
 			std::make_unique<WindowMgr>( *config )
 		};
 
+		auto agent_filter =
+			std::make_shared<AgentFilter>(
+				std::get<AgentFilter::Config>( config->passive ) );
+
 		auto passive = Modules::Passive{
-			std::make_unique<AgentFilter>(
-				std::get<AgentFilter::Config>( config->passive ) ),
+			agent_filter,
 
 			std::make_unique<ChatCommands>(
+				agent_filter,
 				std::get<std::shared_ptr<ConsumablesMgr>>( active ),
 				*config,
 				std::get<ChatCommands::Config>( config->passive ) ),

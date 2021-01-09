@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Module/AgentFilter.h"
 #include "April/Module/ConsumablesMgr.h"
 namespace April { struct ModuleConfigurations; }
 
@@ -29,6 +30,7 @@ namespace April {
 			std::string deactivate_persistent;
 			std::string set_deactivating_objective;
 			std::string toggle_gui;
+			std::string show_suppressed_items;
 			std::string exit;
 
 			static auto LoadDefault() -> Config;
@@ -36,13 +38,15 @@ namespace April {
 		};
 
 
-		ChatCommands( 
-			std::shared_ptr<ConsumablesMgr>, 
+		ChatCommands(
+			std::shared_ptr<AgentFilter>,
+			std::shared_ptr<ConsumablesMgr>,
 			ModuleConfigurations&,
 			Config const& );
 
 
 	private:
+		std::shared_ptr<AgentFilter> agent_filter;
 		std::shared_ptr<ConsumablesMgr> consumables;
 		ModuleConfigurations& configs;
 		Config const& config;
