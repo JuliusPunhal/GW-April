@@ -240,6 +240,14 @@ namespace {
 
 			ImGui::Checkbox( "Activate Agent Filter", &config.active );
 
+			if ( ImGui::Button( "Show suppressed items" ) )
+			{
+				// This is a horrible solution but since cmd_show_suppressed is
+				// now a compiletime-constant, it should not break.
+				auto const cmd = April::ChatCommands::cmd_show_suppressed;
+				GW::SendChat( '/', &cmd[1] );
+			}
+
 			if ( ImGui::CollapsingHeader( "Visible Player Items" ) )
 			{
 				ImGui::Indent();
