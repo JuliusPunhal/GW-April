@@ -96,7 +96,7 @@ namespace April::IO {
 	template<> auto from_string( std::string_view )
 		-> std::optional<Gui::DhuumBotGui::Config>;
 
-	template<> auto from_string( std::string_view ) 
+	template<> auto from_string( std::string_view )
 		-> std::optional<Gui::DhuumInfo::Config>;
 
 	template<> auto from_string( std::string_view )

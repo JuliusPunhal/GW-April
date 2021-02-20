@@ -48,16 +48,16 @@ April::ReturnToOutpost::ReturnToOutpost( Config const& config )
 	: config{ config }
 {
 	// Callback will only be cleaned up during GWCA shutdown.
-	GW::StoC::RegisterPacketCallback<PartyDefeated>( 
-		&entry, 
+	GW::StoC::RegisterPacketCallback<PartyDefeated>(
+		&entry,
 		[this]( auto*, auto* ) { if ( this->config.active ) try_return(); } );
 }
 
 auto April::ReturnToOutpost::Config::LoadDefault() -> Config
 {
 	auto const config = Config{
-		true 
+		true
 	};
-	
+
 	return config;
 }

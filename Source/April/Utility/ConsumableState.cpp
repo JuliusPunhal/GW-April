@@ -20,7 +20,7 @@ namespace {
 
 		return uptime > 1s || uptime < -1s; // account for permanent effects
 	}
-	
+
 	bool is_disguised()
 	{
 		return is_active( GW::SkillID::Disguised_verification_requested )
@@ -54,7 +54,7 @@ auto April::CState<April::RockCandy>::get_state( RockCandy const& consumable )
 		return Active{};
 
 	auto const slowed =
-		is_active( GW::SkillID::Crippled ) 
+		is_active( GW::SkillID::Crippled )
 		|| is_active( GW::SkillID::Tar );
 
 	if ( slowed )
@@ -155,7 +155,7 @@ auto April::CState<April::Tonic>::get_state( Tonic )
 		return NotDisguised{};
 }
 
-auto April::consumable_state( Consumable const& consumable ) 
+auto April::consumable_state( Consumable const& consumable )
 -> ConsumableState
 {
 	auto const get_state = []( auto const& cons ) -> ConsumableState

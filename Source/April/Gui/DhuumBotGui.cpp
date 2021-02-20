@@ -6,9 +6,9 @@
 #include "Dependencies/ImGui.hpp"
 
 
-April::Gui::DhuumBotGui::DhuumBotGui( 
+April::Gui::DhuumBotGui::DhuumBotGui(
 	std::shared_ptr<DhuumBot> bot, Config const& config )
-	: 
+	:
 	bot{ std::move( bot ) }, config{ config }
 {
 }

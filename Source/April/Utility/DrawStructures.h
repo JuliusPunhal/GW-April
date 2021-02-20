@@ -38,7 +38,7 @@ namespace April {
 
 		return XY{ x, y };
 	}
-	
+
 
 	struct FontInfo {
 		std::string path;

@@ -18,7 +18,7 @@ namespace April::Gui {
 		TargetInfo( Config const& );
 
 		void Display() const;
-	
+
 
 	private:
 		Config const& config;

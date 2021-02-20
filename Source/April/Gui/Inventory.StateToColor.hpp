@@ -8,7 +8,7 @@
 
 namespace April::Gui {
 
-	constexpr auto StateToColor( 
+	constexpr auto StateToColor(
 		CState<Trivial>::State const state, Inventory::Config const& c )
 	{
 		using S = CState<Trivial>;
@@ -20,7 +20,7 @@ namespace April::Gui {
 		};
 		return std::visit( visitor, state );
 	}
-	constexpr auto StateToColor( 
+	constexpr auto StateToColor(
 		CState<RockCandy>::State const state, Inventory::Config const& c )
 	{
 		using S = CState<RockCandy>;
@@ -33,7 +33,7 @@ namespace April::Gui {
 		};
 		return std::visit( visitor, state );
 	}
-	constexpr auto StateToColor( 
+	constexpr auto StateToColor(
 		CState<Conset>::State const state, Inventory::Config const& c )
 	{
 		using S = CState<Conset>;
@@ -47,7 +47,7 @@ namespace April::Gui {
 		return std::visit( visitor, state );
 	}
 
-	constexpr auto StateToColor( 
+	constexpr auto StateToColor(
 		CState<LunarFortune>::State const state, Inventory::Config const& c )
 	{
 		using S = CState<LunarFortune>;
@@ -59,7 +59,7 @@ namespace April::Gui {
 		};
 		return std::visit( visitor, state );
 	}
-	constexpr auto StateToColor( 
+	constexpr auto StateToColor(
 		CState<Alcohol>::State const state, Inventory::Config const& c )
 	{
 		using S = CState<Alcohol>;
@@ -71,7 +71,7 @@ namespace April::Gui {
 		};
 		return std::visit( visitor, state );
 	}
-	constexpr auto StateToColor( 
+	constexpr auto StateToColor(
 		CState<SummoningStone>::State const state, Inventory::Config const& c )
 	{
 		using S = CState<SummoningStone>;
@@ -86,7 +86,7 @@ namespace April::Gui {
 		};
 		return std::visit( visitor, state );
 	}
-	constexpr auto StateToColor( 
+	constexpr auto StateToColor(
 		CState<IdentKit>::State const state, Inventory::Config const& c )
 	{
 		using S = CState<IdentKit>;
@@ -98,7 +98,7 @@ namespace April::Gui {
 		};
 		return std::visit( visitor, state );
 	}
-	constexpr auto StateToColor( 
+	constexpr auto StateToColor(
 		CState<MoraleBooster>::State const state, Inventory::Config const& c )
 	{
 		using S = CState<MoraleBooster>;
@@ -111,7 +111,7 @@ namespace April::Gui {
 		};
 		return std::visit( visitor, state );
 	}
-	constexpr auto StateToColor( 
+	constexpr auto StateToColor(
 		CState<Tonic>::State const state, Inventory::Config const& c )
 	{
 		using S = CState<Tonic>;
@@ -126,9 +126,9 @@ namespace April::Gui {
 			[&]( S::NotDisguised )		{ return c.need_not_use; }
 		};
 		return std::visit( visitor, state );
-	}	
+	}
 
-	constexpr auto StateToColor( 
+	constexpr auto StateToColor(
 		ConsumableState const& state, Inventory::Config const& config )
 	{
 		auto const get_col = [&]( auto&& cstate )

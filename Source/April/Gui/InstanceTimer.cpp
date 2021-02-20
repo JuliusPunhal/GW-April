@@ -17,7 +17,7 @@ void April::Gui::InstanceTimer::Display() const
 {
 	// Update
 	auto const label = to_string( GW::GetInstanceTime(), HMMSS );
-	
+
 	// Draw
 	if ( ImGui::Begin( config.window ) )
 	{
@@ -37,7 +37,7 @@ void April::Gui::InstanceTimer::Display() const
 		}
 		ImGui::PopStyleColor();
 
-		// Button 
+		// Button
 		ImGui::SetCursorPos( cursor );
 		ImGui::PushStyleColor( ImGuiCol_Text, config.text_color );
 		ImGui::PushStyleColor( ImGuiCol_Button, Invisible() );
@@ -57,8 +57,8 @@ void April::Gui::InstanceTimer::Display() const
 
 auto April::Gui::InstanceTimer::Config::LoadDefault() -> Config
 {
-	constexpr auto wnd_flags = 
-		ImGuiWindowFlags_NoTitleBar 
+	constexpr auto wnd_flags =
+		ImGuiWindowFlags_NoTitleBar
 		| ImGuiWindowFlags_NoResize
 		| ImGuiWindowFlags_NoMove
 		| ImGuiWindowFlags_NoScrollbar
@@ -69,7 +69,7 @@ auto April::Gui::InstanceTimer::Config::LoadDefault() -> Config
 		| ImGuiWindowFlags_NoFocusOnAppearing
 		| ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-	auto const config = Config{ 
+	auto const config = Config{
 		{ "C:\\Windows\\Fonts\\Consola.ttf", 30 },
 		White(),
 		Black(),

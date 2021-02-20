@@ -45,7 +45,7 @@ April::DhuumsJudgement::DhuumsJudgement()
 	GW::StoC::RegisterPacketCallback<SkillActivate>(
 		&entry, [this]( auto*, auto* packet ) { update( *packet, last); } );
 
-	GW::StoC::RegisterPacketCallback<MapLoaded>( 
+	GW::StoC::RegisterPacketCallback<MapLoaded>(
 		&entry, [this]( auto*, auto* ) { last = -1ms; } );
 }
 
@@ -53,7 +53,7 @@ void April::DhuumsJudgement::Update()
 {
 	auto const* p_dhuum = get_dhuum();
 	if ( p_dhuum == nullptr ) return;
-	
+
 	auto const skill = static_cast<GW::SkillID>(p_dhuum->skill);
 	if ( skill == GW::SkillID::Judgment_of_Dhuum )
 	{

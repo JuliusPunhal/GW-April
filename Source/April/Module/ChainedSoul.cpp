@@ -15,10 +15,10 @@ namespace {
 		for ( auto const* agent : GW::Agents::GetAgentArray() )
 		{
 			if ( agent == nullptr ) continue;
-			
+
 			auto const* const living = agent->GetAsAgentLiving();
 			if ( living == nullptr ) continue;
-			
+
 			if ( living->player_number == ChainedSoul
 				&& living->pos == GW::GamePos{ 11427, 5079, 0 } )
 			{

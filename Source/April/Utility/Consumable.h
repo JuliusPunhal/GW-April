@@ -43,12 +43,12 @@ namespace April {
 		GW::ItemID	model_id;
 		int			max_boost; // e.g. PumpkinCookie: max_boost = 10;
 	};
-	
+
 	struct Tonic {
 		GW::ItemID model_id;
 	};
 
-		
+
 	using Consumable = std::variant<
 		Trivial, RockCandy, Conset, LunarFortune, Alcohol, SummoningStone,
 		IdentKit, MoraleBooster, Tonic>;
@@ -62,7 +62,7 @@ namespace April {
 	constexpr bool operator==( Consumable const& lhs, Consumable const rhs )
 	{
 		return std::visit(
-			[]( auto const& left, auto const& right ) 
+			[]( auto const& left, auto const& right )
 			{
 				return left.model_id == right.model_id;
 			},

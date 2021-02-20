@@ -13,7 +13,7 @@ namespace April {
 
 
 		unique_vector() = default;
-		
+
 		unique_vector( std::vector<Element_t> const& vec )
 			: elements{ vec }
 		{
@@ -35,19 +35,19 @@ namespace April {
 
 		auto size() const noexcept { return elements.size(); }
 		auto empty() const noexcept { return elements.empty(); }
-				
+
 		auto begin() const noexcept { return elements.begin(); }
 		auto end() const noexcept { return elements.end(); }
-		
+
 		auto cbegin() const noexcept { return elements.begin(); }
 		auto cend() const noexcept { return elements.end(); }
-				
+
 		auto rbegin() const noexcept { return elements.rbegin(); }
 		auto rend() const noexcept { return elements.rend(); }
-		
+
 		auto crbegin() const noexcept { return elements.crbegin(); }
 		auto crend() const noexcept { return elements.crend(); }
-		
+
 		auto operator[]( size_type const it ) const -> Element_t const&
 		{
 			return elements[it];
@@ -82,7 +82,7 @@ namespace April {
 
 		bool is_present( Element_t const& el ) const noexcept
 		{
-			return std::find( elements.begin(), elements.end(), el ) 
+			return std::find( elements.begin(), elements.end(), el )
 				!= elements.end();
 		}
 		void remove_duplicates() noexcept
@@ -97,7 +97,7 @@ namespace April {
 				return last;
 			};
 
-			elements.erase( 
+			elements.erase(
 				remove_duplicates( elements.begin(), elements.end() ) );
 		}
 

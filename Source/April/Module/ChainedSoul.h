@@ -43,7 +43,7 @@ namespace April {
 				};
 			return std::visit( tot_visitor, state );
 		}
-		
+
 
 	private:
 		SoulState state = OutOfRange{};

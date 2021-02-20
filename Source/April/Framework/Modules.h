@@ -34,7 +34,9 @@
 namespace April {
 
 	struct ModuleConfigurations {
-		using Active = std::tuple<ConsumablesMgr::Config>;
+		using Active =
+			std::tuple<
+				ConsumablesMgr::Config>;
 		using Passive =
 			std::tuple<
 				AgentFilter::Config,

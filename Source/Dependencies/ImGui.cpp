@@ -9,10 +9,10 @@ bool ImGui::Begin( April::Window const& wnd )
 		ImGui::Begin( wnd.name.c_str(), &wnd.visible, wnd.flags );
 		return true;
 	}
-	else 
+	else
 	{
-		constexpr auto dummy_flags = 
-			ImGuiWindowFlags_NoTitleBar 
+		constexpr auto dummy_flags =
+			ImGuiWindowFlags_NoTitleBar
 			| ImGuiWindowFlags_NoResize
 			| ImGuiWindowFlags_NoMove
 			| ImGuiWindowFlags_NoBackground

@@ -16,7 +16,7 @@ namespace {
 
 	bool at_dhuum( GW::AgentLiving const& player )
 	{
-		if ( GW::GetInstanceType() != GW::InstanceType::Explorable ) 
+		if ( GW::GetInstanceType() != GW::InstanceType::Explorable )
 			return false;
 
 		if ( GW::GetMapID() != GW::MapID::The_Underworld )
@@ -44,9 +44,9 @@ namespace {
 		using namespace GW::Constants::ModelID::UW;
 
 		if ( agent == nullptr ) return nullptr;
-		
+
 		auto const* living = agent->GetAsAgentLiving();
-		return living && living->player_number == Dhuum 
+		return living && living->player_number == Dhuum
 			? living : nullptr;
 	}
 
@@ -65,7 +65,7 @@ namespace {
 		{
 			auto const* dhuum = is_dhuum( agent );
 			if ( not dhuum ) continue;
-			
+
 			cached_id = dhuum->agent_id;
 			return dhuum;
 		}
@@ -83,7 +83,7 @@ namespace {
 
 		if ( rest.GetRecharge() != 0 || id != GW::SkillID::Dhuums_Rest )
 			return false;
-		
+
 		GW::UseSkill( 0 );
 		return true;
 	}
@@ -93,7 +93,7 @@ namespace {
 		auto const* dhuum = find_dhuum( dhuum_id );
 		if ( dhuum == nullptr || dhuum->allegiance != hostile )
 			return false;
-	
+
 		auto const* skillbar = GW::SkillbarMgr::GetPlayerSkillbar();
 		if ( skillbar == nullptr || not skillbar->IsValid() )
 			return false;
@@ -110,7 +110,7 @@ namespace {
 
 	bool used_spirit_skill( GW::AgentID& dhuum_id )
 	{
-		return GW::GetMissionProgress() < 1.f 
+		return GW::GetMissionProgress() < 1.f
 			? used_rest() : used_fury( dhuum_id );
 	}
 
@@ -138,7 +138,7 @@ void April::DhuumBot::Update()
 	if ( steady_clock::now() - last_cast < 1s ) return;
 
 	auto const* player = GW::Agents::GetCharacter();
-	if ( not player_is_valid( player ) || player->GetIsDead() ) 
+	if ( not player_is_valid( player ) || player->GetIsDead() )
 		return;
 
 	if ( GW::GetEnergyPoints( *player ) <= 7 )

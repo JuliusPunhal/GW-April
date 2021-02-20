@@ -20,7 +20,7 @@ namespace April::Gui {
 
 
 		Settings( ModuleConfigurations& );
-	
+
 		void Display() const;
 
 

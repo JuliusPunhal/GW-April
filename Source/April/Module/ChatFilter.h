@@ -23,7 +23,7 @@ namespace April {
 			bool away;
 			bool dnd;
 			bool noone_hears_you;
-	
+
 			bool player_joined;
 			bool player_achieved_title;
 			bool you_have_been_playing_for;
@@ -38,7 +38,7 @@ namespace April {
 
 			bool invalid_target;
 			bool not_enough_energy;
-	
+
 			bool item_cannot_be_used;
 			bool summon_in_instance;
 			bool inventory_is_full;
@@ -49,7 +49,7 @@ namespace April {
 			bool faction_gain;
 			bool skill_to_pvp;
 			bool hall_of_heros;
-	
+
 			bool emotes;
 			bool guild_announcement;
 

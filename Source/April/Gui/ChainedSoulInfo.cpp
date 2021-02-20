@@ -14,7 +14,7 @@ using namespace std::string_literals;
 
 
 namespace {
-	
+
 	auto time_until_death( float const hp, float const pips )
 	{
 		return seconds{ static_cast<int>(hp / pips * -1.f) };
@@ -69,9 +69,9 @@ namespace {
 }
 
 
-April::Gui::ChainedSoulGui::ChainedSoulGui( 
+April::Gui::ChainedSoulGui::ChainedSoulGui(
 	std::shared_ptr<ChainedSoul const> state, Config const& config )
-	: 
+	:
 	state{ std::move( state ) }, config{ config }
 {
 }

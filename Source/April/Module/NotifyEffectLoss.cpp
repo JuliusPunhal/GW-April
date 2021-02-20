@@ -24,23 +24,23 @@ namespace {
 		}
 		return nullptr;
 	}
-	
+
 	void on_remove_effect( RemoveEffect const* packet, Config const& config )
 	{
 		auto const* player = GW::Agents::GetCharacter();
 		if ( player == nullptr || player->agent_id != packet->agent_id )
 			return;
-				
+
 		auto effect = get_effect_by_id( packet->effect_id );
 		if ( effect == nullptr )
 			return;
 
 		auto const skill_id = static_cast<GW::SkillID>( effect->skill_id );
-		auto const found = 
-			std::find_if( 
-				config.notifications, 
-				[skill_id]( auto const& notification ) 
-				{ 
+		auto const found =
+			std::find_if(
+				config.notifications,
+				[skill_id]( auto const& notification )
+				{
 					return notification.skill_id == skill_id;
 				} );
 
@@ -57,24 +57,24 @@ April::NotifyEffectLoss::NotifyEffectLoss( Config const& config )
 	: config{ config }
 {
 	// Callback will only be cleaned up during GWCA shutdown.
-	GW::StoC::RegisterPacketCallback<RemoveEffect>( 
-		&entry, 
-		[this]( auto*, auto* packet ) 
-		{ 
-			on_remove_effect( packet, this->config ); 
+	GW::StoC::RegisterPacketCallback<RemoveEffect>(
+		&entry,
+		[this]( auto*, auto* packet )
+		{
+			on_remove_effect( packet, this->config );
 		} );
 }
 
 auto April::NotifyEffectLoss::Config::LoadDefault() -> Config
 {
 	auto notifications = std::vector<Notification>{
-		{ GW::SkillID::Balthazars_Spirit, 
+		{ GW::SkillID::Balthazars_Spirit,
 			"<c=#FFFF00>Lost Balthasar's Spirit!</c>" },
 
-		{ GW::SkillID::Protective_Bond, 
+		{ GW::SkillID::Protective_Bond,
 			"<c=#FFFF00>Lost Protective Bond!</c>" },
 
-		{ GW::SkillID::Life_Bond, 
+		{ GW::SkillID::Life_Bond,
 			"<c=#FFFF00>Lost Life Bond!</c>" }
 	};
 

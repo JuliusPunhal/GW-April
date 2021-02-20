@@ -2,14 +2,13 @@
 #include "April/Module/ShowKitUses.h"
 
 #include <cmath>
-#include <optional>
 
 
 namespace {
 
 	auto entry = GW::HookEntry{};
 
-	
+
 	template<class Packet_t>
 	auto adjust_qty( Packet_t* packet )
 	{
@@ -47,8 +46,8 @@ April::ShowKitUses::ShowKitUses( Config const& config )
 	using namespace GW::Packet::StoC;
 
 	// Callbacks will only be cleaned up during GWCA shutdown.
-	GW::StoC::RegisterPacketCallback<ItemGeneral>( 
-		&entry, 
+	GW::StoC::RegisterPacketCallback<ItemGeneral>(
+		&entry,
 		[this] ( auto*, auto* packet )
 		{
 			if ( this->config.active ) adjust_qty( packet );

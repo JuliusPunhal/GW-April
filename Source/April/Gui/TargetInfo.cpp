@@ -22,15 +22,15 @@ void April::Gui::TargetInfo::Display() const
 		ImGui::End();
 		return;
 	}
-	
+
 	auto const* player = GW::Agents::GetPlayer();
 	if ( ImGui::Begin( config.window ) )
 	{
 		auto const x = static_cast<int>( target->pos.x );
 		auto const y = static_cast<int>( target->pos.y );
-		auto const distance = 
+		auto const distance =
 			player ? GW::GetDistance( target->pos, player->pos ) : 0;
-		auto const temp = std::sqrt( 
+		auto const temp = std::sqrt(
 			target->move_x * target->move_x + target->move_y * target->move_y );
 		auto const velocity = temp / 288.f * 100;
 
@@ -43,15 +43,15 @@ void April::Gui::TargetInfo::Display() const
 		{
 			ImGui::Text( "ModelID: %d", living->player_number );
 			ImGui::Text( "LoginNumber: %d", living->login_number );
-			ImGui::Text( 
-				"Health: %d/%d (%.0f%%)", 
-				GW::GetHealthPoints( *living ), 
-				living->max_hp, 
+			ImGui::Text(
+				"Health: %d/%d (%.0f%%)",
+				GW::GetHealthPoints( *living ),
+				living->max_hp,
 				living->hp * 100 );
 			ImGui::Text(
-				"Energy: %d/%d (%.0f%%)", 
-				GW::GetEnergyPoints( *living ), 
-				living->max_energy, 
+				"Energy: %d/%d (%.0f%%)",
+				GW::GetEnergyPoints( *living ),
+				living->max_energy,
 				living->energy * 100 );
 			ImGui::Text( "Effects: 0x%X", living->effects );
 		}

@@ -30,9 +30,9 @@ namespace {
 		return items[item_id];
 	}
 
-	bool want_to_display( 
-		GW::Item const& item, 
-		std::vector<GW::ItemID> const& ids, 
+	bool want_to_display(
+		GW::Item const& item,
+		std::vector<GW::ItemID> const& ids,
 		std::vector<GW::Rarity> const& rarities )
 	{
 		// Check for modelid
@@ -85,7 +85,7 @@ void April::AgentFilter::DisplaySuppressedItems()
 	suppressed_packets.clear();
 }
 
-void April::AgentFilter::OnSpawn( 
+void April::AgentFilter::OnSpawn(
 	GW::HookStatus* status, AgentAdd const& packet )
 {
 	auto const want_to_display = [this]( auto const& packet )
@@ -99,18 +99,18 @@ void April::AgentFilter::OnSpawn(
 
 		auto const it_owner = item_owners.find( item->item_id );
 		auto const can_pick_up =
-			it_owner == item_owners.end()				// not reserved 
+			it_owner == item_owners.end()				// not reserved
 			|| it_owner->second == player->agent_id;	// reserved for user
 
 		if ( can_pick_up )
-			return ::want_to_display( 
-				*item, 
-				config.visible_user_items, 
+			return ::want_to_display(
+				*item,
+				config.visible_user_items,
 				config.visible_user_rarities );
 		else
-			return ::want_to_display( 
-				*item, 
-				config.visible_party_items, 
+			return ::want_to_display(
+				*item,
+				config.visible_party_items,
 				config.visible_party_rarities );
 	};
 
@@ -121,7 +121,7 @@ void April::AgentFilter::OnSpawn(
 	}
 }
 
-void April::AgentFilter::OnDespawn( 
+void April::AgentFilter::OnDespawn(
 	GW::HookStatus* status, AgentRemove const& packet )
 {
 	auto const found_iter =
@@ -232,8 +232,8 @@ auto April::AgentFilter::Config::LoadDefault() -> Config
 
 		GW::Constants::ItemID::ELMiku,
 	};
-	auto player_rarities = std::vector<GW::Rarity>{ 
-		GW::Rarity::Gold 
+	auto player_rarities = std::vector<GW::Rarity>{
+		GW::Rarity::Gold
 	};
 	auto party_items = std::vector<GW::ItemID>{
 		GW::Constants::ItemID::EternalBlade,

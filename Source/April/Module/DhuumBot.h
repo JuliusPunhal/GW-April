@@ -14,9 +14,9 @@ namespace April {
 		void Update();
 
 		constexpr bool is_active() const noexcept { return active; }
-		constexpr void activate( bool const state = true ) noexcept 
-		{ 
-			active = state; 
+		constexpr void activate( bool const state = true ) noexcept
+		{
+			active = state;
 		}
 
 

@@ -20,7 +20,7 @@ namespace {
 		return true;
 	}
 
-	constexpr bool FullMatch( 
+	constexpr bool FullMatch(
 		wchar_t const* s, std::initializer_list<wchar_t> const& msg )
 	{
 		int i = 0;
@@ -84,8 +84,8 @@ namespace {
 		}
 		return 0;
 	}
-	
-	bool in_challenge_mission() 
+
+	bool in_challenge_mission()
 	{
 		auto const* info = GW::Map::GetCurrentMapInfo();
 		return info && info->type == GW::RegionType_Challenge;
@@ -166,19 +166,19 @@ namespace {
 				else
 					return config.ally_pickup_common;
 			}
-			case 0x07FC: return config.self_pickup;							// you pick up item y (note: item can be unassigned gold)
+			case 0x07FC: return config.self_pickup;								// you pick up item y (note: item can be unassigned gold)
 			case 0x0807: return config.player_joined;							// player joined the game
 			case 0x0816: return config.self_gain_skillpoint;					// you gain a skill point
 			case 0x0817: return config.ally_gain_skillpoint;					// player x gained a skill point
 			case 0x0846: return config.screenshot_taken;						// 'Screenshot saved as <path>'.
-			case 0x087B: return config.noone_hears_you;						// 'no one hears you.' (outpost)
-			case 0x087C: return config.noone_hears_you;						// 'no one hears you... ' (explorable)
+			case 0x087B: return config.noone_hears_you;							// 'no one hears you.' (outpost)
+			case 0x087C: return config.noone_hears_you;							// 'no one hears you... ' (explorable)
 			case 0x087D: return config.away;									// 'Player <name> might not reply...' (Away)
-			case 0x087F: return config.dnd;									// 'Failed to send whisper to player <name>...' (Do not disturb)
+			case 0x087F: return config.dnd;										// 'Failed to send whisper to player <name>...' (Do not disturb)
 			case 0x0880: return false;											// 'Player name <name> is invalid.'.
 			case 0x0881: return false;											// 'Player <name> is not online.' (Offline)
 			case 0x088E: return config.invalid_target;							// Invalid attack target.
-			case 0x089B: return config.item_cannot_be_used;					// Item cannot be used in towns or outposts.
+			case 0x089B: return config.item_cannot_be_used;						// Item cannot be used in towns or outposts.
 			case 0x089C: return config.opening_chest_messages;					// Chest is being used.
 			case 0x089D: return config.opening_chest_messages;					// The chest is empty.
 			case 0x089E: return config.opening_chest_messages;					// The chest is locked. You must have the correct key or a lockpick.
@@ -193,9 +193,9 @@ namespace {
 			case 0x08C1: return config.invalid_target;							// That skill requires a different weapon type.
 			case 0x08C2: return config.invalid_target;							// Invalid spell target.
 			case 0x08C3: return config.invalid_target;							// Target is out of range.
-			case 0x0AD7: return config.salvage_results;						// You salvaged <number> <item name(s)> from the <item name>
+			case 0x0AD7: return config.salvage_results;							// You salvaged <number> <item name(s)> from the <item name>
 			case 0x2AFC: return false;											// <agent name> hands you <quantity> <item name>
-			case 0x4C32: return config.item_cannot_be_used;					// Item can only be used in towns or outposts.
+			case 0x4C32: return config.item_cannot_be_used;						// Item can only be used in towns or outposts.
 			case 0x52C3:
 			{
 				// 0x52C3 0xDE9C 0xCD2F 0x78E4 0x101 0x100 - Hold-out bonus: +(message[5] - 0x100) points
@@ -234,7 +234,7 @@ namespace {
 					case 0x186B:												// you win 25 festival tickets
 					case 0x186C:												// you win 15 festival tickets
 					case 0x186D:												// did not win 9rings
-					case 0x1526:												// The rings of fortune did not favor you this time. Stay in the area to try again. 
+					case 0x1526:												// The rings of fortune did not favor you this time. Stay in the area to try again.
 					case 0x1529:												// Pan takes 2 festival tickets
 					case 0x152A:												// stay right were you are! rings of fortune is about to begin!
 					case 0x152B:												// you win 12 festival tickets
@@ -251,11 +251,11 @@ namespace {
 					case 0x7C3E:												// This item cannot be used here.
 						return config.item_cannot_be_used;
 				}
-				if ( FullMatch( &message[1], { 0x6649, 0xA2F9, 0xBBFA, 0x3C27 } )	// you will celebrate a festive new year (rocket or popper)
-					|| FullMatch( &message[1], { 0x664B, 0xDBAB, 0x9F4C, 0x6742 } )	// something special is in your future! (lucky aura)
-					|| FullMatch( &message[1], { 0x6648, 0xB765, 0xBC0D, 0x1F73 } )	// you will have a prosperous new year! (gain 100 gold)
-					|| FullMatch( &message[1], { 0x664C, 0xD634, 0x91F8, 0x76EF } )	// your new year will be a blessed one (lunar blessing)
-					|| FullMatch( &message[1], { 0x664A, 0xEFB8, 0xDE25, 0x0363 } ) )// You will find bad luck in this new year... or bad luck will find you
+				if ( FullMatch( &message[1], { 0x6649, 0xA2F9, 0xBBFA, 0x3C27 } )		// you will celebrate a festive new year (rocket or popper)
+					|| FullMatch( &message[1], { 0x664B, 0xDBAB, 0x9F4C, 0x6742 } )		// something special is in your future! (lucky aura)
+					|| FullMatch( &message[1], { 0x6648, 0xB765, 0xBC0D, 0x1F73 } )		// you will have a prosperous new year! (gain 100 gold)
+					|| FullMatch( &message[1], { 0x664C, 0xD634, 0x91F8, 0x76EF } )		// your new year will be a blessed one (lunar blessing)
+					|| FullMatch( &message[1], { 0x664A, 0xEFB8, 0xDE25, 0x0363 } ) )	// You will find bad luck in this new year... or bad luck will find you
 				{
 					return config.lunars;
 				}
@@ -268,17 +268,17 @@ namespace {
 					case 0x4650: return config.skill_to_pvp;					// skill has been updated for pvp
 					case 0x4651: return config.skill_to_pvp;					// a hero skill has been updated for pvp
 					case 0x223F: return false;									// "x minutes of favor of the gods remaining" as a result of /favor command
-					case 0x223B: return config.hall_of_heros;					// a party won hall of heroes	
+					case 0x223B: return config.hall_of_heros;					// a party won hall of heroes
 					case 0x23E4: return config.favor_of_gods;					// 0xF8AA 0x95CD 0x2766 // the world no longer has the favor of the gods
 					case 0x23E5: return true;
 					case 0x23E6: return true;
-					case 0x29F1: return config.item_cannot_be_used;			// Cannot use this item when no party members are dead.
+					case 0x29F1: return config.item_cannot_be_used;				// Cannot use this item when no party members are dead.
 					case 0x2E35: return config.player_achieved_title;			// Player has achieved the title...
 					case 0x2E36: return config.player_achieved_title;			// Player has achieved the title...
 					case 0x3772: return false;									// I'm under the effect of x
-					case 0x3DCA: return config.item_cannot_be_used;			// This item can only be used in a guild hall
+					case 0x3DCA: return config.item_cannot_be_used;				// This item can only be used in a guild hall
 					case 0x4684: return config.summon_in_instance;				// There is already an ally from a summoning stone present in this instance.
-					case 0x4685: return config.item_cannot_be_used;			// You have already used a summoning stone within the last 10 minutes.
+					case 0x4685: return config.item_cannot_be_used;				// You have already used a summoning stone within the last 10 minutes.
 				}
 				return false;
 			case 0x8103:
@@ -292,9 +292,9 @@ namespace {
 
 		return false;
 	}
-	
+
 	void on_message( GW::HookStatus* status, Config const& config )
-	{	
+	{
 		auto& buf = GW::GameContext::instance()->world->message_buff;
 		if ( buf.valid() && should_ignore( buf.begin(), config ) )
 		{
@@ -303,7 +303,7 @@ namespace {
 		}
 	}
 
-	void on_local_message( 
+	void on_local_message(
 		GW::HookStatus* status, wchar_t const* msg, Config const& config )
 	{
 		if ( should_ignore( msg, config ) )
@@ -322,7 +322,7 @@ April::ChatFilter::ChatFilter( Config const& config )
 	: config{ config }
 {
 	using namespace GW::Packet::StoC;
-	
+
 	// Callbacks will only be cleaned up during GWCA shutdown.
 	auto const on_msg = [this]( GW::HookStatus* status, void* )
 	{
@@ -332,8 +332,8 @@ April::ChatFilter::ChatFilter( Config const& config )
 	GW::StoC::RegisterPacketCallback<MessageServer>( &entry, on_msg );
 	GW::StoC::RegisterPacketCallback<MessageGlobal>( &entry, on_msg );
 	GW::StoC::RegisterPacketCallback<MessageLocal>( &entry, on_msg );
-	GW::Chat::RegisterLocalMessageCallback( 
-		&entry, 
+	GW::Chat::RegisterLocalMessageCallback(
+		&entry,
 		[this]( GW::HookStatus* status, int, wchar_t const* msg )
 		{
 			on_local_message( status, msg, this->config );

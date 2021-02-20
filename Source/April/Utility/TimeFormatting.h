@@ -15,28 +15,28 @@ namespace April {
 	};
 
 	inline constexpr auto HMMSS =
-		std::tuple{ 
-			TimeFormat<std::chrono::hours>{ "%01d:" }, 
-			TimeFormat<std::chrono::minutes>{ "%02d:" }, 
-			TimeFormat<std::chrono::seconds>{ "%02d" } 
+		std::tuple{
+			TimeFormat<std::chrono::hours>{ "%01d:" },
+			TimeFormat<std::chrono::minutes>{ "%02d:" },
+			TimeFormat<std::chrono::seconds>{ "%02d" }
 		};
 
 	inline constexpr auto MMSS =
-		std::tuple{ 
-			TimeFormat<std::chrono::minutes>{ "%02d:" }, 
-			TimeFormat<std::chrono::seconds>{ "%02d" } 
+		std::tuple{
+			TimeFormat<std::chrono::minutes>{ "%02d:" },
+			TimeFormat<std::chrono::seconds>{ "%02d" }
 		};
 
 
 	template<class Time_t, class FormatTime_t>
-	auto to_string( Time_t const time, TimeFormat<FormatTime_t> const format ) 
+	auto to_string( Time_t const time, TimeFormat<FormatTime_t> const format )
 		-> std::string
 	{
 		char buf[16] = {};
 
-		snprintf( 
-			buf, sizeof( buf ), 
-			format.fmt, 
+		snprintf(
+			buf, sizeof( buf ),
+			format.fmt,
 			std::chrono::duration_cast<FormatTime_t>(time).count() );
 
 		return std::string( buf );
@@ -44,9 +44,9 @@ namespace April {
 
 	template<class Time_t, class LowPrec_t, class HighPrec_t, class... Params>
 	auto to_string(
-		Time_t const time, 
-		TimeFormat<LowPrec_t> const low, 
-		TimeFormat<HighPrec_t> const high, 
+		Time_t const time,
+		TimeFormat<LowPrec_t> const low,
+		TimeFormat<HighPrec_t> const high,
 		Params const... params )
 		-> std::string
 	{

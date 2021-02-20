@@ -16,11 +16,11 @@ April::SuppressSpeechBubbles::SuppressSpeechBubbles( Config const& config )
 {
 	// Callback will onyl be cleaned up during GWCA shutdown.
 	GW::StoC::RegisterPacketCallback<GW::Packet::StoC::SpeechBubble>(
-		&entry, 
-		[this]( auto* status, auto* ) 
-		{ 
-			if ( this->config.active ) 
-				status->blocked = true; 
+		&entry,
+		[this]( auto* status, auto* )
+		{
+			if ( this->config.active )
+				status->blocked = true;
 		} );
 }
 

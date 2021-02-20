@@ -12,8 +12,8 @@ namespace April {
 		void Update();
 
 		// InstanceTime when Dhuum last used Dhuum's Judgement
-		constexpr auto last_judgement() const noexcept 
-		{ 
+		constexpr auto last_judgement() const noexcept
+		{
 			return last;
 		}
 

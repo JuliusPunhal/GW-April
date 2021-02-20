@@ -16,8 +16,8 @@ April::Gui::Dialogs::Dialogs::Dialogs( Config const& config )
 
 void April::Gui::Dialogs::Dialogs::Display()
 {
-	if ( awaiting_confirmation 
-		&& steady_clock::now() - awaiting_confirmation->time 
+	if ( awaiting_confirmation
+		&& steady_clock::now() - awaiting_confirmation->time
 			> config.confirm_time )
 	{
 		awaiting_confirmation = std::nullopt;
@@ -39,9 +39,9 @@ void April::Gui::Dialogs::Dialogs::Display()
 			if ( awaiting_confirmation && awaiting_confirmation->button == it )
 			{
 				ImGui::PushStyleColor( ImGuiCol_Button, config.confirm_color );
-				ImGui::PushStyleColor( 
+				ImGui::PushStyleColor(
 					ImGuiCol_ButtonActive, config.confirm_color );
-				ImGui::PushStyleColor( 
+				ImGui::PushStyleColor(
 					ImGuiCol_ButtonHovered, config.confirm_color );
 
 				if ( ImGui::Button( "Confirm", { width, 0 } ) )
@@ -70,10 +70,10 @@ auto April::Gui::Dialogs::Config::LoadDefault() -> Config
 	using namespace GW::Constants;
 
 	auto dialogs = std::vector<Dialog>{
-		{ "Take Quest: Slayer",	
+		{ "Take Quest: Slayer",
 			( QuestID::UW::Mnt << 8 ) | 0x800001 },
 
-		{ "Take Quest: Four Horsemen", 
+		{ "Take Quest: Four Horsemen",
 			( QuestID::UW::Planes << 8 ) | 0x800001 }
 	};
 

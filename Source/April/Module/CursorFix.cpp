@@ -21,7 +21,7 @@ April::CursorFix::CursorFix()
 	GetClipCursor_Func = (GetClipCursor_pt)((uintptr_t)GetProcAddress( hUser32, "GetClipCursor" ));
 	if ( GetClipCursor_Func )
 	{
-		GW::HookBase::CreateHook( 
+		GW::HookBase::CreateHook(
 			 GetClipCursor_Func, fnGetClipCursor, (void **)&RetGetClipCursor );
 		GW::HookBase::EnableHooks( GetClipCursor_Func );
 	}

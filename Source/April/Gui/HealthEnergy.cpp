@@ -14,7 +14,7 @@ using April::Gui::Energybar;
 
 
 namespace {
-	
+
 	struct Label {
 		std::string curr_max;
 		std::string pips;
@@ -28,10 +28,10 @@ namespace {
 		RGBA	border_color;
 
 		float	percent_filled; // 0 < percent_filled < 1
-		
+
 		XY		pips_alignment;
 	};
-	
+
 
 	void Draw( Label const& label, Style const& style )
 	{
@@ -64,7 +64,7 @@ namespace {
 		// Pips
 		ImGui::SetCursorPos( cursor );
 		ImGui::PushStyleColor( ImGuiCol_Button, Invisible() );
-		ImGui::PushStyleVar( 
+		ImGui::PushStyleVar(
 			ImGuiStyleVar_ButtonTextAlign, style.pips_alignment );
 		{
 			ImGui::Button( label.pips.c_str(), { -1, -1 } );
@@ -104,9 +104,9 @@ namespace {
 
 		return "";
 	}
-	
-	constexpr auto color_by_effect( 
-		uint32_t const effects, 
+
+	constexpr auto color_by_effect(
+		uint32_t const effects,
 		Healthbar::Config::Colors const& colors ) noexcept
 	{
 		if ( (effects & 0x0400) == 0x0400 ) return colors.degen_hexed;
@@ -158,7 +158,7 @@ void April::Gui::Healthbar::Display() const
 
 auto April::Gui::Healthbar::Config::LoadDefault() -> Config
 {
-	constexpr auto window_flags = 
+	constexpr auto window_flags =
 		ImGuiWindowFlags_NoTitleBar
 		| ImGuiWindowFlags_NoResize
 		| ImGuiWindowFlags_NoMove
@@ -228,7 +228,7 @@ void April::Gui::Energybar::Display() const
 
 auto April::Gui::Energybar::Config::LoadDefault() -> Config
 {
-	constexpr auto window_flags = 
+	constexpr auto window_flags =
 		ImGuiWindowFlags_NoTitleBar
 		| ImGuiWindowFlags_NoResize
 		| ImGuiWindowFlags_NoMove

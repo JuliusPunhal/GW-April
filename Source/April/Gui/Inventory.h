@@ -13,12 +13,12 @@ namespace April::Gui {
 	public:
 		struct Config {
 			FontInfo font;
-			
+
 			WH		slot_size;
 			XY		item_spacing;
 			bool	border;
 			float	button_alpha;
-			
+
 			RGBA no_item;
 			RGBA unknown_item;
 			RGBA wrong_instance_type;
@@ -26,7 +26,7 @@ namespace April::Gui {
 			RGBA can_not_use;
 			RGBA suggest_use;
 			RGBA special_state;
-			
+
 			char label_no_item;
 			char label_unknown_item;
 			char label_persistent;
