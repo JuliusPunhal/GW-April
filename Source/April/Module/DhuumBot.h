@@ -9,9 +9,10 @@ namespace April {
 
 	class DhuumBot {
 	public:
-		DhuumBot();
+		DhuumBot() = default;
 
 		void Update();
+		void Update( GW::Packet::StoC::ObjectiveDone const& );
 
 		constexpr bool is_active() const noexcept { return active; }
 		constexpr void activate( bool const state = true ) noexcept

@@ -32,6 +32,8 @@ namespace April {
 			ModuleConfigurations&,
 			Config const& );
 
+		void OnMessage( GW::HookStatus*, GW::Chat::Channel, wchar_t const* );
+
 
 		static constexpr auto cmd_sendchat =		"/sendchat";
 		static constexpr auto cmd_writechat =		"/writechat";

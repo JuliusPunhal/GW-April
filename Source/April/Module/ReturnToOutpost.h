@@ -15,6 +15,8 @@ namespace April {
 
 		ReturnToOutpost( Config const& );
 
+		void OnDefeated() const;
+
 
 	private:
 		Config const& config;

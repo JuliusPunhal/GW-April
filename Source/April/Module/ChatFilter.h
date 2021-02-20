@@ -66,6 +66,9 @@ namespace April {
 
 		ChatFilter( Config const& config );
 
+		void OnMessage( GW::HookStatus* status ) const;
+		void OnMessage( GW::HookStatus* status, wchar_t const* msg ) const;
+
 
 	private:
 		Config const& config;

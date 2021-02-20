@@ -8,11 +8,6 @@ using namespace GW::Packet::StoC;
 
 namespace {
 
-	// TODO: Detect if someone left, possibly making the user leader.
-
-	auto entry = GW::HookEntry{};
-
-
 	bool player_is_leader()
 	{
 		auto const* party = GW::PartyMgr::GetPartyInfo();
@@ -33,24 +28,20 @@ namespace {
 		return false;
 	}
 
-	void try_return()
-	{
-		if ( player_is_leader() )
-		{
-			GW::CtoS::SendPacket( 0x4, GAME_CMSG_PARTY_RETURN_TO_OUTPOST );
-		}
-	}
-
 }
 
 
 April::ReturnToOutpost::ReturnToOutpost( Config const& config )
 	: config{ config }
 {
-	// Callback will only be cleaned up during GWCA shutdown.
-	GW::StoC::RegisterPacketCallback<PartyDefeated>(
-		&entry,
-		[this]( auto*, auto* ) { if ( this->config.active ) try_return(); } );
+}
+
+void April::ReturnToOutpost::OnDefeated() const
+{
+	if ( config.active && player_is_leader() )
+	{
+		GW::CtoS::SendPacket( 0x4, GAME_CMSG_PARTY_RETURN_TO_OUTPOST );
+	}
 }
 
 auto April::ReturnToOutpost::Config::LoadDefault() -> Config

@@ -17,9 +17,6 @@ using namespace std::chrono;
 
 namespace {
 
-	auto entry = GW::HookEntry{};
-
-
 	void use_item( April::Consumable const& consumable, GW::Item const& item )
 	{
 		using namespace April;
@@ -77,24 +74,6 @@ namespace {
 April::ConsumablesMgr::ConsumablesMgr( Config const& config )
 	: config{ config }
 {
-	using namespace GW::Packet::StoC;
-
-	// Callbacks will only be cleaned up during GWCA shutdown.
-	GW::StoC::RegisterPacketCallback<ObjectiveDone>(
-		&entry,
-		[this]( auto*, auto* packet )
-		{
-			if ( packet->objective_id == deactivating_quest )
-				deactivate_all_temporary();
-		} );
-
-	GW::StoC::RegisterPacketCallback<MapLoaded>(
-		&entry,
-		[this]( auto*, auto* )
-		{
-			if ( GW::GetInstanceType() == GW::InstanceType::Outpost )
-				deactivate_all_temporary();
-		} );
 }
 
 void April::ConsumablesMgr::Update()
@@ -110,6 +89,19 @@ void April::ConsumablesMgr::Update()
 	{
 		last_use = steady_clock::now();
 	}
+}
+
+void April::ConsumablesMgr::Update(
+	GW::Packet::StoC::ObjectiveDone const& packet )
+{
+	if ( packet.objective_id == deactivating_quest )
+		deactivate_all_temporary();
+}
+
+void April::ConsumablesMgr::Update( GW::Packet::StoC::MapLoaded const& )
+{
+	if ( GW::GetInstanceType() == GW::InstanceType::Outpost )
+		deactivate_all_temporary();
 }
 
 auto April::ConsumablesMgr::is_active( GW::ItemID const id ) const -> Active

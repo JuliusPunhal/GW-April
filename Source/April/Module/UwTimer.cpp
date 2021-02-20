@@ -13,9 +13,6 @@ using namespace std::chrono_literals;
 
 namespace {
 
-	auto entry = GW::HookEntry{};
-
-
 	constexpr auto normalize( int const id ) noexcept
 	{
 		return id - GW::Objectives::Chamber;
@@ -27,19 +24,6 @@ namespace {
 April::UwTimer::UwTimer( std::shared_ptr<UwTimes> times )
 	: times{ std::move( times ) }
 {
-	// Callbacks will only be cleaned up during GWCA shutdown.
-	GW::StoC::RegisterPacketCallback<AgentName>(
-		&entry, [this]( auto*, auto* packet ) { UpdatePop( *packet ); } );
-	GW::StoC::RegisterPacketCallback<ObjectiveAdd>(
-		&entry, [this]( auto*, auto* packet ) { UpdateTake( *packet ); } );
-	GW::StoC::RegisterPacketCallback<ObjectiveUpdateName>(
-		&entry, [this]( auto*, auto* packet ) { UpdateTake( *packet ); } );
-	GW::StoC::RegisterPacketCallback<ObjectiveDone>(
-		&entry, [this]( auto*, auto* packet ) { UpdateDone( *packet ); } );
-	GW::StoC::RegisterPacketCallback<AgentUpdateAllegiance>(
-		&entry, [this]( auto*, auto* packet ) { UpdateHostile( *packet ); } );
-	GW::StoC::RegisterPacketCallback<MapLoaded>(
-		&entry, [this]( auto*, auto* ) { Reset(); } );
 }
 
 void April::UwTimer::Update()
@@ -50,7 +34,7 @@ void April::UwTimer::Update()
 	times->instance_time = GW::GetInstanceTime();
 }
 
-void April::UwTimer::UpdatePop( AgentName const& packet )
+void April::UwTimer::Update( AgentName const& packet )
 {
 	auto const reaper = GetReaperByName( packet.name_enc );
 	if ( reaper == std::nullopt ) return;
@@ -63,13 +47,13 @@ void April::UwTimer::UpdatePop( AgentName const& packet )
 	times->pop[it] = GW::GetInstanceTime();
 }
 
-void April::UwTimer::UpdateTake( ObjectiveAdd const& packet )
+void April::UwTimer::Update( ObjectiveAdd const& packet )
 {
 	if ( packet.objective_id == GW::Objectives::Dhuum )
 		times->nightman_cometh = GW::GetInstanceTime();
 }
 
-void April::UwTimer::UpdateTake( ObjectiveUpdateName const& packet )
+void April::UwTimer::Update( ObjectiveUpdateName const& packet )
 {
 	if ( packet.objective_id >= GW::Objectives::Chamber
 		&& packet.objective_id <= GW::Objectives::Pools )
@@ -79,7 +63,7 @@ void April::UwTimer::UpdateTake( ObjectiveUpdateName const& packet )
 	}
 }
 
-void April::UwTimer::UpdateDone( ObjectiveDone const& packet )
+void April::UwTimer::Update( ObjectiveDone const& packet )
 {
 	if ( packet.objective_id >= GW::Objectives::Chamber
 		&& packet.objective_id <= GW::Objectives::Pools )
@@ -93,7 +77,7 @@ void April::UwTimer::UpdateDone( ObjectiveDone const& packet )
 	}
 }
 
-void April::UwTimer::UpdateHostile( AgentUpdateAllegiance const& packet )
+void April::UwTimer::Update( AgentUpdateAllegiance const& packet )
 {
 	auto const* agent = GW::Agents::GetAgentByID( packet.agent_id );
 	if ( agent == nullptr ) return;

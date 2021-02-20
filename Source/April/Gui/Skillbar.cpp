@@ -14,13 +14,11 @@
 
 using April::RGBA;
 using Config = April::Gui::Skillbar::Config;
+using namespace GW::Packet::StoC;
 using namespace std::chrono;
 
 
 namespace {
-
-	auto entry = GW::HookEntry{};
-
 
 	auto can_be_reduced_by_fast_casting( GW::Skill const& info )
 	{
@@ -222,49 +220,6 @@ April::Gui::Skillbar::Skillbar( Config const& config )
 	font_cooldown{ LoadFont( config.font_cooldown ) },
 	font_uptime{ LoadFont( config.font_uptime ) }
 {
-	// Callbacks will only be cleaned up during GWCA shutdown.
-	GW::StoC::RegisterPacketCallback<GW::Packet::StoC::SkillRecharge>(
-		&entry,
-		[this]( auto*, auto* packet )
-		{
-			auto const* player = GW::Agents::GetCharacter();
-			if ( player == nullptr || player->agent_id != packet->agent_id )
-				return;
-
-			auto const skill_id = static_cast<GW::SkillID>( packet->skill_id );
-			if ( packet->recharge < expected_recharge( skill_id, *player ) )
-			{
-				auto const slot =
-					get_skill_slot( skill_id, packet->skill_instance );
-
-				if ( slot == std::nullopt )
-					return;
-
-				hsr[*slot] = true;
-			}
-		} );
-
-	GW::StoC::RegisterPacketCallback<GW::Packet::StoC::SkillRecharged>(
-		&entry,
-		[this]( auto*, auto* packet )
-		{
-			auto const* player = GW::Agents::GetCharacter();
-			if ( player == nullptr || player->agent_id != packet->agent_id )
-				return;
-
-			auto const skill_id = static_cast<GW::SkillID>( packet->skill_id );
-			auto const slot =
-				get_skill_slot( skill_id, packet->skill_instance );
-
-			if ( slot == std::nullopt )
-				return;
-
-			hsr[*slot] = false;
-		} );
-
-	GW::StoC::RegisterPacketCallback<GW::Packet::StoC::MapLoaded>(
-		&entry, [this]( auto*, auto* ) { hsr = {}; } );
-
 }
 
 void April::Gui::Skillbar::Display() const
@@ -364,6 +319,44 @@ void April::Gui::Skillbar::Display() const
 		ImGui::PopStyleVar( 2 );
 	}
 	ImGui::End();
+}
+
+void April::Gui::Skillbar::UpdateHSR( SkillRecharge const& packet )
+{
+	auto const* player = GW::Agents::GetCharacter();
+	if ( player == nullptr || player->agent_id != packet.agent_id )
+		return;
+
+	auto const skill_id = static_cast<GW::SkillID>( packet.skill_id );
+	if ( packet.recharge < expected_recharge( skill_id, *player ) )
+	{
+		auto const slot = get_skill_slot( skill_id, packet.skill_instance );
+
+		if ( slot == std::nullopt )
+			return;
+
+		hsr[*slot] = true;
+	}
+}
+
+void April::Gui::Skillbar::UpdateHSR( SkillRecharged const& packet )
+{
+	auto const* player = GW::Agents::GetCharacter();
+	if ( player == nullptr || player->agent_id != packet.agent_id )
+		return;
+
+	auto const skill_id = static_cast<GW::SkillID>( packet.skill_id );
+	auto const slot = get_skill_slot( skill_id, packet.skill_instance );
+
+	if ( slot == std::nullopt )
+		return;
+
+	hsr[*slot] = false;
+}
+
+void April::Gui::Skillbar::UpdateHSR( MapLoaded const& )
+{
+	hsr = {};
 }
 
 auto April::Gui::Skillbar::Config::LoadDefault() -> Config

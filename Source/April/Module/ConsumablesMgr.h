@@ -27,6 +27,10 @@ namespace April {
 
 		void Update();
 
+		void Update( GW::Packet::StoC::ObjectiveDone const& );
+		void Update( GW::Packet::StoC::MapLoaded const& );
+
+
 		struct Active {
 			bool temporary;
 			bool persistent;

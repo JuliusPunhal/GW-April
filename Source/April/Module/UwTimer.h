@@ -26,17 +26,16 @@ namespace April {
 		UwTimer( std::shared_ptr<UwTimes> );
 
 		void Update();
+		void Update( GW::Packet::StoC::AgentName const& );
+		void Update( GW::Packet::StoC::ObjectiveAdd const& );
+		void Update( GW::Packet::StoC::ObjectiveUpdateName const& );
+		void Update( GW::Packet::StoC::ObjectiveDone const& );
+		void Update( GW::Packet::StoC::AgentUpdateAllegiance const& );
+		void Reset();
 
 
 	private:
 		std::shared_ptr<UwTimes> times;
-
-		void UpdatePop( GW::Packet::StoC::AgentName const& );
-		void UpdateTake( GW::Packet::StoC::ObjectiveAdd const& );
-		void UpdateTake( GW::Packet::StoC::ObjectiveUpdateName const& );
-		void UpdateDone( GW::Packet::StoC::ObjectiveDone const& );
-		void UpdateHostile( GW::Packet::StoC::AgentUpdateAllegiance const& );
-		void Reset();
 	};
 
 }

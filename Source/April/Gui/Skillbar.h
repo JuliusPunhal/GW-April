@@ -2,6 +2,8 @@
 
 #include "April/Utility/DrawStructures.h"
 
+#include "Dependencies/GWCA.hpp"
+
 #include <array>
 #include <chrono>
 #include <vector>
@@ -41,6 +43,10 @@ namespace April::Gui {
 		Skillbar( Config const& config );
 
 		void Display() const;
+
+		void UpdateHSR( GW::Packet::StoC::SkillRecharge const& );
+		void UpdateHSR( GW::Packet::StoC::SkillRecharged const& );
+		void UpdateHSR( GW::Packet::StoC::MapLoaded const& );
 
 
 	private:

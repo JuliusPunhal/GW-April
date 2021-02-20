@@ -29,6 +29,9 @@ namespace April {
 
 		ShowKitUses( Config const& );
 
+		void UpdateKitUses( GW::Packet::StoC::ItemGeneral& ) const;
+		void UpdateKitUses( GW::Packet::StoC::ItemGeneral_ReuseID& ) const;
+
 
 	private:
 		Config const& config;

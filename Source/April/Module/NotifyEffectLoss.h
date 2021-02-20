@@ -25,6 +25,8 @@ namespace April {
 
 		NotifyEffectLoss( Config const& );
 
+		void OnEffectLoss( GW::Packet::StoC::RemoveEffect const& ) const;
+
 
 	private:
 		Config const& config;

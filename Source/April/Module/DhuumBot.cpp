@@ -9,8 +9,6 @@ using namespace std::chrono;
 
 namespace {
 
-	auto entry = GW::HookEntry{};
-
 	inline constexpr auto hostile = 0x3; // GW::Agent::allegiance
 
 
@@ -117,21 +115,6 @@ namespace {
 }
 
 
-April::DhuumBot::DhuumBot()
-{
-	// Callback will only be cleaned up during GWCA shutdown.
-	GW::StoC::RegisterPacketCallback<GW::Packet::StoC::ObjectiveDone>(
-		&entry,
-		[this]( auto*, auto* packet )
-		{
-			if ( packet->objective_id == GW::Objectives::Dhuum )
-			{
-				active = false;
-				dhuum_id = 0;
-			}
-		} );
-}
-
 void April::DhuumBot::Update()
 {
 	if ( not active ) return;
@@ -155,4 +138,13 @@ void April::DhuumBot::Update()
 
 	if ( used_spirit_skill( dhuum_id ) )
 		last_cast = steady_clock::now();
+}
+
+void April::DhuumBot::Update( GW::Packet::StoC::ObjectiveDone const& packet )
+{
+	if ( packet.objective_id == GW::Objectives::Dhuum )
+	{
+		active = false;
+		dhuum_id = 0;
+	}
 }

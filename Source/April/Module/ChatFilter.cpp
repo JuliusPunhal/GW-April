@@ -6,9 +6,6 @@ using Config = April::ChatFilter::Config;
 
 namespace {
 
-	auto entry = GW::HookEntry{};
-
-
 	constexpr bool ShouldIgnoreByAgentThatDropped( wchar_t const* segment )
 	{
 		if ( segment == nullptr )
@@ -293,51 +290,34 @@ namespace {
 		return false;
 	}
 
-	void on_message( GW::HookStatus* status, Config const& config )
-	{
-		auto& buf = GW::GameContext::instance()->world->message_buff;
-		if ( buf.valid() && should_ignore( buf.begin(), config ) )
-		{
-			status->blocked = true;
-			buf.clear();
-		}
-	}
-
-	void on_local_message(
-		GW::HookStatus* status, wchar_t const* msg, Config const& config )
-	{
-		if ( should_ignore( msg, config ) )
-		{
-			status->blocked = true;
-			auto& buf = GW::GameContext::instance()->world->message_buff;
-			if ( buf.valid() )
-				buf.clear();
-		}
-	}
-
 }
 
 
 April::ChatFilter::ChatFilter( Config const& config )
 	: config{ config }
 {
-	using namespace GW::Packet::StoC;
+}
 
-	// Callbacks will only be cleaned up during GWCA shutdown.
-	auto const on_msg = [this]( GW::HookStatus* status, void* )
+void April::ChatFilter::OnMessage( GW::HookStatus* status ) const
+{
+	auto& buf = GW::GameContext::instance()->world->message_buff;
+	if ( buf.valid() && should_ignore( buf.begin(), config ) )
 	{
-		on_message( status, this->config );
-	};
+		status->blocked = true;
+		buf.clear();
+	}
+}
 
-	GW::StoC::RegisterPacketCallback<MessageServer>( &entry, on_msg );
-	GW::StoC::RegisterPacketCallback<MessageGlobal>( &entry, on_msg );
-	GW::StoC::RegisterPacketCallback<MessageLocal>( &entry, on_msg );
-	GW::Chat::RegisterLocalMessageCallback(
-		&entry,
-		[this]( GW::HookStatus* status, int, wchar_t const* msg )
-		{
-			on_local_message( status, msg, this->config );
-		} );
+void April::ChatFilter::OnMessage(
+	GW::HookStatus* status, wchar_t const* msg ) const
+{
+	if ( should_ignore( msg, config ) )
+	{
+		status->blocked = true;
+		auto& buf = GW::GameContext::instance()->world->message_buff;
+		if ( buf.valid() )
+			buf.clear();
+	}
 }
 
 auto April::ChatFilter::Config::LoadDefault() -> Config

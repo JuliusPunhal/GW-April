@@ -26,8 +26,6 @@ namespace {
 
 	constexpr auto PARTY = GW::Chat::CHANNEL_GROUP;
 
-	auto entry = GW::HookEntry{};
-
 
 	template<typename Iter_t>
 	constexpr auto make_sv( Iter_t const begin, Iter_t const end )
@@ -433,33 +431,20 @@ namespace {
 		return false;
 	}
 
-	void on_message(
-		GW::HookStatus* status,
-		std::string msg,
-		AgentFilter& agent_filter,
-		ConsumablesMgr& consumables,
-		Guis& guis,
-		Config const& config )
+	auto msg_to_string( wchar_t const* message ) -> std::string
 	{
-		expand_abbreviations( msg, config );
+		auto str = std::string{ '/' };
+		str.reserve( 128 );
 
-		for ( auto cmd_begin = msg.cbegin(); cmd_begin != msg.cend(); /**/ )
+		for ( auto it = 0; it < 128; ++it )
 		{
-			auto const cmd_end =
-				find_unquoted( cmd_begin + 1, msg.cend(), '/' );
+			if ( message[it] == '\0' )
+				break;
 
-			auto cmd = make_sv( cmd_begin, cmd_end );
-			while( cmd.size() > 0 && cmd.back() == ' ' )
-				cmd.remove_suffix( 1 );
-
-			auto const cli = parse_cmd( cmd );
-			if ( call_command( cli, agent_filter, consumables, guis ) )
-			{
-				status->blocked = true;
-			}
-
-			cmd_begin = cmd_end;
+			str += static_cast<char>( message[it] );
 		}
+
+		return str;
 	}
 
 }
@@ -476,23 +461,36 @@ April::ChatCommands::ChatCommands(
 	configs{ configs },
 	config{ config }
 {
-	// Callbacks will only be cleaned up during GWCA shutdown.
-	GW::Chat::RegisterSendChatCallback(
-		&entry,
-		[this]( GW::HookStatus* s, GW::Chat::Channel channel, wchar_t* msg )
+}
+
+void April::ChatCommands::OnMessage(
+	GW::HookStatus* status,
+	GW::Chat::Channel const channel,
+	wchar_t const* raw_msg )
+{
+	if ( channel != GW::Chat::CHANNEL_COMMAND )
+		return;
+
+	auto msg = msg_to_string( raw_msg );
+	expand_abbreviations( msg, config );
+
+	for ( auto cmd_begin = msg.cbegin(); cmd_begin != msg.cend(); /**/ )
+	{
+		auto const cmd_end =
+			find_unquoted( cmd_begin + 1, msg.cend(), '/' );
+
+		auto cmd = make_sv( cmd_begin, cmd_end );
+		while( cmd.size() > 0 && cmd.back() == ' ' )
+			cmd.remove_suffix( 1 );
+
+		auto const cli = parse_cmd( cmd );
+		if ( call_command( cli, *agent_filter, *consumables, configs.gui ) )
 		{
-			if ( channel != GW::Chat::CHANNEL_COMMAND )
-				return;
+			status->blocked = true;
+		}
 
-			char buf[128] = { '/' };
-			for ( auto it = 1; it < sizeof( buf ); ++it )
-			{
-				buf[it] = static_cast<char>( msg[it - 1] );
-			}
-			buf[127] = '\0';
-
-			on_message( s, buf, *agent_filter, *consumables, this->configs.gui, this->config );
-		} );
+		cmd_begin = cmd_end;
+	}
 }
 
 auto April::ChatCommands::Config::LoadDefault() -> Config

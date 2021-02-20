@@ -13,9 +13,6 @@ using namespace GW::Packet::StoC;
 
 namespace {
 
-	auto entry = GW::HookEntry{};
-
-
 	auto is_item( AgentAdd const& packet ) -> GW::Item const*
 	{
 		// filter non-item-agents
@@ -55,21 +52,6 @@ namespace {
 April::AgentFilter::AgentFilter( Config const& config )
 	: config{ config }
 {
-	// Callbacks will only be cleaned up during GWCA shutdown.
-	GW::StoC::RegisterPacketCallback<AgentAdd>(
-		&entry, [this]( auto* s, auto* pak ) { OnSpawn( s, *pak ); } );
-
-	GW::StoC::RegisterPacketCallback<AgentRemove>(
-		&entry, [this]( auto* s, auto* pak ) { OnDespawn( s, *pak ); } );
-
-	GW::StoC::RegisterPacketCallback<UpdateItemOwner>(
-		&entry, [this]( auto*, auto* pak ) { UpdateOwner( *pak ); } );
-
-	GW::StoC::RegisterPacketCallback<ItemGeneral_ReuseID>(
-		&entry, [this]( auto*, auto* pak ) { DeleteOwner( *pak ); } );
-
-	GW::StoC::RegisterPacketCallback<MapLoaded>(
-		&entry, [this]( auto*, auto* ) { Reset(); } );
 }
 
 void April::AgentFilter::DisplaySuppressedItems()
