@@ -276,7 +276,7 @@ void April::Gui::UwTimesGui::Display() const
 
 auto April::Gui::UwTimesGui::Config::LoadDefault() -> Config
 {
-	auto const config = Config{
+	return Config{
 		std::array<std::string, 11>{
 			"Chamber", "Restore", "Escort", "UWG", "Vale",
 			"Wastes", "Pits", "Plains", "Mnts", "Pools",
@@ -289,6 +289,4 @@ auto April::Gui::UwTimesGui::Config::LoadDefault() -> Config
 		"Underworld Times",
 		ImGuiWindowFlags_None
 	};
-
-	return config;
 }

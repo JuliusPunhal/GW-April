@@ -243,13 +243,11 @@ auto April::AgentFilter::Config::LoadDefault() -> Config
 	};
 	auto party_rarities = std::vector<GW::Rarity>{};
 
-	auto const config = Config{
+	return Config{
 		true,
 		std::move( player_items ),
 		std::move( player_rarities ),
 		std::move( party_items ),
 		std::move( party_rarities )
 	};
-
-	return config;
 }

@@ -382,7 +382,7 @@ auto April::Gui::Skillbar::Config::LoadDefault() -> Config
 		| ImGuiWindowFlags_NoNavInputs
 		| ImGuiWindowFlags_NoNavFocus;
 
-	auto const config = Config{
+	return Config{
 		{ "C:\\Windows\\Fonts\\Gothic.ttf", 30 },
 		{ "C:\\Windows\\Fonts\\Gothic.ttf", 14 },
 		false,
@@ -404,6 +404,4 @@ auto April::Gui::Skillbar::Config::LoadDefault() -> Config
 
 		{ "Skillbar", true, window_flags }
 	};
-
-	return config;
 }

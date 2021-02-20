@@ -55,9 +55,7 @@ April::ReturnToOutpost::ReturnToOutpost( Config const& config )
 
 auto April::ReturnToOutpost::Config::LoadDefault() -> Config
 {
-	auto const config = Config{
+	return Config{
 		true
 	};
-
-	return config;
 }

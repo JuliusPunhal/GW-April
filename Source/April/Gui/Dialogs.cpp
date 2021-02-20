@@ -77,12 +77,10 @@ auto April::Gui::Dialogs::Config::LoadDefault() -> Config
 			( QuestID::UW::Planes << 8 ) | 0x800001 }
 	};
 
-	auto const config = Config{
+	return Config{
 		std::move( dialogs ),
 		3s,
 		{ 0.7f, 0, 0, 1 },
 		{ "Dialogs", false, ImGuiWindowFlags_None }
 	};
-
-	return config;
 }

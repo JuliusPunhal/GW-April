@@ -94,9 +94,7 @@ void April::Gui::DhuumInfo::Display() const
 
 auto April::Gui::DhuumInfo::Config::LoadDefault() -> Config
 {
-	auto const config = Config{
+	return Config{
 		{ "Dhuum Info", false, ImGuiWindowFlags_None }
 	};
-
-	return config;
 }

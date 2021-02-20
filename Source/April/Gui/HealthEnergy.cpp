@@ -172,7 +172,7 @@ auto April::Gui::Healthbar::Config::LoadDefault() -> Config
 		| ImGuiWindowFlags_NoNavInputs
 		| ImGuiWindowFlags_NoNavFocus;
 
-	auto const config = Config{
+	return Config{
 		White(),
 		{ 0.1f, 0.1f, 0.1f, 1 },
 		{
@@ -186,8 +186,6 @@ auto April::Gui::Healthbar::Config::LoadDefault() -> Config
 		{ "C:\\Windows\\Fonts\\Consola.ttf", 14 },
 		{ "Healthbar", true, window_flags }
 	};
-
-	return config;
 }
 
 April::Gui::Energybar::Energybar( Config const& config )
@@ -242,7 +240,7 @@ auto April::Gui::Energybar::Config::LoadDefault() -> Config
 		| ImGuiWindowFlags_NoNavInputs
 		| ImGuiWindowFlags_NoNavFocus;
 
-	auto const config = Config{
+	return Config{
 		White(),
 		{ 0.1f, 0.1f, 0.1f, 1 },
 		{ 0, 0, 0.7f, 1 },
@@ -250,6 +248,4 @@ auto April::Gui::Energybar::Config::LoadDefault() -> Config
 		{ "C:\\Windows\\Fonts\\Consola.ttf", 14 },
 		{ "Energybar", true, window_flags }
 	};
-
-	return config;
 }

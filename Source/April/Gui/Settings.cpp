@@ -1089,9 +1089,7 @@ void April::Gui::Settings::Display() const
 
 auto April::Gui::Settings::Config::LoadDefault() -> Config
 {
-	auto const config = Config{
+	return Config{
 		{ "Settings", true, ImGuiWindowFlags_None }
 	};
-
-	return config;
 }

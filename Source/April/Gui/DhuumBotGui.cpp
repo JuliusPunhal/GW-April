@@ -33,9 +33,7 @@ void April::Gui::DhuumBotGui::Display() const
 
 auto April::Gui::DhuumBotGui::Config::LoadDefault() -> Config
 {
-	auto const config = Config{
+	return Config{
 		{ "Dhuum Bot", false, ImGuiWindowFlags_None }
 	};
-
-	return config;
 }

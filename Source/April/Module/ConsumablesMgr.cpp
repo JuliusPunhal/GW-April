@@ -162,9 +162,7 @@ void April::ConsumablesMgr::deactivate_all_persistent()
 
 auto April::ConsumablesMgr::Config::LoadDefault() -> Config
 {
-	auto const config = Config{
+	return Config{
 		250ms
 	};
-
-	return config;
 }

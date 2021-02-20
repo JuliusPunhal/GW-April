@@ -342,7 +342,7 @@ April::ChatFilter::ChatFilter( Config const& config )
 
 auto April::ChatFilter::Config::LoadDefault() -> Config
 {
-	auto const config = Config{
+	return Config{
 		/*bool self_drop_rare  =*/ true,
 		/*bool self_drop_common  =*/ true,
 		/*bool self_pickup  =*/ true,
@@ -391,6 +391,4 @@ auto April::ChatFilter::Config::LoadDefault() -> Config
 		/*bool lunars  =*/ true,
 		/*bool ninerings  =*/ true,
 	};
-
-	return config;
 }

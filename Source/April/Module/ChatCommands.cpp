@@ -499,49 +499,51 @@ auto April::ChatCommands::Config::LoadDefault() -> Config
 {
 	namespace ModelID = GW::Constants::ItemID;
 
-	return Config{{
-		// Commands
-		{ "/x",				cmd_openxunlai },
-		{ "/s",				cmd_pcons_on },
-		{ "/s_off",			cmd_pcons_off },
-		{ "/sp",			cmd_persistent_on },
-		{ "/sp_off",		cmd_persistent_off },
-		{ "/q",				cmd_pcons_objective },
-		// Consumables
-		{ "cupcake",		std::to_string( ModelID::Cupcakes ) },
-		{ "apple",			std::to_string( ModelID::Apples ) },
-		{ "corn",			std::to_string( ModelID::Corns ) },
-		{ "pie",			std::to_string( ModelID::Pies ) },
-		{ "egg",			std::to_string( ModelID::Eggs ) },
-		{ "warsupply",		std::to_string( ModelID::Warsupplies ) },
-		{ "lunars",			std::to_string( ModelID::LunarRooster ) },
-		{ "lunar",			"lunars" },
-		{ "soup",			std::to_string( ModelID::SkalefinSoup ) },
-		{ "kabob",			std::to_string( ModelID::Kabobs ) },
-		{ "salad",			std::to_string( ModelID::PahnaiSalad ) },
-		{ "bu",				std::to_string( ModelID::ConsEssence ) },
-		{ "grail",			std::to_string( ModelID::ConsGrail ) },
-		{ "armor",			std::to_string( ModelID::ConsArmor ) },
-		{ "rrc",			std::to_string( ModelID::RRC ) },
-		{ "brc",			std::to_string( ModelID::BRC ) },
-		{ "grc",			std::to_string( ModelID::GRC ) },
-		// Objectives
-		{ "restore",		"147" },
-		{ "escort",			"148" },
-		{ "uwg",			"149" },
-		{ "vale",			"150" },
-		{ "wastes",			"151" },
-		{ "pits",			"152" },
-		{ "plains",			"153" },
-		{ "mnts",			"154" },
-		{ "pools",			"155" },
-		{ "dhuum",			"157" },
-		// Util
-		{ "base",			"cupcake apple corn pie egg warsupply" },
-		{ "cons",			"bu grail armor" },
-		{ "miku",			std::to_string( ModelID::ELMiku ) },
-		{ "ident",			std::to_string( ModelID::IdentKit_Superior ) },
-		{ "perma",			"/sp miku ident" },
-		{ "/t4",			"/s base lunars /q plains" }
-	}};
+	return Config{
+		std::vector<Abbreviation>{
+			// Commands
+			{ "/x",				cmd_openxunlai },
+			{ "/s",				cmd_pcons_on },
+			{ "/s_off",			cmd_pcons_off },
+			{ "/sp",			cmd_persistent_on },
+			{ "/sp_off",		cmd_persistent_off },
+			{ "/q",				cmd_pcons_objective },
+			// Consumables
+			{ "cupcake",		std::to_string( ModelID::Cupcakes ) },
+			{ "apple",			std::to_string( ModelID::Apples ) },
+			{ "corn",			std::to_string( ModelID::Corns ) },
+			{ "pie",			std::to_string( ModelID::Pies ) },
+			{ "egg",			std::to_string( ModelID::Eggs ) },
+			{ "warsupply",		std::to_string( ModelID::Warsupplies ) },
+			{ "lunars",			std::to_string( ModelID::LunarRooster ) },
+			{ "lunar",			"lunars" },
+			{ "soup",			std::to_string( ModelID::SkalefinSoup ) },
+			{ "kabob",			std::to_string( ModelID::Kabobs ) },
+			{ "salad",			std::to_string( ModelID::PahnaiSalad ) },
+			{ "bu",				std::to_string( ModelID::ConsEssence ) },
+			{ "grail",			std::to_string( ModelID::ConsGrail ) },
+			{ "armor",			std::to_string( ModelID::ConsArmor ) },
+			{ "rrc",			std::to_string( ModelID::RRC ) },
+			{ "brc",			std::to_string( ModelID::BRC ) },
+			{ "grc",			std::to_string( ModelID::GRC ) },
+			// Objectives
+			{ "restore",		"147" },
+			{ "escort",			"148" },
+			{ "uwg",			"149" },
+			{ "vale",			"150" },
+			{ "wastes",			"151" },
+			{ "pits",			"152" },
+			{ "plains",			"153" },
+			{ "mnts",			"154" },
+			{ "pools",			"155" },
+			{ "dhuum",			"157" },
+			// Util
+			{ "base",			"cupcake apple corn pie egg warsupply" },
+			{ "cons",			"bu grail armor" },
+			{ "miku",			std::to_string( ModelID::ELMiku ) },
+			{ "ident",			std::to_string( ModelID::IdentKit_Superior ) },
+			{ "perma",			"/sp miku ident" },
+			{ "/t4",			"/s base lunars /q plains" }
+		}
+	};
 }

@@ -67,20 +67,16 @@ April::NotifyEffectLoss::NotifyEffectLoss( Config const& config )
 
 auto April::NotifyEffectLoss::Config::LoadDefault() -> Config
 {
-	auto notifications = std::vector<Notification>{
-		{ GW::SkillID::Balthazars_Spirit,
-			"<c=#FFFF00>Lost Balthasar's Spirit!</c>" },
+	return Config{
+		std::vector<Notification>{
+			{ GW::SkillID::Balthazars_Spirit,
+				"<c=#FFFF00>Lost Balthasar's Spirit!</c>" },
 
-		{ GW::SkillID::Protective_Bond,
-			"<c=#FFFF00>Lost Protective Bond!</c>" },
+			{ GW::SkillID::Protective_Bond,
+				"<c=#FFFF00>Lost Protective Bond!</c>" },
 
-		{ GW::SkillID::Life_Bond,
-			"<c=#FFFF00>Lost Life Bond!</c>" }
+			{ GW::SkillID::Life_Bond,
+				"<c=#FFFF00>Lost Life Bond!</c>" }
+		}
 	};
-
-	auto const config = Config{
-		std::move( notifications )
-	};
-
-	return config;
 }

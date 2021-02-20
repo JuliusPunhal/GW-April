@@ -97,9 +97,7 @@ void April::Gui::ChainedSoulGui::Display() const
 
 auto April::Gui::ChainedSoulGui::Config::LoadDefault() -> Config
 {
-	auto const config = Config{
+	return Config{
 		{ "Chained Soul Info", false, ImGuiWindowFlags_None }
 	};
-
-	return config;
 }

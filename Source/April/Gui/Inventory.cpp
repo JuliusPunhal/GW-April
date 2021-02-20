@@ -175,7 +175,7 @@ auto April::Gui::Inventory::Config::LoadDefault() -> Config
 		| ImGuiWindowFlags_NoNavInputs
 		| ImGuiWindowFlags_NoNavFocus;
 
-	auto const config = Config{
+	return Config{
 		{ "C:\\Windows\\Fonts\\Gothic.ttf", 30 },
 
 		WH{ 36, 44 },
@@ -195,6 +195,4 @@ auto April::Gui::Inventory::Config::LoadDefault() -> Config
 
 		{ "Inventory", true, window_flags }
 	};
-
-	return config;
 }

@@ -61,9 +61,7 @@ void April::Gui::TargetInfo::Display() const
 
 auto April::Gui::TargetInfo::Config::LoadDefault() -> Config
 {
-	auto const config = Config{
+	return Config{
 		{ "Target Info", false, ImGuiWindowFlags_None }
 	};
-
-	return config;
 }

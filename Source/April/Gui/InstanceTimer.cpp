@@ -69,12 +69,11 @@ auto April::Gui::InstanceTimer::Config::LoadDefault() -> Config
 		| ImGuiWindowFlags_NoFocusOnAppearing
 		| ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-	auto const config = Config{
+	return Config{
 		{ "C:\\Windows\\Fonts\\Consola.ttf", 30 },
 		White(),
 		Black(),
 		XY{ 1, 1 },
 		{ "Instance Time", true, wnd_flags }
 	};
-	return config;
 }

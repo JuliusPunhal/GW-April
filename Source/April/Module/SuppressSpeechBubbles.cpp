@@ -26,9 +26,7 @@ April::SuppressSpeechBubbles::SuppressSpeechBubbles( Config const& config )
 
 auto April::SuppressSpeechBubbles::Config::LoadDefault() -> Config
 {
-	auto const config = Config{
+	return Config{
 		true
 	};
-
-	return config;
 }

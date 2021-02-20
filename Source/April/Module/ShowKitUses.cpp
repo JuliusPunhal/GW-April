@@ -63,9 +63,7 @@ April::ShowKitUses::ShowKitUses( Config const& config )
 
 auto April::ShowKitUses::Config::LoadDefault() -> Config
 {
-	auto const config = Config{
+	return Config{
 		true
 	};
-
-	return config;
 }
