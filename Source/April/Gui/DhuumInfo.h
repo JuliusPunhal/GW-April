@@ -3,8 +3,6 @@
 #include "April/Module/DhuumsJudgement.h"
 #include "April/Utility/DrawStructures.h"
 
-#include <memory>
-
 
 namespace April::Gui {
 
@@ -18,13 +16,12 @@ namespace April::Gui {
 		};
 
 
-		DhuumInfo( std::shared_ptr<DhuumsJudgement const>, Config const& );
+		DhuumInfo( Config const& );
 
-		void Display() const;
+		void Display( DhuumsJudgement const& ) const;
 
 
 	private:
-		std::shared_ptr<DhuumsJudgement const> judgement;
 		Config const& config;
 	};
 

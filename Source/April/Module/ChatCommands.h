@@ -26,13 +26,15 @@ namespace April {
 		};
 
 
-		ChatCommands(
-			std::shared_ptr<AgentFilter>,
-			std::shared_ptr<ConsumablesMgr>,
-			ModuleConfigurations&,
-			Config const& );
+		ChatCommands( Config const& );
 
-		void OnMessage( GW::HookStatus*, GW::Chat::Channel, wchar_t const* );
+		void OnMessage(
+			GW::HookStatus*,
+			GW::Chat::Channel,
+			wchar_t const*,
+			AgentFilter&,
+			ConsumablesMgr&,
+			ModuleConfigurations& ) const;
 
 
 		static constexpr auto cmd_sendchat =		"/sendchat";
@@ -49,9 +51,6 @@ namespace April {
 
 
 	private:
-		std::shared_ptr<AgentFilter> agent_filter;
-		std::shared_ptr<ConsumablesMgr> consumables;
-		ModuleConfigurations& configs;
 		Config const& config;
 	};
 

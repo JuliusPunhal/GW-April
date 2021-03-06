@@ -21,17 +21,12 @@ namespace {
 }
 
 
-April::UwTimer::UwTimer( std::shared_ptr<UwTimes> times )
-	: times{ std::move( times ) }
-{
-}
-
 void April::UwTimer::Update()
 {
 	if ( GW::GetMapID() != GW::MapID::The_Underworld ) return;
 	if ( GW::PartyMgr::GetIsPartyDefeated() ) return;
 
-	times->instance_time = GW::GetInstanceTime();
+	times.instance_time = GW::GetInstanceTime();
 }
 
 void April::UwTimer::Update( AgentName const& packet )
@@ -42,15 +37,15 @@ void April::UwTimer::Update( AgentName const& packet )
 	// Packet is also sent when reaper is added/removed from party-list.
 	// Therefore, only change when packet is first recieved.
 	auto const it = static_cast<int>(*reaper);
-	if ( times->pop[it] > 0ms ) return;
+	if ( times.pop[it] > 0ms ) return;
 
-	times->pop[it] = GW::GetInstanceTime();
+	times.pop[it] = GW::GetInstanceTime();
 }
 
 void April::UwTimer::Update( ObjectiveAdd const& packet )
 {
 	if ( packet.objective_id == GW::Objectives::Dhuum )
-		times->nightman_cometh = GW::GetInstanceTime();
+		times.nightman_cometh = GW::GetInstanceTime();
 }
 
 void April::UwTimer::Update( ObjectiveUpdateName const& packet )
@@ -59,7 +54,7 @@ void April::UwTimer::Update( ObjectiveUpdateName const& packet )
 		&& packet.objective_id <= GW::Objectives::Pools )
 	{
 		auto const it = normalize( packet.objective_id );
-		times->take[it] = GW::GetInstanceTime();
+		times.take[it] = GW::GetInstanceTime();
 	}
 }
 
@@ -69,11 +64,11 @@ void April::UwTimer::Update( ObjectiveDone const& packet )
 		&& packet.objective_id <= GW::Objectives::Pools )
 	{
 		auto const it = normalize( packet.objective_id );
-		times->done[it] = GW::GetInstanceTime();
+		times.done[it] = GW::GetInstanceTime();
 	}
 	else if ( packet.objective_id == GW::Objectives::Dhuum )
 	{
-		times->dhuum_done = GW::GetInstanceTime();
+		times.dhuum_done = GW::GetInstanceTime();
 	}
 }
 
@@ -87,11 +82,11 @@ void April::UwTimer::Update( AgentUpdateAllegiance const& packet )
 	if ( living->player_number != GW::Constants::ModelID::UW::Dhuum ) return;
 	if ( living->hp < 1 ) return; // TODO: find content for turning hostile
 
-	times->dhuum_hostile = GW::GetInstanceTime();
+	times.dhuum_hostile = GW::GetInstanceTime();
 }
 
 void April::UwTimer::Reset()
 {
 	if ( GW::GetMapID() == GW::MapID::The_Underworld )
-		*times = UwTimes{};
+		times = UwTimes{};
 }

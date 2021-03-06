@@ -4,8 +4,6 @@
 
 #include "April/Utility/DrawStructures.h"
 
-#include <memory>
-
 
 namespace April::Gui {
 
@@ -41,13 +39,12 @@ namespace April::Gui {
 		};
 
 
-		Inventory( std::shared_ptr<ConsumablesMgr>, Config const& );
+		Inventory( Config const& );
 
-		void Display() const;
+		void Display( ConsumablesMgr& ) const;
 
 
 	private:
-		std::shared_ptr<ConsumablesMgr> cons_mgr;
 		Config const& config;
 		ImFont* font;
 	};

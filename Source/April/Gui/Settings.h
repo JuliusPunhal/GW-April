@@ -19,13 +19,9 @@ namespace April::Gui {
 		};
 
 
-		Settings( ModuleConfigurations& );
+		Settings() = default;
 
-		void Display() const;
-
-
-	private:
-		ModuleConfigurations& configurations;
+		void Display( ModuleConfigurations& ) const;
 	};
 
 }

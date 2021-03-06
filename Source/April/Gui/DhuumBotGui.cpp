@@ -6,14 +6,12 @@
 #include "Dependencies/ImGui.hpp"
 
 
-April::Gui::DhuumBotGui::DhuumBotGui(
-	std::shared_ptr<DhuumBot> bot, Config const& config )
-	:
-	bot{ std::move( bot ) }, config{ config }
+April::Gui::DhuumBotGui::DhuumBotGui( Config const& config )
+	: config{ config }
 {
 }
 
-void April::Gui::DhuumBotGui::Display() const
+void April::Gui::DhuumBotGui::Display( DhuumBot& bot ) const
 {
 	if ( ImGui::Begin( config.window ) )
 	{
@@ -22,10 +20,10 @@ void April::Gui::DhuumBotGui::Display() const
 			WndProc::BlockMouseInput();
 		}
 
-		auto checked = bot->is_active();
+		auto checked = bot.is_active();
 		if ( ImGui::Checkbox( "Activate Dhuum Bot", &checked ) )
 		{
-			bot->activate( checked );
+			bot.activate( checked );
 		}
 	}
 	ImGui::End();

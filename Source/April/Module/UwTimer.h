@@ -4,7 +4,6 @@
 
 #include <array>
 #include <chrono>
-#include <memory>
 
 
 namespace April {
@@ -23,7 +22,7 @@ namespace April {
 
 	class UwTimer {
 	public:
-		UwTimer( std::shared_ptr<UwTimes> );
+		UwTimer() = default;
 
 		void Update();
 		void Update( GW::Packet::StoC::AgentName const& );
@@ -33,9 +32,11 @@ namespace April {
 		void Update( GW::Packet::StoC::AgentUpdateAllegiance const& );
 		void Reset();
 
+		auto current() const noexcept { return times; }
+
 
 	private:
-		std::shared_ptr<UwTimes> times;
+		UwTimes times;
 	};
 
 }

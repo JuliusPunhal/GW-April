@@ -97,16 +97,12 @@ namespace {
 }
 
 
-April::Gui::Inventory::Inventory(
-	std::shared_ptr<ConsumablesMgr> mgr, Config const& style )
-	:
-	cons_mgr{ std::move( mgr ) },
-	config{ style },
-	font{ LoadFont( config.font ) }
+April::Gui::Inventory::Inventory( Config const& style )
+	: config{ style }, font{ LoadFont( config.font ) }
 {
 }
 
-void April::Gui::Inventory::Display() const
+void April::Gui::Inventory::Display( ConsumablesMgr& cons_mgr ) const
 {
 	auto const bags = GW::Items::GetBagArray();
 	if ( bags == nullptr ) return;
@@ -124,7 +120,7 @@ void April::Gui::Inventory::Display() const
 			{
 				auto const color = item_color( item, config );
 				auto const surface = surface_color( color, config );
-				auto const label = get_label( item, *cons_mgr, config );
+				auto const label = get_label( item, cons_mgr, config );
 
 				ImGui::PushID( item );
 				ImGui::PushStyleColor( ImGuiCol_Border, color );
@@ -139,11 +135,11 @@ void April::Gui::Inventory::Display() const
 						WndProc::BlockMouseInput();
 						if ( ImGui::GetIO().MouseClicked[0] && item )
 						{
-							activate_or_promote( item->model_id, *cons_mgr );
+							activate_or_promote( item->model_id, cons_mgr );
 						}
 						else if ( ImGui::GetIO().MouseClicked[1] && item )
 						{
-							deactivate( item->model_id, *cons_mgr );
+							deactivate( item->model_id, cons_mgr );
 						}
 					}
 				}

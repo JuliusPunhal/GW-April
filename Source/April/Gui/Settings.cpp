@@ -1051,14 +1051,9 @@ namespace {
 }
 
 
-April::Gui::Settings::Settings( ModuleConfigurations& config )
-	: configurations{ config }
+void April::Gui::Settings::Display( ModuleConfigurations& configs ) const
 {
-}
-
-void April::Gui::Settings::Display() const
-{
-	auto& config = std::get<Config>( configurations.gui );
+	auto& config = std::get<Config>( configs.gui );
 
 	if ( ImGui::Begin( config.window ) )
 	{
@@ -1070,11 +1065,11 @@ void April::Gui::Settings::Display() const
 		}
 
 		ImGui::Text( "Module Settings" );
-		draw_settings( configurations.active );
-		draw_settings( configurations.passive );
+		draw_settings( configs.active );
+		draw_settings( configs.passive );
 
 		ImGui::Text( "\nGui Settings" );
-		draw_settings( configurations.gui );
+		draw_settings( configs.gui );
 
 		ImGui::Text( "\nGlobal Style Settings" );
 		if ( ImGui::CollapsingHeader( "ImGui Style" ) )

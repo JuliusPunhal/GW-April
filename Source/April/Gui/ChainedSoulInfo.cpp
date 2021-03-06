@@ -59,26 +59,24 @@ namespace {
 			return "Soul not found!"s;
 	}
 
-	auto parse_chained_soul_state( April::ChainedSoul const& soul )
+	auto parse_chained_soul_state( April::ChainedSoul::SoulState const& soul )
 		-> std::string
 	{
 		auto const parser = []( auto&& soul ) { return parse( soul ); };
-		return std::visit( parser, soul.get() );
+		return std::visit( parser, soul );
 	}
 
 }
 
 
-April::Gui::ChainedSoulGui::ChainedSoulGui(
-	std::shared_ptr<ChainedSoul const> state, Config const& config )
-	:
-	state{ std::move( state ) }, config{ config }
+April::Gui::ChainedSoulGui::ChainedSoulGui( Config const& config )
+	: config{ config }
 {
 }
 
-void April::Gui::ChainedSoulGui::Display() const
+void April::Gui::ChainedSoulGui::Display( ChainedSoul const& state ) const
 {
-	auto const label = parse_chained_soul_state( *state );
+	auto const label = parse_chained_soul_state( state.get() );
 
 	if ( ImGui::Begin( config.window ) )
 	{

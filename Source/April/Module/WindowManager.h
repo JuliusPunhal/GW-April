@@ -11,16 +11,24 @@ namespace April {
 
 	class WindowMgr {
 	public:
-		WindowMgr( ModuleConfigurations& );
+		WindowMgr() = default;
 
-		void Update();
-		void Update( GW::Packet::StoC::ObjectiveDone const& ) const;
-		void Update( GW::Packet::StoC::AgentUpdateAllegiance const& ) const;
-		void Update( GW::Packet::StoC::MapLoaded const& ) const;
+		void Update( ModuleConfigurations& );
+
+		void Update(
+			GW::Packet::StoC::ObjectiveDone const&,
+			ModuleConfigurations& ) const;
+
+		void Update(
+			GW::Packet::StoC::AgentUpdateAllegiance const&,
+			ModuleConfigurations& ) const;
+
+		void Update(
+			GW::Packet::StoC::MapLoaded const&,
+			ModuleConfigurations& ) const;
 
 
 	private:
-		ModuleConfigurations& configs;
 		bool in_pits = false;
 	};
 

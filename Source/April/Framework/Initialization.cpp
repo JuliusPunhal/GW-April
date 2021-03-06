@@ -224,7 +224,6 @@ namespace {
 
 
 		using namespace April;
-		auto uw_times = std::make_shared<UwTimes>();
 
 		auto config = std::make_unique<ModuleConfigurations>(
 			ModuleConfigurations{
@@ -257,91 +256,76 @@ namespace {
 			} );
 
 		auto active = Modules::Active{
-			std::make_shared<ConsumablesMgr>(
-				std::get<ConsumablesMgr::Config>( config->active ) ),
-
-			std::make_shared<ChainedSoul>(),
-
-			std::make_shared<DhuumBot>(),
-
-			std::make_shared<DhuumsJudgement>(),
-
-			std::make_shared<UwTimer>( uw_times ),
-
-			std::make_unique<WindowMgr>( *config )
+			ConsumablesMgr{
+				std::get<ConsumablesMgr::Config>( config->active )
+			},
+			ChainedSoul{},
+			DhuumBot{},
+			DhuumsJudgement{},
+			UwTimer{},
+			WindowMgr{}
 		};
 
-		auto agent_filter =
-			std::make_shared<AgentFilter>(
-				std::get<AgentFilter::Config>( config->passive ) );
-
 		auto passive = Modules::Passive{
-			agent_filter,
-
-			std::make_unique<ChatCommands>(
-				agent_filter,
-				std::get<std::shared_ptr<ConsumablesMgr>>( active ),
-				*config,
-				std::get<ChatCommands::Config>( config->passive ) ),
-
-			std::make_unique<ChatFilter>(
-				std::get<ChatFilter::Config>( config->passive ) ),
-
-			std::make_unique<CursorFix>(),
-
-			std::make_unique<NotifyEffectLoss>(
-				std::get<NotifyEffectLoss::Config>( config->passive ) ),
-
-			std::make_unique<ReturnToOutpost>(
-				std::get<ReturnToOutpost::Config>( config->passive ) ),
-
-			std::make_unique<ShowKitUses>(
-				std::get<ShowKitUses::Config>( config->passive ) ),
-
-			std::make_unique<SuppressSpeechBubbles>(
-				std::get<SuppressSpeechBubbles::Config>( config->passive ) )
+			AgentFilter{
+				std::get<AgentFilter::Config>( config->passive )
+			},
+			ChatCommands{
+				std::get<ChatCommands::Config>( config->passive )
+			},
+			ChatFilter{
+				std::get<ChatFilter::Config>( config->passive )
+			},
+			CursorFix{},
+			NotifyEffectLoss{
+				std::get<NotifyEffectLoss::Config>( config->passive )
+			},
+			ReturnToOutpost{
+				std::get<ReturnToOutpost::Config>( config->passive )
+			},
+			ShowKitUses{
+				std::get<ShowKitUses::Config>( config->passive )
+			},
+			SuppressSpeechBubbles{
+				std::get<SuppressSpeechBubbles::Config>( config->passive )
+			}
 		};
 
 		auto gui = Modules::Guis{
-			std::make_unique<Gui::ChainedSoulGui>(
-				std::get<std::shared_ptr<ChainedSoul>>( active ),
-				std::get<Gui::ChainedSoulGui::Config>( config->gui ) ),
-
-			std::make_unique<Gui::Energybar>(
-				std::get<Gui::Energybar::Config>( config->gui ) ),
-
-			std::make_unique<Gui::DhuumBotGui>(
-				std::get<std::shared_ptr<DhuumBot>>( active ),
-				std::get<Gui::DhuumBotGui::Config>( config->gui ) ),
-
-			std::make_unique<Gui::DhuumInfo>(
-				std::get<std::shared_ptr<DhuumsJudgement>>( active ),
-				std::get<Gui::DhuumInfo::Config>( config->gui ) ),
-
-			std::make_unique<Gui::Dialogs>(
-				std::get<Gui::Dialogs::Config>( config->gui ) ),
-
-			std::make_unique<Gui::Healthbar>(
-				std::get<Gui::Healthbar::Config>( config->gui ) ),
-
-			std::make_unique<Gui::InstanceTimer>(
-				std::get<Gui::InstanceTimer::Config>( config->gui ) ),
-
-			std::make_unique<Gui::Inventory>(
-				std::get<std::shared_ptr<ConsumablesMgr>>( active ),
-				std::get<Gui::Inventory::Config>( config->gui ) ),
-
-			std::make_unique<Gui::Settings>( *config ),
-
-			std::make_unique<Gui::Skillbar>(
-				std::get<Gui::Skillbar::Config>( config->gui ) ),
-
-			std::make_unique<Gui::TargetInfo>(
-				std::get<Gui::TargetInfo::Config>( config->gui ) ),
-
-			std::make_unique<Gui::UwTimesGui>(
-				uw_times,
-				std::get<Gui::UwTimesGui::Config>( config->gui ) )
+			Gui::ChainedSoulGui{
+				std::get<Gui::ChainedSoulGui::Config>( config->gui )
+			},
+			Gui::Energybar{
+				std::get<Gui::Energybar::Config>( config->gui )
+			},
+			Gui::DhuumBotGui{
+				std::get<Gui::DhuumBotGui::Config>( config->gui )
+			},
+			Gui::DhuumInfo{
+				std::get<Gui::DhuumInfo::Config>( config->gui )
+			},
+			Gui::Dialogs{
+				std::get<Gui::Dialogs::Config>( config->gui )
+			},
+			Gui::Healthbar{
+				std::get<Gui::Healthbar::Config>( config->gui )
+			},
+			Gui::InstanceTimer{
+				std::get<Gui::InstanceTimer::Config>( config->gui )
+			},
+			Gui::Inventory{
+				std::get<Gui::Inventory::Config>( config->gui )
+			},
+			Gui::Settings{},
+			Gui::Skillbar{
+				std::get<Gui::Skillbar::Config>( config->gui )
+			},
+			Gui::TargetInfo{
+				std::get<Gui::TargetInfo::Config>( config->gui )
+			},
+			Gui::UwTimesGui{
+				std::get<Gui::UwTimesGui::Config>( config->gui )
+			}
 		};
 
 		modules =

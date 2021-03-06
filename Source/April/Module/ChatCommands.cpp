@@ -450,23 +450,18 @@ namespace {
 }
 
 
-April::ChatCommands::ChatCommands(
-	std::shared_ptr<AgentFilter> filter,
-	std::shared_ptr<ConsumablesMgr> cons,
-	ModuleConfigurations& configs,
-	Config const& config )
-	:
-	agent_filter{ std::move( filter ) },
-	consumables{ std::move( cons ) },
-	configs{ configs },
-	config{ config }
+April::ChatCommands::ChatCommands( Config const& config )
+	: config{ config }
 {
 }
 
 void April::ChatCommands::OnMessage(
 	GW::HookStatus* status,
 	GW::Chat::Channel const channel,
-	wchar_t const* raw_msg )
+	wchar_t const* raw_msg,
+	AgentFilter& agent_filter,
+	ConsumablesMgr& mgr,
+	ModuleConfigurations& configs ) const
 {
 	if ( channel != GW::Chat::CHANNEL_COMMAND )
 		return;
@@ -484,7 +479,7 @@ void April::ChatCommands::OnMessage(
 			cmd.remove_suffix( 1 );
 
 		auto const cli = parse_cmd( cmd );
-		if ( call_command( cli, *agent_filter, *consumables, configs.gui ) )
+		if ( call_command( cli, agent_filter, mgr, configs.gui ) )
 		{
 			status->blocked = true;
 		}

@@ -3,8 +3,6 @@
 #include "April/Module/DhuumBot.h"
 #include "April/Utility/DrawStructures.h"
 
-#include <memory>
-
 
 namespace April::Gui {
 
@@ -18,13 +16,12 @@ namespace April::Gui {
 		};
 
 
-		DhuumBotGui( std::shared_ptr<DhuumBot>, Config const& );
+		DhuumBotGui( Config const& );
 
-		void Display() const;
+		void Display( DhuumBot& ) const;
 
 
 	private:
-		std::shared_ptr<DhuumBot> bot;
 		Config const& config;
 	};
 

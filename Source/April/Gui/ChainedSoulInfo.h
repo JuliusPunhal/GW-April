@@ -3,8 +3,6 @@
 #include "April/Module/ChainedSoul.h"
 #include "April/Utility/DrawStructures.h"
 
-#include <memory>
-
 
 namespace April::Gui {
 
@@ -18,13 +16,12 @@ namespace April::Gui {
 		};
 
 
-		ChainedSoulGui( std::shared_ptr<ChainedSoul const>, Config const& );
+		ChainedSoulGui( Config const& );
 
-		void Display() const;
+		void Display( ChainedSoul const& ) const;
 
 
 	private:
-		std::shared_ptr<ChainedSoul const> state;
 		Config const& config;
 	};
 

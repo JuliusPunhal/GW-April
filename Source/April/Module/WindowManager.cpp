@@ -10,12 +10,7 @@ using namespace GW::Packet::StoC;
 using namespace GW::Constants::ModelID::UW;
 
 
-April::WindowMgr::WindowMgr( ModuleConfigurations& configs )
-	: configs{ configs }
-{
-}
-
-void April::WindowMgr::Update()
+void April::WindowMgr::Update( ModuleConfigurations& configs )
 {
 	auto const* player = GW::Agents::GetCharacter();
 	if ( player == nullptr )
@@ -36,7 +31,8 @@ void April::WindowMgr::Update()
 	}
 }
 
-void April::WindowMgr::Update( ObjectiveDone const& packet ) const
+void April::WindowMgr::Update(
+	ObjectiveDone const& packet, ModuleConfigurations& configs ) const
 {
 	if ( packet.objective_id == GW::Objectives::Dhuum )
 	{
@@ -45,7 +41,8 @@ void April::WindowMgr::Update( ObjectiveDone const& packet ) const
 	}
 }
 
-void April::WindowMgr::Update( AgentUpdateAllegiance const& packet ) const
+void April::WindowMgr::Update(
+	AgentUpdateAllegiance const& packet, ModuleConfigurations& configs ) const
 {
 	auto const* agent = GW::Agents::GetAgentByID( packet.agent_id );
 	if ( agent == nullptr ) return;
@@ -59,7 +56,8 @@ void April::WindowMgr::Update( AgentUpdateAllegiance const& packet ) const
 	std::get<DhuumBotGui::Config>( configs.gui ).window.visible = true;
 }
 
-void April::WindowMgr::Update( MapLoaded const& ) const
+void April::WindowMgr::Update(
+	MapLoaded const&, ModuleConfigurations& configs ) const
 {
 	if ( GW::GetMapID() == GW::MapID::The_Underworld
 		|| GW::GetMapID() == GW::MapID::Embark_Beach )

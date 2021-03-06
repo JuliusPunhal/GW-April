@@ -51,14 +51,12 @@ namespace {
 }
 
 
-April::Gui::DhuumInfo::DhuumInfo(
-	std::shared_ptr<DhuumsJudgement const> judgement, Config const& config )
-	:
-	judgement{ std::move( judgement ) }, config{ config }
+April::Gui::DhuumInfo::DhuumInfo( Config const& config )
+	: config{ config }
 {
 }
 
-void April::Gui::DhuumInfo::Display() const
+void April::Gui::DhuumInfo::Display( DhuumsJudgement const& judgement ) const
 {
 	if ( ImGui::Begin( config.window ) )
 	{
@@ -71,7 +69,7 @@ void April::Gui::DhuumInfo::Display() const
 
 		auto const rest = GW::GetMissionProgress();
 		auto const label_rest = rest_to_string( rest * 100 );
-		auto const label_judgement = judgement_to_string( *judgement );
+		auto const label_judgement = judgement_to_string( judgement );
 
 		auto const cursor = ImGui::GetCursorPos();
 		ImGui::ProgressBar( rest, { -1, 0 }, "" );

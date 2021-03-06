@@ -211,17 +211,17 @@ namespace {
 }
 
 
-April::Gui::UwTimesGui::UwTimesGui(
-	std::shared_ptr<UwTimes const> times, Config const& config )
-	: times{ std::move( times ) }, config{ config }
+April::Gui::UwTimesGui::UwTimesGui( Config const& config )
+	: config{ config }
 {
 }
 
-void April::Gui::UwTimesGui::Display() const
+void April::Gui::UwTimesGui::Display( UwTimer const& timer ) const
 {
-	auto const strings = uwtimes_to_strings( *times );
+	auto const times = timer.current();
+	auto const strings = uwtimes_to_strings( times );
 	auto const instance_time_str =
-		to_string( times->instance_time, instance_time_fmt );
+		to_string( times.instance_time, instance_time_fmt );
 
 	if ( ImGui::Begin( config.window ) )
 	{

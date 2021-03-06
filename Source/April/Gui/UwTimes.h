@@ -4,7 +4,6 @@
 #include "April/Utility/DrawStructures.h"
 
 #include <array>
-#include <memory>
 #include <string>
 
 
@@ -23,13 +22,12 @@ namespace April::Gui {
 		};
 
 
-		UwTimesGui( std::shared_ptr<UwTimes const>, Config const& );
+		UwTimesGui( Config const& );
 
-		void Display() const;
+		void Display( UwTimer const& ) const;
 
 
 	private:
-		std::shared_ptr<UwTimes const> times;
 		Config const& config;
 	};
 

@@ -71,38 +71,38 @@ namespace April {
 	public:
 		using Active =
 			std::tuple<
-				std::shared_ptr<ConsumablesMgr>,
-				std::shared_ptr<ChainedSoul>,
-				std::shared_ptr<DhuumBot>,
-				std::shared_ptr<DhuumsJudgement>,
-				std::shared_ptr<UwTimer>,
-				std::unique_ptr<WindowMgr>>;
+				ConsumablesMgr,
+				ChainedSoul,
+				DhuumBot,
+				DhuumsJudgement,
+				UwTimer,
+				WindowMgr>;
 
 		using Passive =
 			std::tuple<
-				std::shared_ptr<AgentFilter>,
-				std::unique_ptr<ChatCommands>,
-				std::unique_ptr<ChatFilter>,
-				std::unique_ptr<CursorFix>,
-				std::unique_ptr<NotifyEffectLoss>,
-				std::unique_ptr<ReturnToOutpost>,
-				std::unique_ptr<ShowKitUses>,
-				std::unique_ptr<SuppressSpeechBubbles>>;
+				AgentFilter,
+				ChatCommands,
+				ChatFilter,
+				CursorFix,
+				NotifyEffectLoss,
+				ReturnToOutpost,
+				ShowKitUses,
+				SuppressSpeechBubbles>;
 
 		using Guis =
 			std::tuple<
-				std::unique_ptr<Gui::ChainedSoulGui>,
-				std::unique_ptr<Gui::Energybar>,
-				std::unique_ptr<Gui::DhuumBotGui>,
-				std::unique_ptr<Gui::DhuumInfo>,
-				std::unique_ptr<Gui::Dialogs>,
-				std::unique_ptr<Gui::Healthbar>,
-				std::unique_ptr<Gui::InstanceTimer>,
-				std::unique_ptr<Gui::Inventory>,
-				std::unique_ptr<Gui::Settings>,
-				std::unique_ptr<Gui::Skillbar>,
-				std::unique_ptr<Gui::TargetInfo>,
-				std::unique_ptr<Gui::UwTimesGui>>;
+				Gui::ChainedSoulGui,
+				Gui::Energybar,
+				Gui::DhuumBotGui,
+				Gui::DhuumInfo,
+				Gui::Dialogs,
+				Gui::Healthbar,
+				Gui::InstanceTimer,
+				Gui::Inventory,
+				Gui::Settings,
+				Gui::Skillbar,
+				Gui::TargetInfo,
+				Gui::UwTimesGui>;
 
 
 		Modules(

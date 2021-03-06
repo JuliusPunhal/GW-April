@@ -14,55 +14,6 @@ namespace {
 
 	auto entry = GW::HookEntry{};
 
-
-	template<auto N = 0, typename... Args>
-	#pragma warning( suppress: 4100 )
-	void update( std::tuple<Args...>& modules )
-	{
-		if constexpr ( N < sizeof...( Args ) )
-		{
-			std::get<N>( modules )->Update();
-			update<N + 1>( modules );
-		}
-	}
-
-	template<auto N = 0, typename... Args>
-	#pragma warning( suppress: 4100 )
-	void display( std::tuple<Args...>& modules )
-	{
-		if constexpr ( N < sizeof...( Args ) )
-		{
-			std::get<N>( modules )->Display();
-			display<N + 1>( modules );
-		}
-	}
-
-
-	template <typename T, typename Tuple>
-	struct has_type;
-
-	template <typename T, typename... Us>
-	struct has_type<T, std::tuple<Us...>>
-		: std::disjunction<std::is_same<T, Us>...> {};
-
-	template<typename Container, typename Lookup>
-	constexpr auto has_type_v = has_type<Container, Lookup>::value;
-
-
-	template<typename Lookup_t, typename Container_t>
-	auto Get( Container_t& container ) -> auto&
-	{
-		if constexpr ( has_type_v<std::shared_ptr<Lookup_t>, Container_t> )
-		{
-			return *std::get<std::shared_ptr<Lookup_t>>( container );
-		}
-		else if constexpr ( has_type_v<std::unique_ptr<Lookup_t>, Container_t> )
-		{
-			return *std::get<std::unique_ptr<Lookup_t>>( container );
-		}
-		else static_assert( false, "Type not supported" );
-	}
-
 }
 
 
@@ -84,150 +35,150 @@ April::Modules::Modules(
 		&entry,
 		[this]( auto* status, auto* packet )
 		{
-			Get<AgentFilter>( passive ).OnSpawn( status, *packet );
+			std::get<AgentFilter>( passive ).OnSpawn( status, *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<AgentName>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			Get<UwTimer>( active ).Update( *packet );
+			std::get<UwTimer>( active ).Update( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<AgentRemove>(
 		&entry,
 		[this]( auto* status, auto* packet )
 		{
-			Get<AgentFilter>( passive ).OnDespawn( status, *packet );
+			std::get<AgentFilter>( passive ).OnDespawn( status, *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<AgentUpdateAllegiance>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			Get<UwTimer>( active ).Update( *packet );
-			Get<WindowMgr>( active ).Update( *packet );
+			std::get<UwTimer>( active ).Update( *packet );
+			std::get<WindowMgr>( active ).Update( *packet, *config );
 		} );
 
 	GW::StoC::RegisterPacketCallback<ItemGeneral>(
 		&entry,
 		[this] ( auto*, auto* packet )
 		{
-			Get<ShowKitUses>( passive ).UpdateKitUses( *packet );
+			std::get<ShowKitUses>( passive ).UpdateKitUses( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<ItemGeneral_ReuseID>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			Get<AgentFilter>( passive ).DeleteOwner( *packet );
-			Get<ShowKitUses>( passive ).UpdateKitUses( *packet );
+			std::get<AgentFilter>( passive ).DeleteOwner( *packet );
+			std::get<ShowKitUses>( passive ).UpdateKitUses( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<MapLoaded>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			Get<Gui::Skillbar>( gui ).UpdateHSR( *packet );
-			Get<AgentFilter>( passive ).Reset();
-			Get<ConsumablesMgr>( active ).Update( *packet );
-			Get<DhuumsJudgement>( active ).Update( *packet );
-			Get<UwTimer>( active ).Reset();
-			Get<WindowMgr>( active ).Update( *packet );
+			std::get<Gui::Skillbar>( gui ).UpdateHSR( *packet );
+			std::get<AgentFilter>( passive ).Reset();
+			std::get<ConsumablesMgr>( active ).Update( *packet );
+			std::get<DhuumsJudgement>( active ).Update( *packet );
+			std::get<UwTimer>( active ).Reset();
+			std::get<WindowMgr>( active ).Update( *packet, *config );
 		} );
 
 	GW::StoC::RegisterPacketCallback<MessageGlobal>(
 		&entry,
 		[this] ( auto* status, auto* )
 		{
-			Get<ChatFilter>( passive ).OnMessage( status );
+			std::get<ChatFilter>( passive ).OnMessage( status );
 		} );
 
 	GW::StoC::RegisterPacketCallback<MessageLocal>(
 		&entry,
 		[this] ( auto* status, auto* )
 		{
-			Get<ChatFilter>( passive ).OnMessage( status );
+			std::get<ChatFilter>( passive ).OnMessage( status );
 		} );
 
 	GW::StoC::RegisterPacketCallback<MessageServer>(
 		&entry,
 		[this] ( auto* status, auto* )
 		{
-			Get<ChatFilter>( passive ).OnMessage( status );
+			std::get<ChatFilter>( passive ).OnMessage( status );
 		} );
 
 	GW::StoC::RegisterPacketCallback<ObjectiveAdd>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			Get<UwTimer>( active ).Update( *packet );
+			std::get<UwTimer>( active ).Update( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<ObjectiveDone>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			Get<ConsumablesMgr>( active ).Update( *packet );
-			Get<DhuumBot>( active ).Update( *packet );
-			Get<UwTimer>( active ).Update( *packet );
-			Get<WindowMgr>( active ).Update( *packet );
+			std::get<ConsumablesMgr>( active ).Update( *packet );
+			std::get<DhuumBot>( active ).Update( *packet );
+			std::get<UwTimer>( active ).Update( *packet );
+			std::get<WindowMgr>( active ).Update( *packet, *config );
 		} );
 
 	GW::StoC::RegisterPacketCallback<ObjectiveUpdateName>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			Get<UwTimer>( active ).Update( *packet );
+			std::get<UwTimer>( active ).Update( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<PartyDefeated>(
 		&entry,
 		[this]( auto*, auto* )
 		{
-			Get<ReturnToOutpost>( passive ).OnDefeated();
+			std::get<ReturnToOutpost>( passive ).OnDefeated();
 		} );
 
 	GW::StoC::RegisterPacketCallback<RemoveEffect>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			Get<NotifyEffectLoss>( passive ).OnEffectLoss( *packet );
+			std::get<NotifyEffectLoss>( passive ).OnEffectLoss( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<SkillRecharge>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			Get<Gui::Skillbar>( gui ).UpdateHSR( *packet );
+			std::get<Gui::Skillbar>( gui ).UpdateHSR( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<SkillRecharged>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			Get<Gui::Skillbar>( gui ).UpdateHSR( *packet );
+			std::get<Gui::Skillbar>( gui ).UpdateHSR( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<SpeechBubble>(
 		&entry,
 		[this]( auto* status, auto* )
 		{
-			Get<SuppressSpeechBubbles>( passive ).Suppress( status );
+			std::get<SuppressSpeechBubbles>( passive ).Suppress( status );
 		} );
 
 	GW::StoC::RegisterPacketCallback<UpdateItemOwner>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			Get<AgentFilter>( passive ).UpdateOwner( *packet );
+			std::get<AgentFilter>( passive ).UpdateOwner( *packet );
 		} );
 
 	GW::Chat::RegisterLocalMessageCallback(
 		&entry,
 		[this]( GW::HookStatus* status, int, wchar_t const* msg )
 		{
-			Get<ChatFilter>( passive ).OnMessage( status, msg );
+			std::get<ChatFilter>( passive ).OnMessage( status, msg );
 		} );
 
 	GW::Chat::RegisterSendChatCallback(
@@ -235,21 +186,48 @@ April::Modules::Modules(
 		[this](
 			GW::HookStatus* status, GW::Chat::Channel channel, wchar_t* msg )
 		{
-			Get<ChatCommands>( passive ).OnMessage( status, channel, msg );
+			auto& chat_commands = std::get<ChatCommands>( passive );
+			auto& agent_filter = std::get<AgentFilter>( passive );
+			auto& mgr = std::get<ConsumablesMgr>( active );
+
+			chat_commands.OnMessage(
+				status, channel, msg, agent_filter, mgr, *config );
 		} );
 }
 
 void April::Modules::Update()
 {
-	update( active );
+	std::get<ConsumablesMgr>( active ).Update();
+	std::get<ChainedSoul>( active ).Update();
+	std::get<DhuumBot>( active ).Update();
+	std::get<DhuumsJudgement>( active ).Update();
+	std::get<UwTimer>( active ).Update();
+	std::get<WindowMgr>( active ).Update( *config );
 }
 
 void April::Modules::Display()
 {
-	display( gui );
+	auto& chained_soul = std::get<ChainedSoul>( active );
+	auto& dhuum_bot = std::get<DhuumBot>( active );
+	auto& dhuums_judgement = std::get<DhuumsJudgement>( active );
+	auto& cons = std::get<ConsumablesMgr>( active );
+	auto& uw_timer = std::get<UwTimer>( active );
+
+	std::get<Gui::ChainedSoulGui>( gui ).Display( chained_soul );
+	std::get<Gui::Energybar>( gui ).Display();
+	std::get<Gui::DhuumBotGui>( gui ).Display( dhuum_bot );
+	std::get<Gui::DhuumInfo>( gui ).Display( dhuums_judgement );
+	std::get<Gui::Dialogs>( gui ).Display();
+	std::get<Gui::Healthbar>( gui ).Display();
+	std::get<Gui::InstanceTimer>( gui ).Display();
+	std::get<Gui::Inventory>( gui ).Display( cons );
+	std::get<Gui::Settings>( gui ).Display( *config );
+	std::get<Gui::Skillbar>( gui ).Display();
+	std::get<Gui::TargetInfo>( gui ).Display();
+	std::get<Gui::UwTimesGui>( gui ).Display( uw_timer );
 }
 
 void April::Modules::Shutdown()
 {
-	std::get<std::shared_ptr<AgentFilter>>( passive )->DisplaySuppressedItems();
+	std::get<AgentFilter>( passive ).DisplaySuppressedItems();
 }
