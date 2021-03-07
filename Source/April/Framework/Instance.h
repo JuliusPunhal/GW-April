@@ -32,40 +32,6 @@
 
 namespace April {
 
-	struct ModuleConfigurations {
-		using Active =
-			std::tuple<
-				ConsumablesMgr::Config>;
-		using Passive =
-			std::tuple<
-				AgentFilter::Config,
-				ChatCommands::Config,
-				ChatFilter::Config,
-				NotifyEffectLoss::Config,
-				ReturnToOutpost::Config,
-				ShowKitUses::Config,
-				SuppressSpeechBubbles::Config>;
-		using Gui =
-			std::tuple<
-				Gui::ChainedSoulGui::Config,
-				Gui::DhuumBotGui::Config,
-				Gui::DhuumInfo::Config,
-				Gui::Dialogs::Config,
-				Gui::Energybar::Config,
-				Gui::Healthbar::Config,
-				Gui::InstanceTimer::Config,
-				Gui::Inventory::Config,
-				Gui::Settings::Config,
-				Gui::Skillbar::Config,
-				Gui::TargetInfo::Config,
-				Gui::UwTimesGui::Config>;
-
-		Active active;
-		Passive passive;
-		Gui gui;
-	};
-
-
 	struct Instance {
 		using Modules =
 			std::tuple<
@@ -96,8 +62,32 @@ namespace April {
 				Gui::TargetInfo,
 				Gui::UwTimesGui>;
 
+		using Configuration =
+			std::tuple<
+				ConsumablesMgr::Config,
+				AgentFilter::Config,
+				ChatCommands::Config,
+				ChatFilter::Config,
+				NotifyEffectLoss::Config,
+				ReturnToOutpost::Config,
+				ShowKitUses::Config,
+				SuppressSpeechBubbles::Config,
+				Gui::ChainedSoulGui::Config,
+				Gui::DhuumBotGui::Config,
+				Gui::DhuumInfo::Config,
+				Gui::Dialogs::Config,
+				Gui::Energybar::Config,
+				Gui::Healthbar::Config,
+				Gui::InstanceTimer::Config,
+				Gui::Inventory::Config,
+				Gui::Settings::Config,
+				Gui::Skillbar::Config,
+				Gui::TargetInfo::Config,
+				Gui::UwTimesGui::Config>;
+
+
 		Modules modules;
-		ModuleConfigurations config;
+		Configuration config;
 	};
 
 

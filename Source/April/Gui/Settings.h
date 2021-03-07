@@ -1,7 +1,7 @@
 #pragma once
 
 namespace April {
-	struct ModuleConfigurations; // avoid cyclic include
+	struct Instance; // avoid cyclic include
 }
 
 #include "April/Utility/DrawStructures.h"
@@ -21,7 +21,7 @@ namespace April::Gui {
 
 		Settings() = default;
 
-		void Display( ModuleConfigurations& ) const;
+		void Display( Instance& ) const;
 	};
 
 }

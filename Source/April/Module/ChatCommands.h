@@ -2,7 +2,7 @@
 
 #include "April/Module/AgentFilter.h"
 #include "April/Module/ConsumablesMgr.h"
-namespace April { struct ModuleConfigurations; }
+namespace April { struct Instance; }
 
 #include "Dependencies/GWCA.hpp"
 
@@ -34,7 +34,7 @@ namespace April {
 			wchar_t const*,
 			AgentFilter&,
 			ConsumablesMgr&,
-			ModuleConfigurations&,
+			Instance&,
 			Config const& ) const;
 
 

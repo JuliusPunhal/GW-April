@@ -184,7 +184,7 @@ namespace {
 				std::get<AgentFilter>( inst->modules ).OnSpawn(
 					status,
 					*packet,
-					std::get<AgentFilter::Config>( inst->config.passive ) );
+					std::get<AgentFilter::Config>( inst->config ) );
 			} );
 
 		GW::StoC::RegisterPacketCallback<AgentName>(
@@ -207,7 +207,7 @@ namespace {
 			[inst]( auto*, auto* packet )
 			{
 				std::get<UwTimer>( inst->modules ).Update( *packet );
-				std::get<WindowMgr>( inst->modules ).Update( *packet, inst->config );
+				std::get<WindowMgr>( inst->modules ).Update( *packet, *inst );
 			} );
 
 		GW::StoC::RegisterPacketCallback<ItemGeneral>(
@@ -215,7 +215,7 @@ namespace {
 			[inst] ( auto*, auto* packet )
 			{
 				std::get<ShowKitUses>( inst->modules ).UpdateKitUses(
-					*packet, std::get<ShowKitUses::Config>( inst->config.passive ) );
+					*packet, std::get<ShowKitUses::Config>( inst->config ) );
 			} );
 
 		GW::StoC::RegisterPacketCallback<ItemGeneral_ReuseID>(
@@ -224,7 +224,7 @@ namespace {
 			{
 				std::get<AgentFilter>( inst->modules ).DeleteOwner( *packet );
 				std::get<ShowKitUses>( inst->modules ).UpdateKitUses(
-					*packet, std::get<ShowKitUses::Config>( inst->config.passive ) );
+					*packet, std::get<ShowKitUses::Config>( inst->config ) );
 			} );
 
 		GW::StoC::RegisterPacketCallback<MapLoaded>(
@@ -236,7 +236,7 @@ namespace {
 				std::get<ConsumablesMgr>( inst->modules ).Update( *packet );
 				std::get<DhuumsJudgement>( inst->modules ).Update( *packet );
 				std::get<UwTimer>( inst->modules ).Reset();
-				std::get<WindowMgr>( inst->modules ).Update( *packet, inst->config );
+				std::get<WindowMgr>( inst->modules ).Update( *packet, *inst );
 			} );
 
 		GW::StoC::RegisterPacketCallback<MessageGlobal>(
@@ -244,7 +244,7 @@ namespace {
 			[inst] ( auto* status, auto* )
 			{
 				std::get<ChatFilter>( inst->modules ).OnMessage(
-					status, std::get<ChatFilter::Config>( inst->config.passive ) );
+					status, std::get<ChatFilter::Config>( inst->config ) );
 			} );
 
 		GW::StoC::RegisterPacketCallback<MessageLocal>(
@@ -252,7 +252,7 @@ namespace {
 			[inst] ( auto* status, auto* )
 			{
 				std::get<ChatFilter>( inst->modules ).OnMessage(
-					status, std::get<ChatFilter::Config>( inst->config.passive ) );
+					status, std::get<ChatFilter::Config>( inst->config ) );
 			} );
 
 		GW::StoC::RegisterPacketCallback<MessageServer>(
@@ -260,7 +260,7 @@ namespace {
 			[inst] ( auto* status, auto* )
 			{
 				std::get<ChatFilter>( inst->modules ).OnMessage(
-					status, std::get<ChatFilter::Config>( inst->config.passive ) );
+					status, std::get<ChatFilter::Config>( inst->config ) );
 			} );
 
 		GW::StoC::RegisterPacketCallback<ObjectiveAdd>(
@@ -277,7 +277,7 @@ namespace {
 				std::get<ConsumablesMgr>( inst->modules ).Update( *packet );
 				std::get<DhuumBot>( inst->modules ).Update( *packet );
 				std::get<UwTimer>( inst->modules ).Update( *packet );
-				std::get<WindowMgr>( inst->modules ).Update( *packet, inst->config );
+				std::get<WindowMgr>( inst->modules ).Update( *packet, *inst );
 			} );
 
 		GW::StoC::RegisterPacketCallback<ObjectiveUpdateName>(
@@ -292,7 +292,7 @@ namespace {
 			[inst]( auto*, auto* )
 			{
 				std::get<ReturnToOutpost>( inst->modules ).OnDefeated(
-					std::get<ReturnToOutpost::Config>( inst->config.passive ) );
+					std::get<ReturnToOutpost::Config>( inst->config ) );
 			} );
 
 		GW::StoC::RegisterPacketCallback<RemoveEffect>(
@@ -301,7 +301,7 @@ namespace {
 			{
 				std::get<NotifyEffectLoss>( inst->modules ).OnEffectLoss(
 					*packet,
-					std::get<NotifyEffectLoss::Config>( inst->config.passive ) );
+					std::get<NotifyEffectLoss::Config>( inst->config ) );
 			} );
 
 		GW::StoC::RegisterPacketCallback<SkillRecharge>(
@@ -324,7 +324,7 @@ namespace {
 			{
 				std::get<SuppressSpeechBubbles>( inst->modules ).Suppress(
 					status,
-					std::get<SuppressSpeechBubbles::Config>( inst->config.passive ) );
+					std::get<SuppressSpeechBubbles::Config>( inst->config ) );
 			} );
 
 		GW::StoC::RegisterPacketCallback<UpdateItemOwner>(
@@ -339,7 +339,7 @@ namespace {
 			[inst]( GW::HookStatus* status, int, wchar_t const* msg )
 			{
 				std::get<ChatFilter>( inst->modules ).OnMessage(
-					status, msg, std::get<ChatFilter::Config>( inst->config.passive ) );
+					status, msg, std::get<ChatFilter::Config>( inst->config ) );
 			} );
 
 		GW::Chat::RegisterSendChatCallback(
@@ -350,10 +350,10 @@ namespace {
 				auto& chat_commands = std::get<ChatCommands>( inst->modules );
 				auto& agent_filter = std::get<AgentFilter>( inst->modules );
 				auto& mgr = std::get<ConsumablesMgr>( inst->modules );
-				auto& cfg = std::get<ChatCommands::Config>( inst->config.passive );
+				auto& cfg = std::get<ChatCommands::Config>( inst->config );
 
 				chat_commands.OnMessage(
-					status, channel, msg, agent_filter, mgr, inst->config, cfg );
+					status, channel, msg, agent_filter, mgr, *inst, cfg );
 			} );
 	}
 
@@ -412,33 +412,27 @@ namespace {
 
 		using namespace April;
 
-		auto config = ModuleConfigurations{
-			{
-				load_config<ConsumablesMgr::Config>(),
-			},
-			{
-				load_config<AgentFilter::Config>(),
-				load_config<ChatCommands::Config>(),
-				load_config<ChatFilter::Config>(),
-				load_config<NotifyEffectLoss::Config>(),
-				load_config<ReturnToOutpost::Config>(),
-				load_config<ShowKitUses::Config>(),
-				load_config<SuppressSpeechBubbles::Config>(),
-			},
-			{
-				load_config<Gui::ChainedSoulGui::Config>(),
-				load_config<Gui::DhuumBotGui::Config>(),
-				load_config<Gui::DhuumInfo::Config>(),
-				load_config<Gui::Dialogs::Config>(),
-				load_config<Gui::Energybar::Config>(),
-				load_config<Gui::Healthbar::Config>(),
-				load_config<Gui::InstanceTimer::Config>(),
-				load_config<Gui::Inventory::Config>(),
-				load_config<Gui::Settings::Config>(),
-				load_config<Gui::Skillbar::Config>(),
-				load_config<Gui::TargetInfo::Config>(),
-				load_config<Gui::UwTimesGui::Config>(),
-			}
+		auto config = Instance::Configuration{
+			load_config<ConsumablesMgr::Config>(),
+			load_config<AgentFilter::Config>(),
+			load_config<ChatCommands::Config>(),
+			load_config<ChatFilter::Config>(),
+			load_config<NotifyEffectLoss::Config>(),
+			load_config<ReturnToOutpost::Config>(),
+			load_config<ShowKitUses::Config>(),
+			load_config<SuppressSpeechBubbles::Config>(),
+			load_config<Gui::ChainedSoulGui::Config>(),
+			load_config<Gui::DhuumBotGui::Config>(),
+			load_config<Gui::DhuumInfo::Config>(),
+			load_config<Gui::Dialogs::Config>(),
+			load_config<Gui::Energybar::Config>(),
+			load_config<Gui::Healthbar::Config>(),
+			load_config<Gui::InstanceTimer::Config>(),
+			load_config<Gui::Inventory::Config>(),
+			load_config<Gui::Settings::Config>(),
+			load_config<Gui::Skillbar::Config>(),
+			load_config<Gui::TargetInfo::Config>(),
+			load_config<Gui::UwTimesGui::Config>()
 		};
 
 		auto modules = Instance::Modules{
@@ -458,23 +452,23 @@ namespace {
 			SuppressSpeechBubbles{},
 			Gui::ChainedSoulGui{},
 			Gui::Energybar{
-				std::get<Gui::Energybar::Config>( config.gui )
+				std::get<Gui::Energybar::Config>( config )
 			},
 			Gui::DhuumBotGui{},
 			Gui::DhuumInfo{},
 			Gui::Dialogs{},
 			Gui::Healthbar{
-				std::get<Gui::Healthbar::Config>( config.gui )
+				std::get<Gui::Healthbar::Config>( config )
 			},
 			Gui::InstanceTimer{
-				std::get<Gui::InstanceTimer::Config>( config.gui )
+				std::get<Gui::InstanceTimer::Config>( config )
 			},
 			Gui::Inventory{
-				std::get<Gui::Inventory::Config>( config.gui )
+				std::get<Gui::Inventory::Config>( config )
 			},
 			Gui::Settings{},
 			Gui::Skillbar{
-				std::get<Gui::Skillbar::Config>( config.gui )
+				std::get<Gui::Skillbar::Config>( config )
 			},
 			Gui::TargetInfo{},
 			Gui::UwTimesGui{}

@@ -1036,24 +1036,12 @@ namespace {
 		draw_window_settings( config );
 	}
 
-
-	template<auto N = 0, typename... Args>
-	#pragma warning( suppress: 4100 )
-	void draw_settings( std::tuple<Args...>& config )
-	{
-		if constexpr ( N < sizeof...( Args ) )
-		{
-			draw( std::get<N>( config ) );
-			draw_settings<N + 1>( config );
-		}
-	}
-
 }
 
 
-void April::Gui::Settings::Display( ModuleConfigurations& configs ) const
+void April::Gui::Settings::Display( Instance& instance ) const
 {
-	auto& config = std::get<Config>( configs.gui );
+	auto& config = std::get<Config>( instance.config );
 
 	if ( ImGui::Begin( config.window ) )
 	{
@@ -1065,11 +1053,28 @@ void April::Gui::Settings::Display( ModuleConfigurations& configs ) const
 		}
 
 		ImGui::Text( "Module Settings" );
-		draw_settings( configs.active );
-		draw_settings( configs.passive );
+		draw( std::get<ConsumablesMgr::Config>( instance.config ) );
+		draw( std::get<AgentFilter::Config>( instance.config ) );
+		draw( std::get<ChatCommands::Config>( instance.config ) );
+		draw( std::get<ChatFilter::Config>( instance.config ) );
+		draw( std::get<NotifyEffectLoss::Config>( instance.config ) );
+		draw( std::get<ReturnToOutpost::Config>( instance.config ) );
+		draw( std::get<ShowKitUses::Config>( instance.config ) );
+		draw( std::get<SuppressSpeechBubbles::Config>( instance.config ) );
 
 		ImGui::Text( "\nGui Settings" );
-		draw_settings( configs.gui );
+		draw( std::get<Gui::ChainedSoulGui::Config>( instance.config ) );
+		draw( std::get<Gui::DhuumBotGui::Config>( instance.config ) );
+		draw( std::get<Gui::DhuumInfo::Config>( instance.config ) );
+		draw( std::get<Gui::Dialogs::Config>( instance.config ) );
+		draw( std::get<Gui::Energybar::Config>( instance.config ) );
+		draw( std::get<Gui::Healthbar::Config>( instance.config ) );
+		draw( std::get<Gui::InstanceTimer::Config>( instance.config ) );
+		draw( std::get<Gui::Inventory::Config>( instance.config ) );
+		draw( std::get<Gui::Settings::Config>( instance.config ) );
+		draw( std::get<Gui::Skillbar::Config>( instance.config ) );
+		draw( std::get<Gui::TargetInfo::Config>( instance.config ) );
+		draw( std::get<Gui::UwTimesGui::Config>( instance.config ) );
 
 		ImGui::Text( "\nGlobal Style Settings" );
 		if ( ImGui::CollapsingHeader( "ImGui Style" ) )

@@ -5,61 +5,55 @@
 void April::Update( Instance& instance )
 {
 	std::get<ConsumablesMgr>( instance.modules ).Update(
-		std::get<ConsumablesMgr::Config>( instance.config.active ) );
+		std::get<ConsumablesMgr::Config>( instance.config ) );
 	std::get<ChainedSoul>( instance.modules ).Update();
 	std::get<DhuumBot>( instance.modules ).Update();
 	std::get<DhuumsJudgement>( instance.modules ).Update();
 	std::get<UwTimer>( instance.modules ).Update();
-	std::get<WindowMgr>( instance.modules ).Update( instance.config );
+	std::get<WindowMgr>( instance.modules ).Update( instance );
 }
 
 void April::Display( Instance& instance )
 {
-	auto& chained_soul = std::get<ChainedSoul>( instance.modules );
-	auto& dhuum_bot = std::get<DhuumBot>( instance.modules );
-	auto& dhuums_judgement = std::get<DhuumsJudgement>( instance.modules );
-	auto& cons = std::get<ConsumablesMgr>( instance.modules );
-	auto& uw_timer = std::get<UwTimer>( instance.modules );
-
 	std::get<Gui::ChainedSoulGui>( instance.modules ).Display(
-		chained_soul,
-		std::get<Gui::ChainedSoulGui::Config>( instance.config.gui ) );
+		std::get<ChainedSoul>( instance.modules ),
+		std::get<Gui::ChainedSoulGui::Config>( instance.config ) );
 
 	std::get<Gui::Energybar>( instance.modules ).Display(
-		std::get<Gui::Energybar::Config>( instance.config.gui ) );
+		std::get<Gui::Energybar::Config>( instance.config ) );
 
 	std::get<Gui::DhuumBotGui>( instance.modules ).Display(
-		dhuum_bot,
-		std::get<Gui::DhuumBotGui::Config>( instance.config.gui ) );
+		std::get<DhuumBot>( instance.modules ),
+		std::get<Gui::DhuumBotGui::Config>( instance.config ) );
 
 	std::get<Gui::DhuumInfo>( instance.modules ).Display(
-		dhuums_judgement,
-		std::get<Gui::DhuumInfo::Config>( instance.config.gui ) );
+		std::get<DhuumsJudgement>( instance.modules ),
+		std::get<Gui::DhuumInfo::Config>( instance.config ) );
 
 	std::get<Gui::Dialogs>( instance.modules ).Display(
-		std::get<Gui::Dialogs::Config>( instance.config.gui ) );
+		std::get<Gui::Dialogs::Config>( instance.config ) );
 
 	std::get<Gui::Healthbar>( instance.modules ).Display(
-		std::get<Gui::Healthbar::Config>( instance.config.gui ) );
+		std::get<Gui::Healthbar::Config>( instance.config ) );
 
 	std::get<Gui::InstanceTimer>( instance.modules ).Display(
-		std::get<Gui::InstanceTimer::Config>( instance.config.gui ) );
+		std::get<Gui::InstanceTimer::Config>( instance.config ) );
 
 	std::get<Gui::Inventory>( instance.modules ).Display(
-		cons,
-		std::get<Gui::Inventory::Config>( instance.config.gui ) );
+		std::get<ConsumablesMgr>( instance.modules ),
+		std::get<Gui::Inventory::Config>( instance.config ) );
 
-	std::get<Gui::Settings>( instance.modules ).Display( instance.config );
+	std::get<Gui::Settings>( instance.modules ).Display( instance );
 
 	std::get<Gui::Skillbar>( instance.modules ).Display(
-		std::get<Gui::Skillbar::Config>( instance.config.gui ) );
+		std::get<Gui::Skillbar::Config>( instance.config ) );
 
 	std::get<Gui::TargetInfo>( instance.modules ).Display(
-		std::get<Gui::TargetInfo::Config>( instance.config.gui ) );
+		std::get<Gui::TargetInfo::Config>( instance.config ) );
 
 	std::get<Gui::UwTimesGui>( instance.modules ).Display(
-		uw_timer,
-		std::get<Gui::UwTimesGui::Config>( instance.config.gui ) );
+		std::get<UwTimer>( instance.modules ),
+		std::get<Gui::UwTimesGui::Config>( instance.config ) );
 }
 
 void April::Shutdown( Instance& instance )
