@@ -66,19 +66,16 @@ namespace April {
 	};
 
 
-	class Modules {
+	class Instance {
 	public:
-		using Active =
+		using Modules =
 			std::tuple<
 				ConsumablesMgr,
 				ChainedSoul,
 				DhuumBot,
 				DhuumsJudgement,
 				UwTimer,
-				WindowMgr>;
-
-		using Passive =
-			std::tuple<
+				WindowMgr,
 				AgentFilter,
 				ChatCommands,
 				ChatFilter,
@@ -86,10 +83,7 @@ namespace April {
 				NotifyEffectLoss,
 				ReturnToOutpost,
 				ShowKitUses,
-				SuppressSpeechBubbles>;
-
-		using Guis =
-			std::tuple<
+				SuppressSpeechBubbles,
 				Gui::ChainedSoulGui,
 				Gui::Energybar,
 				Gui::DhuumBotGui,
@@ -104,11 +98,7 @@ namespace April {
 				Gui::UwTimesGui>;
 
 
-		Modules(
-			Active&&,
-			Passive&&,
-			Guis&&,
-			ModuleConfigurations&& );
+		Instance( Modules&&, ModuleConfigurations&& );
 
 		void Update();
 		void Display();
@@ -117,9 +107,7 @@ namespace April {
 
 
 	private:
-		Active active;
-		Passive passive;
-		Guis gui;
+		Modules modules;
 		ModuleConfigurations config;
 	};
 

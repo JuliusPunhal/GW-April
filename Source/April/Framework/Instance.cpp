@@ -1,5 +1,5 @@
 
-#include "April/Framework/Modules.h"
+#include "April/Framework/Instance.h"
 
 #include "Dependencies/GWCA.hpp"
 
@@ -17,16 +17,8 @@ namespace {
 }
 
 
-April::Modules::Modules(
-	Active&& active_,
-	Passive&& passive_,
-	Guis&& gui_,
-	ModuleConfigurations&& config_ )
-	:
-	active{ std::move( active_ ) },
-	passive{ std::move( passive_ ) },
-	gui{ std::move( gui_ ) },
-	config{ std::move( config_ ) }
+April::Instance::Instance( Modules&& modules_, ModuleConfigurations&& config_ )
+	: modules{ std::move( modules_ ) }, config{ std::move( config_ ) }
 {
 	using namespace GW::Packet::StoC;
 
@@ -35,7 +27,7 @@ April::Modules::Modules(
 		&entry,
 		[this]( auto* status, auto* packet )
 		{
-			std::get<AgentFilter>( passive ).OnSpawn(
+			std::get<AgentFilter>( modules ).OnSpawn(
 				status,
 				*packet,
 				std::get<AgentFilter::Config>( config.passive ) );
@@ -45,29 +37,29 @@ April::Modules::Modules(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			std::get<UwTimer>( active ).Update( *packet );
+			std::get<UwTimer>( modules ).Update( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<AgentRemove>(
 		&entry,
 		[this]( auto* status, auto* packet )
 		{
-			std::get<AgentFilter>( passive ).OnDespawn( status, *packet );
+			std::get<AgentFilter>( modules ).OnDespawn( status, *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<AgentUpdateAllegiance>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			std::get<UwTimer>( active ).Update( *packet );
-			std::get<WindowMgr>( active ).Update( *packet, config );
+			std::get<UwTimer>( modules ).Update( *packet );
+			std::get<WindowMgr>( modules ).Update( *packet, config );
 		} );
 
 	GW::StoC::RegisterPacketCallback<ItemGeneral>(
 		&entry,
 		[this] ( auto*, auto* packet )
 		{
-			std::get<ShowKitUses>( passive ).UpdateKitUses(
+			std::get<ShowKitUses>( modules ).UpdateKitUses(
 				*packet, std::get<ShowKitUses::Config>( config.passive ) );
 		} );
 
@@ -75,8 +67,8 @@ April::Modules::Modules(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			std::get<AgentFilter>( passive ).DeleteOwner( *packet );
-			std::get<ShowKitUses>( passive ).UpdateKitUses(
+			std::get<AgentFilter>( modules ).DeleteOwner( *packet );
+			std::get<ShowKitUses>( modules ).UpdateKitUses(
 				*packet, std::get<ShowKitUses::Config>( config.passive ) );
 		} );
 
@@ -84,19 +76,19 @@ April::Modules::Modules(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			std::get<Gui::Skillbar>( gui ).UpdateHSR( *packet );
-			std::get<AgentFilter>( passive ).Reset();
-			std::get<ConsumablesMgr>( active ).Update( *packet );
-			std::get<DhuumsJudgement>( active ).Update( *packet );
-			std::get<UwTimer>( active ).Reset();
-			std::get<WindowMgr>( active ).Update( *packet, config );
+			std::get<Gui::Skillbar>( modules ).UpdateHSR( *packet );
+			std::get<AgentFilter>( modules ).Reset();
+			std::get<ConsumablesMgr>( modules ).Update( *packet );
+			std::get<DhuumsJudgement>( modules ).Update( *packet );
+			std::get<UwTimer>( modules ).Reset();
+			std::get<WindowMgr>( modules ).Update( *packet, config );
 		} );
 
 	GW::StoC::RegisterPacketCallback<MessageGlobal>(
 		&entry,
 		[this] ( auto* status, auto* )
 		{
-			std::get<ChatFilter>( passive ).OnMessage(
+			std::get<ChatFilter>( modules ).OnMessage(
 				status, std::get<ChatFilter::Config>( config.passive ) );
 		} );
 
@@ -104,7 +96,7 @@ April::Modules::Modules(
 		&entry,
 		[this] ( auto* status, auto* )
 		{
-			std::get<ChatFilter>( passive ).OnMessage(
+			std::get<ChatFilter>( modules ).OnMessage(
 				status, std::get<ChatFilter::Config>( config.passive ) );
 		} );
 
@@ -112,7 +104,7 @@ April::Modules::Modules(
 		&entry,
 		[this] ( auto* status, auto* )
 		{
-			std::get<ChatFilter>( passive ).OnMessage(
+			std::get<ChatFilter>( modules ).OnMessage(
 				status, std::get<ChatFilter::Config>( config.passive ) );
 		} );
 
@@ -120,31 +112,31 @@ April::Modules::Modules(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			std::get<UwTimer>( active ).Update( *packet );
+			std::get<UwTimer>( modules ).Update( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<ObjectiveDone>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			std::get<ConsumablesMgr>( active ).Update( *packet );
-			std::get<DhuumBot>( active ).Update( *packet );
-			std::get<UwTimer>( active ).Update( *packet );
-			std::get<WindowMgr>( active ).Update( *packet, config );
+			std::get<ConsumablesMgr>( modules ).Update( *packet );
+			std::get<DhuumBot>( modules ).Update( *packet );
+			std::get<UwTimer>( modules ).Update( *packet );
+			std::get<WindowMgr>( modules ).Update( *packet, config );
 		} );
 
 	GW::StoC::RegisterPacketCallback<ObjectiveUpdateName>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			std::get<UwTimer>( active ).Update( *packet );
+			std::get<UwTimer>( modules ).Update( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<PartyDefeated>(
 		&entry,
 		[this]( auto*, auto* )
 		{
-			std::get<ReturnToOutpost>( passive ).OnDefeated(
+			std::get<ReturnToOutpost>( modules ).OnDefeated(
 				std::get<ReturnToOutpost::Config>( config.passive ) );
 		} );
 
@@ -152,7 +144,7 @@ April::Modules::Modules(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			std::get<NotifyEffectLoss>( passive ).OnEffectLoss(
+			std::get<NotifyEffectLoss>( modules ).OnEffectLoss(
 				*packet,
 				std::get<NotifyEffectLoss::Config>( config.passive ) );
 		} );
@@ -161,21 +153,21 @@ April::Modules::Modules(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			std::get<Gui::Skillbar>( gui ).UpdateHSR( *packet );
+			std::get<Gui::Skillbar>( modules ).UpdateHSR( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<SkillRecharged>(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			std::get<Gui::Skillbar>( gui ).UpdateHSR( *packet );
+			std::get<Gui::Skillbar>( modules ).UpdateHSR( *packet );
 		} );
 
 	GW::StoC::RegisterPacketCallback<SpeechBubble>(
 		&entry,
 		[this]( auto* status, auto* )
 		{
-			std::get<SuppressSpeechBubbles>( passive ).Suppress(
+			std::get<SuppressSpeechBubbles>( modules ).Suppress(
 				status,
 				std::get<SuppressSpeechBubbles::Config>( config.passive ) );
 		} );
@@ -184,14 +176,14 @@ April::Modules::Modules(
 		&entry,
 		[this]( auto*, auto* packet )
 		{
-			std::get<AgentFilter>( passive ).UpdateOwner( *packet );
+			std::get<AgentFilter>( modules ).UpdateOwner( *packet );
 		} );
 
 	GW::Chat::RegisterLocalMessageCallback(
 		&entry,
 		[this]( GW::HookStatus* status, int, wchar_t const* msg )
 		{
-			std::get<ChatFilter>( passive ).OnMessage(
+			std::get<ChatFilter>( modules ).OnMessage(
 				status, msg, std::get<ChatFilter::Config>( config.passive ) );
 		} );
 
@@ -200,9 +192,9 @@ April::Modules::Modules(
 		[this](
 			GW::HookStatus* status, GW::Chat::Channel channel, wchar_t* msg )
 		{
-			auto& chat_commands = std::get<ChatCommands>( passive );
-			auto& agent_filter = std::get<AgentFilter>( passive );
-			auto& mgr = std::get<ConsumablesMgr>( active );
+			auto& chat_commands = std::get<ChatCommands>( modules );
+			auto& agent_filter = std::get<AgentFilter>( modules );
+			auto& mgr = std::get<ConsumablesMgr>( modules );
 			auto& cfg = std::get<ChatCommands::Config>( config.passive );
 
 			chat_commands.OnMessage(
@@ -210,51 +202,51 @@ April::Modules::Modules(
 		} );
 }
 
-void April::Modules::Update()
+void April::Instance::Update()
 {
-	std::get<ConsumablesMgr>( active ).Update(
+	std::get<ConsumablesMgr>( modules ).Update(
 		std::get<ConsumablesMgr::Config>( config.active ) );
-	std::get<ChainedSoul>( active ).Update();
-	std::get<DhuumBot>( active ).Update();
-	std::get<DhuumsJudgement>( active ).Update();
-	std::get<UwTimer>( active ).Update();
-	std::get<WindowMgr>( active ).Update( config );
+	std::get<ChainedSoul>( modules ).Update();
+	std::get<DhuumBot>( modules ).Update();
+	std::get<DhuumsJudgement>( modules ).Update();
+	std::get<UwTimer>( modules ).Update();
+	std::get<WindowMgr>( modules ).Update( config );
 }
 
-void April::Modules::Display()
+void April::Instance::Display()
 {
-	auto& chained_soul = std::get<ChainedSoul>( active );
-	auto& dhuum_bot = std::get<DhuumBot>( active );
-	auto& dhuums_judgement = std::get<DhuumsJudgement>( active );
-	auto& cons = std::get<ConsumablesMgr>( active );
-	auto& uw_timer = std::get<UwTimer>( active );
+	auto& chained_soul = std::get<ChainedSoul>( modules );
+	auto& dhuum_bot = std::get<DhuumBot>( modules );
+	auto& dhuums_judgement = std::get<DhuumsJudgement>( modules );
+	auto& cons = std::get<ConsumablesMgr>( modules );
+	auto& uw_timer = std::get<UwTimer>( modules );
 
-	std::get<Gui::ChainedSoulGui>( gui ).Display(
+	std::get<Gui::ChainedSoulGui>( modules ).Display(
 		chained_soul, std::get<Gui::ChainedSoulGui::Config>( config.gui ) );
-	std::get<Gui::Energybar>( gui ).Display(
+	std::get<Gui::Energybar>( modules ).Display(
 		std::get<Gui::Energybar::Config>( config.gui ) );
-	std::get<Gui::DhuumBotGui>( gui ).Display(
+	std::get<Gui::DhuumBotGui>( modules ).Display(
 		dhuum_bot, std::get<Gui::DhuumBotGui::Config>( config.gui ) );
-	std::get<Gui::DhuumInfo>( gui ).Display(
+	std::get<Gui::DhuumInfo>( modules ).Display(
 		dhuums_judgement, std::get<Gui::DhuumInfo::Config>( config.gui ) );
-	std::get<Gui::Dialogs>( gui ).Display(
+	std::get<Gui::Dialogs>( modules ).Display(
 		std::get<Gui::Dialogs::Config>( config.gui ) );
-	std::get<Gui::Healthbar>( gui ).Display(
+	std::get<Gui::Healthbar>( modules ).Display(
 		std::get<Gui::Healthbar::Config>( config.gui ) );
-	std::get<Gui::InstanceTimer>( gui ).Display(
+	std::get<Gui::InstanceTimer>( modules ).Display(
 		std::get<Gui::InstanceTimer::Config>( config.gui ) );
-	std::get<Gui::Inventory>( gui ).Display(
+	std::get<Gui::Inventory>( modules ).Display(
 		cons, std::get<Gui::Inventory::Config>( config.gui ) );
-	std::get<Gui::Settings>( gui ).Display( config );
-	std::get<Gui::Skillbar>( gui ).Display(
+	std::get<Gui::Settings>( modules ).Display( config );
+	std::get<Gui::Skillbar>( modules ).Display(
 		std::get<Gui::Skillbar::Config>( config.gui ) );
-	std::get<Gui::TargetInfo>( gui ).Display(
+	std::get<Gui::TargetInfo>( modules ).Display(
 		std::get<Gui::TargetInfo::Config>( config.gui ) );
-	std::get<Gui::UwTimesGui>( gui ).Display(
+	std::get<Gui::UwTimesGui>( modules ).Display(
 		uw_timer, std::get<Gui::UwTimesGui::Config>( config.gui ) );
 }
 
-void April::Modules::Shutdown()
+void April::Instance::Shutdown()
 {
-	std::get<AgentFilter>( passive ).DisplaySuppressedItems();
+	std::get<AgentFilter>( modules ).DisplaySuppressedItems();
 }

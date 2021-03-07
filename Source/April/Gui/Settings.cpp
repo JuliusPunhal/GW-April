@@ -1,7 +1,7 @@
 
 #include "April/Gui/Settings.h"
 
-#include "April/Framework/Modules.h"
+#include "April/Framework/Instance.h"
 #include "April/Framework/WndProc.h"
 #include "April/Utility/FileIO.h"
 

@@ -1,7 +1,7 @@
 
 #include "April/Module/WindowManager.h"
 
-#include "April/Framework/Modules.h"
+#include "April/Framework/Instance.h"
 
 #include "Dependencies/GWCA.hpp"
 

@@ -2,7 +2,7 @@
 #include "April/Module/ChatCommands.h"
 
 #include "April/Framework/Initialization.h"
-#include "April/Framework/Modules.h"
+#include "April/Framework/Instance.h"
 #include "April/Utility/stl.h"
 
 #include "Dependencies/GWCA.hpp"

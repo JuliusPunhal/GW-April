@@ -96,7 +96,7 @@
     <ClCompile Include="Dependencies\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_draw.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="Source\April\Framework\Modules.cpp" />
+    <ClCompile Include="Source\April\Framework\Instance.cpp" />
     <ClCompile Include="Source\April\Gui\ChainedSoulInfo.cpp" />
     <ClCompile Include="Source\April\Gui\DhuumBotGui.cpp" />
     <ClCompile Include="Source\April\Gui\DhuumInfo.cpp" />
@@ -145,7 +145,7 @@
     <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
-    <ClInclude Include="Source\April\Framework\Modules.h" />
+    <ClInclude Include="Source\April\Framework\Instance.h" />
     <ClInclude Include="Source\April\Gui\ChainedSoulInfo.h" />
     <ClInclude Include="Source\April\Gui\DhuumBotGui.h" />
     <ClInclude Include="Source\April\Gui\DhuumInfo.h" />

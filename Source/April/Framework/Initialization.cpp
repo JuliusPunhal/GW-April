@@ -1,7 +1,7 @@
 
 #include "April/Framework/Initialization.h"
 
-#include "April/Framework/Modules.h"
+#include "April/Framework/Instance.h"
 #include "April/Framework/WndProc.h"
 #include "April/Utility/FileIO.h"
 
@@ -20,7 +20,7 @@ namespace fs = std::filesystem;
 
 namespace {
 
-	auto modules = std::unique_ptr<April::Modules>{};
+	auto instance = std::unique_ptr<April::Instance>{};
 
 	auto die = false;
 	auto running = true;
@@ -181,13 +181,13 @@ namespace {
 	{
 		April::WndProc::RestoreMouseInput();
 
-		modules->Update();
+		instance->Update();
 
 		ImGui_ImplDX9_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 		{
-			modules->Display();
+			instance->Display();
 		}
 		ImGui::EndFrame();
 		ImGui::Render();
@@ -200,7 +200,7 @@ namespace {
 			ImGui_ImplWin32_Shutdown();
 			ImGui::DestroyContext();
 
-			modules->Shutdown();
+			instance->Shutdown();
 
 			GW::Render::SetRenderCallback( RenderCallback_Shutdown );
 		}
@@ -254,16 +254,13 @@ namespace {
 			}
 		};
 
-		auto active = Modules::Active{
+		auto modules = Instance::Modules{
 			ConsumablesMgr{},
 			ChainedSoul{},
 			DhuumBot{},
 			DhuumsJudgement{},
 			UwTimer{},
-			WindowMgr{}
-		};
-
-		auto passive = Modules::Passive{
+			WindowMgr{},
 			AgentFilter{},
 			ChatCommands{},
 			ChatFilter{},
@@ -271,40 +268,34 @@ namespace {
 			NotifyEffectLoss{},
 			ReturnToOutpost{},
 			ShowKitUses{},
-			SuppressSpeechBubbles{}
-		};
-
-		auto gui = Modules::Guis{
+			SuppressSpeechBubbles{},
 			Gui::ChainedSoulGui{},
 			Gui::Energybar{
-				std::get<Gui::Energybar::Config>( config->gui )
+				std::get<Gui::Energybar::Config>( config.gui )
 			},
 			Gui::DhuumBotGui{},
 			Gui::DhuumInfo{},
 			Gui::Dialogs{},
 			Gui::Healthbar{
-				std::get<Gui::Healthbar::Config>( config->gui )
+				std::get<Gui::Healthbar::Config>( config.gui )
 			},
 			Gui::InstanceTimer{
-				std::get<Gui::InstanceTimer::Config>( config->gui )
+				std::get<Gui::InstanceTimer::Config>( config.gui )
 			},
 			Gui::Inventory{
-				std::get<Gui::Inventory::Config>( config->gui )
+				std::get<Gui::Inventory::Config>( config.gui )
 			},
 			Gui::Settings{},
 			Gui::Skillbar{
-				std::get<Gui::Skillbar::Config>( config->gui )
+				std::get<Gui::Skillbar::Config>( config.gui )
 			},
 			Gui::TargetInfo{},
 			Gui::UwTimesGui{}
 		};
 
-		modules =
-			std::make_unique<Modules>(
-				std::move( active ),
-				std::move( passive ),
-				std::move( gui ),
-				std::move( config ) );
+		instance =
+			std::make_unique<Instance>(
+				std::move( modules ), std::move( config ) );
 
 
 		GW::Render::SetRenderCallback( RenderCallback );
