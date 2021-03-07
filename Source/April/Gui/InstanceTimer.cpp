@@ -9,11 +9,11 @@
 
 
 April::Gui::InstanceTimer::InstanceTimer( Config const& config )
-	: config{ config }, font{ LoadFont( config.font ) }
+	: font{ LoadFont( config.font ) }
 {
 }
 
-void April::Gui::InstanceTimer::Display() const
+void April::Gui::InstanceTimer::Display( Config const& config ) const
 {
 	// Update
 	auto const label = to_string( GW::GetInstanceTime(), HMMSS );

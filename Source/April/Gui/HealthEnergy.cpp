@@ -121,11 +121,11 @@ namespace {
 
 
 April::Gui::Healthbar::Healthbar( Config const& config )
-	: config{ config }, font{ LoadFont( config.font ) }
+	: font{ LoadFont( config.font ) }
 {
 }
 
-void April::Gui::Healthbar::Display() const
+void April::Gui::Healthbar::Display( Config const& config ) const
 {
 	auto const player = GW::Agents::GetCharacter();
 	if ( player == nullptr ) return;
@@ -189,11 +189,11 @@ auto April::Gui::Healthbar::Config::LoadDefault() -> Config
 }
 
 April::Gui::Energybar::Energybar( Config const& config )
-	: config{ config }, font{ LoadFont( config.font ) }
+	: font{ LoadFont( config.font ) }
 {
 }
 
-void April::Gui::Energybar::Display() const
+void April::Gui::Energybar::Display( Config const& config ) const
 {
 	auto const player = GW::Agents::GetCharacter();
 	if ( player == nullptr ) return;

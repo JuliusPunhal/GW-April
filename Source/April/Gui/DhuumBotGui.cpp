@@ -6,12 +6,8 @@
 #include "Dependencies/ImGui.hpp"
 
 
-April::Gui::DhuumBotGui::DhuumBotGui( Config const& config )
-	: config{ config }
-{
-}
-
-void April::Gui::DhuumBotGui::Display( DhuumBot& bot ) const
+void April::Gui::DhuumBotGui::Display(
+	DhuumBot& bot, Config const& config ) const
 {
 	if ( ImGui::Begin( config.window ) )
 	{

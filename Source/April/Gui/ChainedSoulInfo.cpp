@@ -69,12 +69,8 @@ namespace {
 }
 
 
-April::Gui::ChainedSoulGui::ChainedSoulGui( Config const& config )
-	: config{ config }
-{
-}
-
-void April::Gui::ChainedSoulGui::Display( ChainedSoul const& state ) const
+void April::Gui::ChainedSoulGui::Display(
+	ChainedSoul const& state, Config const& config ) const
 {
 	auto const label = parse_chained_soul_state( state.get() );
 

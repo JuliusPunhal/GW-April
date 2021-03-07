@@ -27,14 +27,13 @@ namespace April {
 		};
 
 
-		ShowKitUses( Config const& );
+		ShowKitUses() = default;
 
-		void UpdateKitUses( GW::Packet::StoC::ItemGeneral& ) const;
-		void UpdateKitUses( GW::Packet::StoC::ItemGeneral_ReuseID& ) const;
+		void UpdateKitUses(
+			GW::Packet::StoC::ItemGeneral&, Config const& ) const;
 
-
-	private:
-		Config const& config;
+		void UpdateKitUses(
+			GW::Packet::StoC::ItemGeneral_ReuseID&, Config const& ) const;
 	};
 
 }

@@ -31,12 +31,7 @@ namespace {
 }
 
 
-April::ReturnToOutpost::ReturnToOutpost( Config const& config )
-	: config{ config }
-{
-}
-
-void April::ReturnToOutpost::OnDefeated() const
+void April::ReturnToOutpost::OnDefeated( Config const& config ) const
 {
 	if ( config.active && player_is_leader() )
 	{

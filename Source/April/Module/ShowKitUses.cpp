@@ -38,19 +38,15 @@ namespace {
 }
 
 
-
-April::ShowKitUses::ShowKitUses( Config const& config )
-	: config{ config }
-{
-}
-
-void April::ShowKitUses::UpdateKitUses( ItemGeneral& packet ) const
+void April::ShowKitUses::UpdateKitUses(
+	ItemGeneral& packet, Config const& config ) const
 {
 	if ( config.active )
 		adjust_qty( packet );
 }
 
-void April::ShowKitUses::UpdateKitUses( ItemGeneral_ReuseID& packet ) const
+void April::ShowKitUses::UpdateKitUses(
+	ItemGeneral_ReuseID& packet, Config const& config ) const
 {
 	if ( config.active )
 		adjust_qty( packet );

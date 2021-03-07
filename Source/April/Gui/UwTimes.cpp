@@ -211,12 +211,8 @@ namespace {
 }
 
 
-April::Gui::UwTimesGui::UwTimesGui( Config const& config )
-	: config{ config }
-{
-}
-
-void April::Gui::UwTimesGui::Display( UwTimer const& timer ) const
+void April::Gui::UwTimesGui::Display(
+	UwTimer const& timer, Config const& config ) const
 {
 	auto const times = timer.current();
 	auto const strings = uwtimes_to_strings( times );

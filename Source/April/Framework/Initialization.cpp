@@ -225,40 +225,37 @@ namespace {
 
 		using namespace April;
 
-		auto config = std::make_unique<ModuleConfigurations>(
-			ModuleConfigurations{
-				{
-					load_config<ConsumablesMgr::Config>(),
-				},
-				{
-					load_config<AgentFilter::Config>(),
-					load_config<ChatCommands::Config>(),
-					load_config<ChatFilter::Config>(),
-					load_config<NotifyEffectLoss::Config>(),
-					load_config<ReturnToOutpost::Config>(),
-					load_config<ShowKitUses::Config>(),
-					load_config<SuppressSpeechBubbles::Config>(),
-				},
-				{
-					load_config<Gui::ChainedSoulGui::Config>(),
-					load_config<Gui::DhuumBotGui::Config>(),
-					load_config<Gui::DhuumInfo::Config>(),
-					load_config<Gui::Dialogs::Config>(),
-					load_config<Gui::Energybar::Config>(),
-					load_config<Gui::Healthbar::Config>(),
-					load_config<Gui::InstanceTimer::Config>(),
-					load_config<Gui::Inventory::Config>(),
-					load_config<Gui::Settings::Config>(),
-					load_config<Gui::Skillbar::Config>(),
-					load_config<Gui::TargetInfo::Config>(),
-					load_config<Gui::UwTimesGui::Config>(),
-				}
-			} );
+		auto config = ModuleConfigurations{
+			{
+				load_config<ConsumablesMgr::Config>(),
+			},
+			{
+				load_config<AgentFilter::Config>(),
+				load_config<ChatCommands::Config>(),
+				load_config<ChatFilter::Config>(),
+				load_config<NotifyEffectLoss::Config>(),
+				load_config<ReturnToOutpost::Config>(),
+				load_config<ShowKitUses::Config>(),
+				load_config<SuppressSpeechBubbles::Config>(),
+			},
+			{
+				load_config<Gui::ChainedSoulGui::Config>(),
+				load_config<Gui::DhuumBotGui::Config>(),
+				load_config<Gui::DhuumInfo::Config>(),
+				load_config<Gui::Dialogs::Config>(),
+				load_config<Gui::Energybar::Config>(),
+				load_config<Gui::Healthbar::Config>(),
+				load_config<Gui::InstanceTimer::Config>(),
+				load_config<Gui::Inventory::Config>(),
+				load_config<Gui::Settings::Config>(),
+				load_config<Gui::Skillbar::Config>(),
+				load_config<Gui::TargetInfo::Config>(),
+				load_config<Gui::UwTimesGui::Config>(),
+			}
+		};
 
 		auto active = Modules::Active{
-			ConsumablesMgr{
-				std::get<ConsumablesMgr::Config>( config->active )
-			},
+			ConsumablesMgr{},
 			ChainedSoul{},
 			DhuumBot{},
 			DhuumsJudgement{},
@@ -267,46 +264,24 @@ namespace {
 		};
 
 		auto passive = Modules::Passive{
-			AgentFilter{
-				std::get<AgentFilter::Config>( config->passive )
-			},
-			ChatCommands{
-				std::get<ChatCommands::Config>( config->passive )
-			},
-			ChatFilter{
-				std::get<ChatFilter::Config>( config->passive )
-			},
+			AgentFilter{},
+			ChatCommands{},
+			ChatFilter{},
 			CursorFix{},
-			NotifyEffectLoss{
-				std::get<NotifyEffectLoss::Config>( config->passive )
-			},
-			ReturnToOutpost{
-				std::get<ReturnToOutpost::Config>( config->passive )
-			},
-			ShowKitUses{
-				std::get<ShowKitUses::Config>( config->passive )
-			},
-			SuppressSpeechBubbles{
-				std::get<SuppressSpeechBubbles::Config>( config->passive )
-			}
+			NotifyEffectLoss{},
+			ReturnToOutpost{},
+			ShowKitUses{},
+			SuppressSpeechBubbles{}
 		};
 
 		auto gui = Modules::Guis{
-			Gui::ChainedSoulGui{
-				std::get<Gui::ChainedSoulGui::Config>( config->gui )
-			},
+			Gui::ChainedSoulGui{},
 			Gui::Energybar{
 				std::get<Gui::Energybar::Config>( config->gui )
 			},
-			Gui::DhuumBotGui{
-				std::get<Gui::DhuumBotGui::Config>( config->gui )
-			},
-			Gui::DhuumInfo{
-				std::get<Gui::DhuumInfo::Config>( config->gui )
-			},
-			Gui::Dialogs{
-				std::get<Gui::Dialogs::Config>( config->gui )
-			},
+			Gui::DhuumBotGui{},
+			Gui::DhuumInfo{},
+			Gui::Dialogs{},
 			Gui::Healthbar{
 				std::get<Gui::Healthbar::Config>( config->gui )
 			},
@@ -320,12 +295,8 @@ namespace {
 			Gui::Skillbar{
 				std::get<Gui::Skillbar::Config>( config->gui )
 			},
-			Gui::TargetInfo{
-				std::get<Gui::TargetInfo::Config>( config->gui )
-			},
-			Gui::UwTimesGui{
-				std::get<Gui::UwTimesGui::Config>( config->gui )
-			}
+			Gui::TargetInfo{},
+			Gui::UwTimesGui{}
 		};
 
 		modules =

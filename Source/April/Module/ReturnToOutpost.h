@@ -13,13 +13,9 @@ namespace April {
 		};
 
 
-		ReturnToOutpost( Config const& );
+		ReturnToOutpost() = default;
 
-		void OnDefeated() const;
-
-
-	private:
-		Config const& config;
+		void OnDefeated( Config const& ) const;
 	};
 
 }

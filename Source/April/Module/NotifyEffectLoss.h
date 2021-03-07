@@ -23,13 +23,10 @@ namespace April {
 		};
 
 
-		NotifyEffectLoss( Config const& );
+		NotifyEffectLoss() = default;
 
-		void OnEffectLoss( GW::Packet::StoC::RemoveEffect const& ) const;
-
-
-	private:
-		Config const& config;
+		void OnEffectLoss(
+			GW::Packet::StoC::RemoveEffect const&, Config const& ) const;
 	};
 
 }

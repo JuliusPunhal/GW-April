@@ -29,9 +29,9 @@ namespace April::Gui {
 		};
 
 
-		Dialogs( Config const& );
+		Dialogs() = default;
 
-		void Display();
+		void Display( Config const& );
 
 
 	private:
@@ -40,8 +40,6 @@ namespace April::Gui {
 			std::chrono::steady_clock::time_point	time;
 		};
 		std::optional<LastClick> awaiting_confirmation = std::nullopt;
-
-		Config const& config;
 	};
 
 }

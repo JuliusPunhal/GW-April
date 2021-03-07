@@ -22,12 +22,11 @@ namespace April::Gui {
 
 		InstanceTimer( Config const& );
 
-		void Display() const;
+		void Display( Config const& ) const;
 
 
 	private:
-		Config const&	config;
-		ImFont*			font;
+		ImFont* font;
 	};
 
 }

@@ -40,9 +40,9 @@ namespace April::Gui {
 		};
 
 
-		Skillbar( Config const& config );
+		Skillbar( Config const& );
 
-		void Display() const;
+		void Display( Config const& ) const;
 
 		void UpdateHSR( GW::Packet::StoC::SkillRecharge const& );
 		void UpdateHSR( GW::Packet::StoC::SkillRecharged const& );
@@ -50,11 +50,10 @@ namespace April::Gui {
 
 
 	private:
-		Config const& config;
 		ImFont* font_cooldown;
 		ImFont* font_uptime;
 
-		std::array<bool, 8> hsr;
+		std::array<bool, 8> hsr{};
 	};
 
 }

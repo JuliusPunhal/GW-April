@@ -71,12 +71,7 @@ namespace {
 }
 
 
-April::ConsumablesMgr::ConsumablesMgr( Config const& config )
-	: config{ config }
-{
-}
-
-void April::ConsumablesMgr::Update()
+void April::ConsumablesMgr::Update( Config const& config )
 {
 	if ( steady_clock::now() - last_use < config.timeout )
 		return;

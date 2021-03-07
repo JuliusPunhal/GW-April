@@ -64,14 +64,11 @@ namespace April {
 		};
 
 
-		ChatFilter( Config const& config );
+		ChatFilter() = default;
 
-		void OnMessage( GW::HookStatus* status ) const;
-		void OnMessage( GW::HookStatus* status, wchar_t const* msg ) const;
-
-
-	private:
-		Config const& config;
+		void OnMessage( GW::HookStatus* status, Config const& ) const;
+		void OnMessage(
+			GW::HookStatus* status, wchar_t const* msg, Config const& ) const;
 	};
 
 }

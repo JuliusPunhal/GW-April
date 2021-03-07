@@ -16,13 +16,9 @@ namespace April::Gui {
 		};
 
 
-		DhuumBotGui( Config const& );
+		DhuumBotGui() = default;
 
-		void Display( DhuumBot& ) const;
-
-
-	private:
-		Config const& config;
+		void Display( DhuumBot&, Config const& ) const;
 	};
 
 }

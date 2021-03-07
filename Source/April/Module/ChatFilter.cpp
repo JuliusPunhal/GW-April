@@ -293,12 +293,8 @@ namespace {
 }
 
 
-April::ChatFilter::ChatFilter( Config const& config )
-	: config{ config }
-{
-}
-
-void April::ChatFilter::OnMessage( GW::HookStatus* status ) const
+void April::ChatFilter::OnMessage(
+	GW::HookStatus* status, Config const& config ) const
 {
 	auto& buf = GW::GameContext::instance()->world->message_buff;
 	if ( buf.valid() && should_ignore( buf.begin(), config ) )
@@ -309,7 +305,7 @@ void April::ChatFilter::OnMessage( GW::HookStatus* status ) const
 }
 
 void April::ChatFilter::OnMessage(
-	GW::HookStatus* status, wchar_t const* msg ) const
+	GW::HookStatus* status, wchar_t const* msg, Config const& config ) const
 {
 	if ( should_ignore( msg, config ) )
 	{

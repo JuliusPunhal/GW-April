@@ -22,13 +22,9 @@ namespace April::Gui {
 		};
 
 
-		UwTimesGui( Config const& );
+		UwTimesGui() = default;
 
-		void Display( UwTimer const& ) const;
-
-
-	private:
-		Config const& config;
+		void Display( UwTimer const&, Config const& ) const;
 	};
 
 }

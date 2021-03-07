@@ -5,12 +5,7 @@
 #include "Dependencies/ImGui.hpp"
 
 
-April::Gui::TargetInfo::TargetInfo( Config const& config )
-	: config{ config }
-{
-}
-
-void April::Gui::TargetInfo::Display() const
+void April::Gui::TargetInfo::Display( Config const& config ) const
 {
 	auto const* target = GW::Agents::GetTarget();
 	if ( target == nullptr )

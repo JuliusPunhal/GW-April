@@ -97,12 +97,13 @@ namespace {
 }
 
 
-April::Gui::Inventory::Inventory( Config const& style )
-	: config{ style }, font{ LoadFont( config.font ) }
+April::Gui::Inventory::Inventory( Config const& config )
+	: font{ LoadFont( config.font ) }
 {
 }
 
-void April::Gui::Inventory::Display( ConsumablesMgr& cons_mgr ) const
+void April::Gui::Inventory::Display(
+	ConsumablesMgr& cons_mgr, Config const& config ) const
 {
 	auto const bags = GW::Items::GetBagArray();
 	if ( bags == nullptr ) return;

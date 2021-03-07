@@ -16,13 +16,9 @@ namespace April::Gui {
 		};
 
 
-		DhuumInfo( Config const& );
+		DhuumInfo() = default;
 
-		void Display( DhuumsJudgement const& ) const;
-
-
-	private:
-		Config const& config;
+		void Display( DhuumsJudgement const&, Config const& ) const;
 	};
 
 }

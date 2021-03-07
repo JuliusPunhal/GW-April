@@ -9,12 +9,7 @@
 using namespace std::chrono;
 
 
-April::Gui::Dialogs::Dialogs::Dialogs( Config const& config )
-	: config{ config }
-{
-}
-
-void April::Gui::Dialogs::Dialogs::Display()
+void April::Gui::Dialogs::Dialogs::Display( Config const& config )
 {
 	if ( awaiting_confirmation
 		&& steady_clock::now() - awaiting_confirmation->time

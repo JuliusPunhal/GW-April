@@ -450,18 +450,14 @@ namespace {
 }
 
 
-April::ChatCommands::ChatCommands( Config const& config )
-	: config{ config }
-{
-}
-
 void April::ChatCommands::OnMessage(
 	GW::HookStatus* status,
 	GW::Chat::Channel const channel,
 	wchar_t const* raw_msg,
 	AgentFilter& agent_filter,
 	ConsumablesMgr& mgr,
-	ModuleConfigurations& configs ) const
+	ModuleConfigurations& configs,
+	Config const& config ) const
 {
 	if ( channel != GW::Chat::CHANNEL_COMMAND )
 		return;

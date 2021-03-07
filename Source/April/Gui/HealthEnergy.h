@@ -34,11 +34,10 @@ namespace April::Gui {
 
 		Healthbar( Config const& );
 
-		void Display() const;
+		void Display( Config const& ) const;
 
 
 	private:
-		Config const& config;
 		ImFont* font;
 	};
 
@@ -69,11 +68,10 @@ namespace April::Gui {
 
  		Energybar( Config const& );
 
-		void Display() const;
+		void Display( Config const& ) const;
 
 
 	private:
-		Config const& config;
 		ImFont* font;
 	};
 

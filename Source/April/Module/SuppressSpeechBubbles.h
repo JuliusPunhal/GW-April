@@ -15,13 +15,9 @@ namespace April {
 		};
 
 
-		SuppressSpeechBubbles( Config const& );
+		SuppressSpeechBubbles() = default;
 
-		void Suppress( GW::HookStatus* ) const;
-
-
-	private:
-		Config const& config;
+		void Suppress( GW::HookStatus*, Config const& ) const;
 	};
 
 }

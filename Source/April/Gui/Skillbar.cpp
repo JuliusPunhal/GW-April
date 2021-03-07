@@ -216,13 +216,12 @@ namespace {
 
 April::Gui::Skillbar::Skillbar( Config const& config )
 	:
-	config{ config },
 	font_cooldown{ LoadFont( config.font_cooldown ) },
 	font_uptime{ LoadFont( config.font_uptime ) }
 {
 }
 
-void April::Gui::Skillbar::Display() const
+void April::Gui::Skillbar::Display( Config const& config ) const
 {
 	// Get GW-data
 	auto const skillbar = GW::SkillbarMgr::GetPlayerSkillbar();

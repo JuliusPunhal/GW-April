@@ -51,12 +51,8 @@ namespace {
 }
 
 
-April::Gui::DhuumInfo::DhuumInfo( Config const& config )
-	: config{ config }
-{
-}
-
-void April::Gui::DhuumInfo::Display( DhuumsJudgement const& judgement ) const
+void April::Gui::DhuumInfo::Display(
+	DhuumsJudgement const& judgement, Config const& config ) const
 {
 	if ( ImGui::Begin( config.window ) )
 	{

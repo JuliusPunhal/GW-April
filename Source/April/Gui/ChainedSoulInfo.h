@@ -16,13 +16,9 @@ namespace April::Gui {
 		};
 
 
-		ChainedSoulGui( Config const& );
+		ChainedSoulGui() = default;
 
-		void Display( ChainedSoul const& ) const;
-
-
-	private:
-		Config const& config;
+		void Display( ChainedSoul const&, Config const& ) const;
 	};
 
 }

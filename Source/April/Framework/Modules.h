@@ -27,7 +27,6 @@
 #include "April/Gui/TargetInfo.h"
 #include "April/Gui/UwTimes.h"
 
-#include <memory>
 #include <tuple>
 
 
@@ -109,7 +108,7 @@ namespace April {
 			Active&&,
 			Passive&&,
 			Guis&&,
-			std::unique_ptr<ModuleConfigurations> );
+			ModuleConfigurations&& );
 
 		void Update();
 		void Display();
@@ -121,7 +120,7 @@ namespace April {
 		Active active;
 		Passive passive;
 		Guis gui;
-		std::unique_ptr<ModuleConfigurations> config;
+		ModuleConfigurations config;
 	};
 
 }

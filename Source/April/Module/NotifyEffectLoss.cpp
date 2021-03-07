@@ -25,12 +25,8 @@ namespace {
 }
 
 
-April::NotifyEffectLoss::NotifyEffectLoss( Config const& config )
-	: config{ config }
-{
-}
-
-void April::NotifyEffectLoss::OnEffectLoss( RemoveEffect const& packet ) const
+void April::NotifyEffectLoss::OnEffectLoss(
+	RemoveEffect const& packet, Config const& config ) const
 {
 	auto const* player = GW::Agents::GetCharacter();
 	if ( player == nullptr || player->agent_id != packet.agent_id )

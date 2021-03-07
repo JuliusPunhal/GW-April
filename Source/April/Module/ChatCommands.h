@@ -26,7 +26,7 @@ namespace April {
 		};
 
 
-		ChatCommands( Config const& );
+		ChatCommands() = default;
 
 		void OnMessage(
 			GW::HookStatus*,
@@ -34,7 +34,8 @@ namespace April {
 			wchar_t const*,
 			AgentFilter&,
 			ConsumablesMgr&,
-			ModuleConfigurations& ) const;
+			ModuleConfigurations&,
+			Config const& ) const;
 
 
 		static constexpr auto cmd_sendchat =		"/sendchat";
@@ -48,10 +49,6 @@ namespace April {
 		static constexpr auto cmd_toggle_gui =		"/gui";
 		static constexpr auto cmd_show_suppressed = "/show_suppressed";
 		static constexpr auto cmd_exit =			"/exit";
-
-
-	private:
-		Config const& config;
 	};
 
 }

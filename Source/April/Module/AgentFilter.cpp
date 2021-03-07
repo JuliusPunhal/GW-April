@@ -49,11 +49,6 @@ namespace {
 }
 
 
-April::AgentFilter::AgentFilter( Config const& config )
-	: config{ config }
-{
-}
-
 void April::AgentFilter::DisplaySuppressedItems()
 {
 	for ( auto const& packet : suppressed_packets )
@@ -68,9 +63,9 @@ void April::AgentFilter::DisplaySuppressedItems()
 }
 
 void April::AgentFilter::OnSpawn(
-	GW::HookStatus* status, AgentAdd const& packet )
+	GW::HookStatus* status, AgentAdd const& packet, Config const& config )
 {
-	auto const want_to_display = [this]( auto const& packet )
+	auto const want_to_display = [&]( auto const& packet )
 	{
 		auto const* item = is_item( packet );
 		if ( not item ) return true;

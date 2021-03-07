@@ -23,9 +23,9 @@ namespace April {
 		};
 
 
-		ConsumablesMgr( Config const& );
+		ConsumablesMgr() = default;
 
-		void Update();
+		void Update( Config const& );
 
 		void Update( GW::Packet::StoC::ObjectiveDone const& );
 		void Update( GW::Packet::StoC::MapLoaded const& );
@@ -53,8 +53,6 @@ namespace April {
 		std::chrono::steady_clock::time_point last_use{};
 		unique_vector<Consumable> temporary{};
 		unique_vector<Consumable> persistent{};
-
-		Config const& config;
 	};
 
 }

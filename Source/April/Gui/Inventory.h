@@ -41,11 +41,10 @@ namespace April::Gui {
 
 		Inventory( Config const& );
 
-		void Display( ConsumablesMgr& ) const;
+		void Display( ConsumablesMgr&, Config const& ) const;
 
 
 	private:
-		Config const& config;
 		ImFont* font;
 	};
 
