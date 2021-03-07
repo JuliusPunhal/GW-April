@@ -66,8 +66,7 @@ namespace April {
 	};
 
 
-	class Instance {
-	public:
+	struct Instance {
 		using Modules =
 			std::tuple<
 				ConsumablesMgr,
@@ -97,18 +96,13 @@ namespace April {
 				Gui::TargetInfo,
 				Gui::UwTimesGui>;
 
-
-		Instance( Modules&&, ModuleConfigurations&& );
-
-		void Update();
-		void Display();
-
-		void Shutdown();
-
-
-	private:
 		Modules modules;
 		ModuleConfigurations config;
 	};
+
+
+	void Update( Instance& );
+	void Display( Instance& );
+	void Shutdown( Instance& );
 
 }

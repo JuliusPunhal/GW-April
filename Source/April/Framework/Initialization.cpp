@@ -20,8 +20,9 @@ namespace fs = std::filesystem;
 
 namespace {
 
-	auto instance = std::unique_ptr<April::Instance>{};
+	auto instance = std::shared_ptr<April::Instance>{};
 
+	auto entry = GW::HookEntry{};
 	auto die = false;
 	auto running = true;
 
@@ -170,6 +171,192 @@ namespace {
 		return *config;
 	}
 
+	void RegisterCallbacks( std::shared_ptr<April::Instance> inst )
+	{
+		using namespace April;
+		using namespace GW::Packet::StoC;
+
+		// Callbacks will only be cleaned up during GWCA shutdown.
+		GW::StoC::RegisterPacketCallback<AgentAdd>(
+			&entry,
+			[inst]( auto* status, auto* packet )
+			{
+				std::get<AgentFilter>( inst->modules ).OnSpawn(
+					status,
+					*packet,
+					std::get<AgentFilter::Config>( inst->config.passive ) );
+			} );
+
+		GW::StoC::RegisterPacketCallback<AgentName>(
+			&entry,
+			[inst]( auto*, auto* packet )
+			{
+				std::get<UwTimer>( inst->modules ).Update( *packet );
+			} );
+
+		GW::StoC::RegisterPacketCallback<AgentRemove>(
+			&entry,
+			[inst]( auto* status, auto* packet )
+			{
+				std::get<AgentFilter>( inst->modules ).OnDespawn(
+					status, *packet );
+			} );
+
+		GW::StoC::RegisterPacketCallback<AgentUpdateAllegiance>(
+			&entry,
+			[inst]( auto*, auto* packet )
+			{
+				std::get<UwTimer>( inst->modules ).Update( *packet );
+				std::get<WindowMgr>( inst->modules ).Update( *packet, inst->config );
+			} );
+
+		GW::StoC::RegisterPacketCallback<ItemGeneral>(
+			&entry,
+			[inst] ( auto*, auto* packet )
+			{
+				std::get<ShowKitUses>( inst->modules ).UpdateKitUses(
+					*packet, std::get<ShowKitUses::Config>( inst->config.passive ) );
+			} );
+
+		GW::StoC::RegisterPacketCallback<ItemGeneral_ReuseID>(
+			&entry,
+			[inst]( auto*, auto* packet )
+			{
+				std::get<AgentFilter>( inst->modules ).DeleteOwner( *packet );
+				std::get<ShowKitUses>( inst->modules ).UpdateKitUses(
+					*packet, std::get<ShowKitUses::Config>( inst->config.passive ) );
+			} );
+
+		GW::StoC::RegisterPacketCallback<MapLoaded>(
+			&entry,
+			[inst]( auto*, auto* packet )
+			{
+				std::get<Gui::Skillbar>( inst->modules ).UpdateHSR( *packet );
+				std::get<AgentFilter>( inst->modules ).Reset();
+				std::get<ConsumablesMgr>( inst->modules ).Update( *packet );
+				std::get<DhuumsJudgement>( inst->modules ).Update( *packet );
+				std::get<UwTimer>( inst->modules ).Reset();
+				std::get<WindowMgr>( inst->modules ).Update( *packet, inst->config );
+			} );
+
+		GW::StoC::RegisterPacketCallback<MessageGlobal>(
+			&entry,
+			[inst] ( auto* status, auto* )
+			{
+				std::get<ChatFilter>( inst->modules ).OnMessage(
+					status, std::get<ChatFilter::Config>( inst->config.passive ) );
+			} );
+
+		GW::StoC::RegisterPacketCallback<MessageLocal>(
+			&entry,
+			[inst] ( auto* status, auto* )
+			{
+				std::get<ChatFilter>( inst->modules ).OnMessage(
+					status, std::get<ChatFilter::Config>( inst->config.passive ) );
+			} );
+
+		GW::StoC::RegisterPacketCallback<MessageServer>(
+			&entry,
+			[inst] ( auto* status, auto* )
+			{
+				std::get<ChatFilter>( inst->modules ).OnMessage(
+					status, std::get<ChatFilter::Config>( inst->config.passive ) );
+			} );
+
+		GW::StoC::RegisterPacketCallback<ObjectiveAdd>(
+			&entry,
+			[inst]( auto*, auto* packet )
+			{
+				std::get<UwTimer>( inst->modules ).Update( *packet );
+			} );
+
+		GW::StoC::RegisterPacketCallback<ObjectiveDone>(
+			&entry,
+			[inst]( auto*, auto* packet )
+			{
+				std::get<ConsumablesMgr>( inst->modules ).Update( *packet );
+				std::get<DhuumBot>( inst->modules ).Update( *packet );
+				std::get<UwTimer>( inst->modules ).Update( *packet );
+				std::get<WindowMgr>( inst->modules ).Update( *packet, inst->config );
+			} );
+
+		GW::StoC::RegisterPacketCallback<ObjectiveUpdateName>(
+			&entry,
+			[inst]( auto*, auto* packet )
+			{
+				std::get<UwTimer>( inst->modules ).Update( *packet );
+			} );
+
+		GW::StoC::RegisterPacketCallback<PartyDefeated>(
+			&entry,
+			[inst]( auto*, auto* )
+			{
+				std::get<ReturnToOutpost>( inst->modules ).OnDefeated(
+					std::get<ReturnToOutpost::Config>( inst->config.passive ) );
+			} );
+
+		GW::StoC::RegisterPacketCallback<RemoveEffect>(
+			&entry,
+			[inst]( auto*, auto* packet )
+			{
+				std::get<NotifyEffectLoss>( inst->modules ).OnEffectLoss(
+					*packet,
+					std::get<NotifyEffectLoss::Config>( inst->config.passive ) );
+			} );
+
+		GW::StoC::RegisterPacketCallback<SkillRecharge>(
+			&entry,
+			[inst]( auto*, auto* packet )
+			{
+				std::get<Gui::Skillbar>( inst->modules ).UpdateHSR( *packet );
+			} );
+
+		GW::StoC::RegisterPacketCallback<SkillRecharged>(
+			&entry,
+			[inst]( auto*, auto* packet )
+			{
+				std::get<Gui::Skillbar>( inst->modules ).UpdateHSR( *packet );
+			} );
+
+		GW::StoC::RegisterPacketCallback<SpeechBubble>(
+			&entry,
+			[inst]( auto* status, auto* )
+			{
+				std::get<SuppressSpeechBubbles>( inst->modules ).Suppress(
+					status,
+					std::get<SuppressSpeechBubbles::Config>( inst->config.passive ) );
+			} );
+
+		GW::StoC::RegisterPacketCallback<UpdateItemOwner>(
+			&entry,
+			[inst]( auto*, auto* packet )
+			{
+				std::get<AgentFilter>( inst->modules ).UpdateOwner( *packet );
+			} );
+
+		GW::Chat::RegisterLocalMessageCallback(
+			&entry,
+			[inst]( GW::HookStatus* status, int, wchar_t const* msg )
+			{
+				std::get<ChatFilter>( inst->modules ).OnMessage(
+					status, msg, std::get<ChatFilter::Config>( inst->config.passive ) );
+			} );
+
+		GW::Chat::RegisterSendChatCallback(
+			&entry,
+			[inst](
+				GW::HookStatus* status, GW::Chat::Channel channel, wchar_t* msg )
+			{
+				auto& chat_commands = std::get<ChatCommands>( inst->modules );
+				auto& agent_filter = std::get<AgentFilter>( inst->modules );
+				auto& mgr = std::get<ConsumablesMgr>( inst->modules );
+				auto& cfg = std::get<ChatCommands::Config>( inst->config.passive );
+
+				chat_commands.OnMessage(
+					status, channel, msg, agent_filter, mgr, inst->config, cfg );
+			} );
+	}
+
 
 	void RenderCallback_Shutdown( IDirect3DDevice9* )
 	{
@@ -181,13 +368,13 @@ namespace {
 	{
 		April::WndProc::RestoreMouseInput();
 
-		instance->Update();
+		Update( *instance );
 
 		ImGui_ImplDX9_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 		{
-			instance->Display();
+			Display( *instance );
 		}
 		ImGui::EndFrame();
 		ImGui::Render();
@@ -200,7 +387,7 @@ namespace {
 			ImGui_ImplWin32_Shutdown();
 			ImGui::DestroyContext();
 
-			instance->Shutdown();
+			Shutdown( *instance );
 
 			GW::Render::SetRenderCallback( RenderCallback_Shutdown );
 		}
@@ -294,8 +481,10 @@ namespace {
 		};
 
 		instance =
-			std::make_unique<Instance>(
-				std::move( modules ), std::move( config ) );
+			std::make_shared<Instance>(
+				Instance{ std::move( modules ), std::move( config ) } );
+
+		RegisterCallbacks( instance );
 
 
 		GW::Render::SetRenderCallback( RenderCallback );
