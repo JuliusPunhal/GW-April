@@ -171,6 +171,38 @@ namespace {
 		return *config;
 	}
 
+
+	template<typename, typename = void>
+	struct has_window : std::false_type {};
+
+	template<typename T>
+	struct has_window<T, std::void_t<decltype(std::declval<T>().window)>>
+		: std::true_type {};
+
+	template<typename T>
+	void get_windows_impl( std::vector<April::Window*>& windows, T& config )
+	{
+		if constexpr ( has_window<stl::remove_cvref_t<T>>::value )
+		{
+			windows.push_back( &config.window );
+		}
+	}
+
+	auto get_windows( April::Instance& inst )
+	{
+		auto impl = []( auto&... module )
+		{
+			auto windows = std::vector<April::Window*>{};
+
+			( get_windows_impl( windows, module ), ... );
+
+			return windows;
+		};
+
+		return std::apply( impl, inst.config );
+	}
+
+
 	void RegisterCallbacks( std::shared_ptr<April::Instance> inst )
 	{
 		using namespace April;
@@ -207,7 +239,10 @@ namespace {
 			[inst]( auto*, auto* packet )
 			{
 				std::get<UwTimer>( inst->modules ).Update( *packet );
-				std::get<WindowMgr>( inst->modules ).Update( *packet, *inst );
+				std::get<WindowMgr>( inst->modules ).Update(
+					*packet,
+					std::get<Gui::DhuumBotGui::Config>( inst->config ),
+					std::get<Gui::DhuumInfo::Config>( inst->config ) );
 			} );
 
 		GW::StoC::RegisterPacketCallback<ItemGeneral>(
@@ -236,7 +271,12 @@ namespace {
 				std::get<ConsumablesMgr>( inst->modules ).Update( *packet );
 				std::get<DhuumsJudgement>( inst->modules ).Update( *packet );
 				std::get<UwTimer>( inst->modules ).Reset();
-				std::get<WindowMgr>( inst->modules ).Update( *packet, *inst );
+				std::get<WindowMgr>( inst->modules ).Update(
+					*packet,
+					std::get<Gui::ChainedSoulGui::Config>( inst->config ),
+					std::get<Gui::DhuumBotGui::Config>( inst->config ),
+					std::get<Gui::DhuumInfo::Config>( inst->config ),
+					std::get<Gui::UwTimesGui::Config>( inst->config ) );
 			} );
 
 		GW::StoC::RegisterPacketCallback<MessageGlobal>(
@@ -277,7 +317,10 @@ namespace {
 				std::get<ConsumablesMgr>( inst->modules ).Update( *packet );
 				std::get<DhuumBot>( inst->modules ).Update( *packet );
 				std::get<UwTimer>( inst->modules ).Update( *packet );
-				std::get<WindowMgr>( inst->modules ).Update( *packet, *inst );
+				std::get<WindowMgr>( inst->modules ).Update(
+					*packet,
+					std::get<Gui::DhuumBotGui::Config>( inst->config ),
+					std::get<Gui::DhuumInfo::Config>( inst->config ) );
 			} );
 
 		GW::StoC::RegisterPacketCallback<ObjectiveUpdateName>(
@@ -351,9 +394,10 @@ namespace {
 				auto& agent_filter = std::get<AgentFilter>( inst->modules );
 				auto& mgr = std::get<ConsumablesMgr>( inst->modules );
 				auto& cfg = std::get<ChatCommands::Config>( inst->config );
+				auto windows = get_windows( *inst );
 
 				chat_commands.OnMessage(
-					status, channel, msg, agent_filter, mgr, *inst, cfg );
+					status, channel, msg, agent_filter, mgr, windows, cfg );
 			} );
 	}
 

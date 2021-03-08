@@ -1,8 +1,6 @@
 
 #include "April/Module/WindowManager.h"
 
-#include "April/Framework/Instance.h"
-
 #include "Dependencies/GWCA.hpp"
 
 using namespace April::Gui;
@@ -10,7 +8,7 @@ using namespace GW::Packet::StoC;
 using namespace GW::Constants::ModelID::UW;
 
 
-void April::WindowMgr::Update( Instance& instance )
+void April::WindowMgr::Update( ChainedSoulGui::Config& chained_soul )
 {
 	auto const* player = GW::Agents::GetCharacter();
 	if ( player == nullptr )
@@ -18,31 +16,34 @@ void April::WindowMgr::Update( Instance& instance )
 
 	auto const distance = GW::GetDistance( player->pos, { 11427, 5079 } );
 
-	auto& window = std::get<ChainedSoulGui::Config>( instance.config ).window;
 	if ( not in_pits && distance < GW::Constants::Range::Compass )
 	{
 		in_pits = true;
-		window.visible = true;
+		chained_soul.window.visible = true;
 	}
 	else if ( in_pits && distance > GW::Constants::Range::Compass )
 	{
 		in_pits = false;
-		window.visible = false;
+		chained_soul.window.visible = false;
 	}
 }
 
 void April::WindowMgr::Update(
-	ObjectiveDone const& packet, Instance& instance ) const
+	ObjectiveDone const& packet,
+	DhuumBotGui::Config& dhuum_bot,
+	DhuumInfo::Config& dhuum_info ) const
 {
 	if ( packet.objective_id == GW::Objectives::Dhuum )
 	{
-		std::get<DhuumBotGui::Config>( instance.config ).window.visible = false;
-		std::get<DhuumInfo::Config>( instance.config ).window.visible = false;
+		dhuum_bot.window.visible = false;
+		dhuum_info.window.visible = false;
 	}
 }
 
 void April::WindowMgr::Update(
-	AgentUpdateAllegiance const& packet, Instance& instance ) const
+	AgentUpdateAllegiance const& packet,
+	DhuumBotGui::Config& dhuum_bot,
+	DhuumInfo::Config& dhuum_info ) const
 {
 	auto const* agent = GW::Agents::GetAgentByID( packet.agent_id );
 	if ( agent == nullptr ) return;
@@ -52,21 +53,25 @@ void April::WindowMgr::Update(
 	if ( living->player_number != Dhuum ) return;
 	if ( living->hp < 1 ) return; // TODO: find content for turning hostile
 
-	std::get<DhuumInfo::Config>( instance.config ).window.visible = true;
-	std::get<DhuumBotGui::Config>( instance.config ).window.visible = true;
+	dhuum_bot.window.visible = true;
+	dhuum_info.window.visible = true;
 }
 
 void April::WindowMgr::Update(
-	MapLoaded const&, Instance& instance ) const
+	MapLoaded const&,
+	ChainedSoulGui::Config& chained_soul,
+	DhuumBotGui::Config& dhuum_bot,
+	DhuumInfo::Config& dhuum_info,
+	UwTimesGui::Config& uw_times ) const
 {
 	if ( GW::GetMapID() == GW::MapID::The_Underworld
 		|| GW::GetMapID() == GW::MapID::Embark_Beach )
 	{
-		std::get<UwTimesGui::Config>( instance.config ).window.visible = true;
+		uw_times.window.visible = true;
 	}
-	else std::get<UwTimesGui::Config>( instance.config ).window.visible = false;
+	else uw_times.window.visible = false;
 
-	std::get<DhuumBotGui::Config>( instance.config ).window.visible = false;
-	std::get<DhuumInfo::Config>( instance.config ).window.visible = false;
-	std::get<ChainedSoulGui::Config>( instance.config ).window.visible = false;
+	dhuum_bot.window.visible = false;
+	dhuum_info.window.visible = false;
+	chained_soul.window.visible = false;
 }

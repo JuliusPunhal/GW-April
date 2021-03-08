@@ -1,7 +1,6 @@
 
 #include "April/Gui/Settings.h"
 
-#include "April/Framework/Instance.h"
 #include "April/Framework/WndProc.h"
 #include "April/Utility/FileIO.h"
 
@@ -1039,11 +1038,30 @@ namespace {
 }
 
 
-void April::Gui::Settings::Display( Instance& instance ) const
+void April::Gui::Settings::Display(
+	std::tuple<
+		ConsumablesMgr::Config&,
+		AgentFilter::Config&,
+		ChatCommands::Config&,
+		ChatFilter::Config&,
+		NotifyEffectLoss::Config&,
+		ReturnToOutpost::Config&,
+		ShowKitUses::Config&,
+		SuppressSpeechBubbles::Config&,
+		Gui::ChainedSoulGui::Config&,
+		Gui::DhuumBotGui::Config&,
+		Gui::DhuumInfo::Config&,
+		Gui::Dialogs::Config&,
+		Gui::Energybar::Config&,
+		Gui::Healthbar::Config&,
+		Gui::InstanceTimer::Config&,
+		Gui::Inventory::Config&,
+		Gui::Settings::Config&,
+		Gui::Skillbar::Config&,
+		Gui::TargetInfo::Config&,
+		Gui::UwTimesGui::Config&> configs ) const
 {
-	auto& config = std::get<Config>( instance.config );
-
-	if ( ImGui::Begin( config.window ) )
+	if ( ImGui::Begin( std::get<Settings::Config&>( configs ).window ) )
 	{
 		ImGui::PushStyleVar( ImGuiStyleVar_IndentSpacing, 28 );
 
@@ -1053,28 +1071,28 @@ void April::Gui::Settings::Display( Instance& instance ) const
 		}
 
 		ImGui::Text( "Module Settings" );
-		draw( std::get<ConsumablesMgr::Config>( instance.config ) );
-		draw( std::get<AgentFilter::Config>( instance.config ) );
-		draw( std::get<ChatCommands::Config>( instance.config ) );
-		draw( std::get<ChatFilter::Config>( instance.config ) );
-		draw( std::get<NotifyEffectLoss::Config>( instance.config ) );
-		draw( std::get<ReturnToOutpost::Config>( instance.config ) );
-		draw( std::get<ShowKitUses::Config>( instance.config ) );
-		draw( std::get<SuppressSpeechBubbles::Config>( instance.config ) );
+		draw( std::get<ConsumablesMgr::Config&>( configs ) );
+		draw( std::get<AgentFilter::Config&>( configs ) );
+		draw( std::get<ChatCommands::Config&>( configs ) );
+		draw( std::get<ChatFilter::Config&>( configs ) );
+		draw( std::get<NotifyEffectLoss::Config&>( configs ) );
+		draw( std::get<ReturnToOutpost::Config&>( configs ) );
+		draw( std::get<ShowKitUses::Config&>( configs ) );
+		draw( std::get<SuppressSpeechBubbles::Config&>( configs ) );
 
 		ImGui::Text( "\nGui Settings" );
-		draw( std::get<Gui::ChainedSoulGui::Config>( instance.config ) );
-		draw( std::get<Gui::DhuumBotGui::Config>( instance.config ) );
-		draw( std::get<Gui::DhuumInfo::Config>( instance.config ) );
-		draw( std::get<Gui::Dialogs::Config>( instance.config ) );
-		draw( std::get<Gui::Energybar::Config>( instance.config ) );
-		draw( std::get<Gui::Healthbar::Config>( instance.config ) );
-		draw( std::get<Gui::InstanceTimer::Config>( instance.config ) );
-		draw( std::get<Gui::Inventory::Config>( instance.config ) );
-		draw( std::get<Gui::Settings::Config>( instance.config ) );
-		draw( std::get<Gui::Skillbar::Config>( instance.config ) );
-		draw( std::get<Gui::TargetInfo::Config>( instance.config ) );
-		draw( std::get<Gui::UwTimesGui::Config>( instance.config ) );
+		draw( std::get<Gui::ChainedSoulGui::Config&>( configs ) );
+		draw( std::get<Gui::DhuumBotGui::Config&>( configs ) );
+		draw( std::get<Gui::DhuumInfo::Config&>( configs ) );
+		draw( std::get<Gui::Dialogs::Config&>( configs ) );
+		draw( std::get<Gui::Energybar::Config&>( configs ) );
+		draw( std::get<Gui::Healthbar::Config&>( configs ) );
+		draw( std::get<Gui::InstanceTimer::Config&>( configs ) );
+		draw( std::get<Gui::Inventory::Config&>( configs ) );
+		draw( std::get<Gui::Settings::Config&>( configs ) );
+		draw( std::get<Gui::Skillbar::Config&>( configs ) );
+		draw( std::get<Gui::TargetInfo::Config&>( configs ) );
+		draw( std::get<Gui::UwTimesGui::Config&>( configs ) );
 
 		ImGui::Text( "\nGlobal Style Settings" );
 		if ( ImGui::CollapsingHeader( "ImGui Style" ) )

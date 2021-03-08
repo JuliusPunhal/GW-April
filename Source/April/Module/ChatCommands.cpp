@@ -2,7 +2,6 @@
 #include "April/Module/ChatCommands.h"
 
 #include "April/Framework/Initialization.h"
-#include "April/Framework/Instance.h"
 #include "April/Utility/stl.h"
 
 #include "Dependencies/GWCA.hpp"
@@ -19,7 +18,7 @@ using namespace std::string_view_literals;
 using April::AgentFilter;
 using April::ChatCommands;
 using April::ConsumablesMgr;
-using Configs = April::Instance::Configuration;
+using April::Window;
 using Config = April::ChatCommands::Config;
 
 
@@ -203,46 +202,18 @@ namespace {
 	}
 
 
-	template<typename, typename = void>
-	struct has_window : std::false_type {};
-
-	template<typename T>
-	struct has_window<T, std::void_t<decltype(std::declval<T>().window)>>
-		: std::true_type {};
-
-
-	template<typename T, auto... I>
-	bool toggle_window_impl(
-		std::string_view name, T&& tup, std::index_sequence<I...> )
+	bool toggle_window_by_name(
+		std::string_view name, std::vector<Window*>& windows )
 	{
-		auto window_found = false;
-		auto try_toggle = [&window_found, name]( auto& gui )
+		for ( auto* window : windows )
 		{
-			using T = stl::remove_cvref_t<decltype(gui)>;
-			if constexpr ( has_window<T>::value )
+			if ( window->name == name )
 			{
-				if ( gui.window.name == name )
-				{
-					gui.window.visible = !gui.window.visible;
-					window_found = true;
-				}
+				window->visible = !window->visible;
+				return true;
 			}
-		};
-
-		( try_toggle( std::get<I>( tup ) ), ... );
-
-		return window_found;
-	}
-
-	template<typename T>
-	bool toggle_window_by_name( std::string_view name, T&& tup )
-	{
-		return
-			toggle_window_impl(
-				name,
-				std::forward<T>( tup ),
-				std::make_index_sequence<
-					std::tuple_size_v<stl::remove_cvref_t<T>>>{} );
+		}
+		return false;
 	}
 
 
@@ -250,7 +221,7 @@ namespace {
 		cli const& cmd,
 		AgentFilter& agent_filter,
 		ConsumablesMgr& consumables,
-		Configs& configs )
+		std::vector<Window*>& windows )
 	{
 		using namespace April;
 
@@ -417,7 +388,7 @@ namespace {
 
 		else if ( cmd.cmd == ChatCommands::cmd_toggle_gui )
 		{
-			if ( toggle_window_by_name( cmd.arguments, configs ) == false )
+			if ( toggle_window_by_name( cmd.arguments, windows ) == false )
 			{
 				auto const window_name = std::string{ cmd.arguments };
 				GW::WriteChat(
@@ -470,7 +441,7 @@ void April::ChatCommands::OnMessage(
 	wchar_t const* raw_msg,
 	AgentFilter& agent_filter,
 	ConsumablesMgr& mgr,
-	Instance& instance,
+	std::vector<Window*>& windows,
 	Config const& config ) const
 {
 	if ( channel != GW::Chat::CHANNEL_COMMAND )
@@ -489,7 +460,7 @@ void April::ChatCommands::OnMessage(
 			cmd.remove_suffix( 1 );
 
 		auto const cli = parse_cmd( cmd );
-		if ( call_command( cli, agent_filter, mgr, instance.config ) )
+		if ( call_command( cli, agent_filter, mgr, windows ) )
 		{
 			status->blocked = true;
 		}

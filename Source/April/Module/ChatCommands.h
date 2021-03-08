@@ -2,11 +2,12 @@
 
 #include "April/Module/AgentFilter.h"
 #include "April/Module/ConsumablesMgr.h"
-namespace April { struct Instance; }
+#include "April/Utility/DrawStructures.h"
 
 #include "Dependencies/GWCA.hpp"
 
 #include <string>
+#include <vector>
 
 
 namespace April {
@@ -34,7 +35,7 @@ namespace April {
 			wchar_t const*,
 			AgentFilter&,
 			ConsumablesMgr&,
-			Instance&,
+			std::vector<Window*>&,
 			Config const& ) const;
 
 
