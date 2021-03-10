@@ -27,6 +27,8 @@
 #include "April/Gui/TargetInfo.h"
 #include "April/Gui/UwTimes.h"
 
+struct IDirect3DDevice9;
+
 #include <memory>
 #include <tuple>
 
@@ -93,14 +95,17 @@ namespace April {
 
 	private:
 		Instance() = default;
-		friend auto make_instance() -> std::unique_ptr<Instance>;
+		friend auto make_instance( IDirect3DDevice9* )
+			-> std::shared_ptr<Instance>;
 	};
 
 
-	auto make_instance() -> std::unique_ptr<Instance>;
+	auto make_instance( IDirect3DDevice9* ) -> std::shared_ptr<Instance>;
 
 	void Update( Instance& );
 	void Display( Instance& );
 	void Shutdown( Instance& );
+
+	void OnDeviceReset( IDirect3DDevice9* );
 
 }
