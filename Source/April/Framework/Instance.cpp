@@ -382,13 +382,17 @@ namespace {
 				GW::HookStatus* status, GW::Chat::Channel channel, wchar_t* msg )
 			{
 				auto& chat_commands = std::get<ChatCommands>( inst->modules );
-				auto& agent_filter = std::get<AgentFilter>( inst->modules );
-				auto& mgr = std::get<ConsumablesMgr>( inst->modules );
-				auto& cfg = std::get<ChatCommands::Config>( inst->config );
 				auto windows = get_windows( *inst );
 
 				chat_commands.OnMessage(
-					status, channel, msg, agent_filter, mgr, windows, cfg );
+					status,
+					channel,
+					msg,
+					std::get<AgentFilter>( inst->modules ),
+					std::get<ConsumablesMgr>( inst->modules ),
+					windows,
+					inst->terminate,
+					std::get<ChatCommands::Config>( inst->config ) );
 			} );
 	}
 

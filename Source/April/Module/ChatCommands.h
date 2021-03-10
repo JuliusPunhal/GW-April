@@ -36,6 +36,7 @@ namespace April {
 			AgentFilter&,
 			ConsumablesMgr&,
 			std::vector<Window*>&,
+			bool& terminate,
 			Config const& ) const;
 
 

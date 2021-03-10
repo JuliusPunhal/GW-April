@@ -1,7 +1,6 @@
 
 #include "April/Module/ChatCommands.h"
 
-#include "April/Framework/Initialization.h"
 #include "April/Utility/stl.h"
 
 #include "Dependencies/GWCA.hpp"
@@ -221,7 +220,8 @@ namespace {
 		cli const& cmd,
 		AgentFilter& agent_filter,
 		ConsumablesMgr& consumables,
-		std::vector<Window*>& windows )
+		std::vector<Window*>& windows,
+		bool& terminate )
 	{
 		using namespace April;
 
@@ -409,7 +409,7 @@ namespace {
 
 		else if ( cmd.cmd == ChatCommands::cmd_exit )
 		{
-			April::Die();
+			terminate = true; // this is horrible, check commit message.
 			return true;
 		}
 
@@ -442,6 +442,7 @@ void April::ChatCommands::OnMessage(
 	AgentFilter& agent_filter,
 	ConsumablesMgr& mgr,
 	std::vector<Window*>& windows,
+	bool& terminate,
 	Config const& config ) const
 {
 	if ( channel != GW::Chat::CHANNEL_COMMAND )
@@ -460,7 +461,7 @@ void April::ChatCommands::OnMessage(
 			cmd.remove_suffix( 1 );
 
 		auto const cli = parse_cmd( cmd );
-		if ( call_command( cli, agent_filter, mgr, windows ) )
+		if ( call_command( cli, agent_filter, mgr, windows, terminate ) )
 		{
 			status->blocked = true;
 		}

@@ -102,7 +102,6 @@
     <ClCompile Include="Source\April\Gui\DhuumInfo.cpp" />
     <ClCompile Include="Source\April\Gui\Dialogs.cpp" />
     <ClCompile Include="Source\April\Gui\Inventory.cpp" />
-    <ClCompile Include="Source\April\Framework\Initialization.cpp" />
     <ClCompile Include="Source\April\Framework\WndProc.cpp" />
     <ClCompile Include="Source\April\Gui\HealthEnergy.cpp" />
     <ClCompile Include="Source\April\Gui\InstanceTimer.cpp" />
@@ -151,7 +150,6 @@
     <ClInclude Include="Source\April\Gui\DhuumInfo.h" />
     <ClInclude Include="Source\April\Gui\Dialogs.h" />
     <ClInclude Include="Source\April\Gui\Inventory.h" />
-    <ClInclude Include="Source\April\Framework\Initialization.h" />
     <ClInclude Include="Source\April\Framework\WndProc.h" />
     <ClInclude Include="Source\April\Gui\HealthEnergy.h" />
     <ClInclude Include="Source\April\Gui\InstanceTimer.h" />

@@ -92,6 +92,8 @@ namespace April {
 		Modules modules;
 		Configuration config;
 
+		bool terminate = false;
+
 
 	private:
 		Instance() = default;
