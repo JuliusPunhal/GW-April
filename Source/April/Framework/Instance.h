@@ -27,69 +27,77 @@
 #include "April/Gui/TargetInfo.h"
 #include "April/Gui/UwTimes.h"
 
+#include <memory>
 #include <tuple>
 
 
 namespace April {
 
+	using Modules =
+		std::tuple<
+			ConsumablesMgr,
+			ChainedSoul,
+			DhuumBot,
+			DhuumsJudgement,
+			UwTimer,
+			WindowMgr,
+			AgentFilter,
+			ChatCommands,
+			ChatFilter,
+			CursorFix,
+			NotifyEffectLoss,
+			ReturnToOutpost,
+			ShowKitUses,
+			SuppressSpeechBubbles,
+			Gui::ChainedSoulGui,
+			Gui::Energybar,
+			Gui::DhuumBotGui,
+			Gui::DhuumInfo,
+			Gui::Dialogs,
+			Gui::Healthbar,
+			Gui::InstanceTimer,
+			Gui::Inventory,
+			Gui::Settings,
+			Gui::Skillbar,
+			Gui::TargetInfo,
+			Gui::UwTimesGui>;
+
+	using Configuration =
+		std::tuple<
+			ConsumablesMgr::Config,
+			AgentFilter::Config,
+			ChatCommands::Config,
+			ChatFilter::Config,
+			NotifyEffectLoss::Config,
+			ReturnToOutpost::Config,
+			ShowKitUses::Config,
+			SuppressSpeechBubbles::Config,
+			Gui::ChainedSoulGui::Config,
+			Gui::DhuumBotGui::Config,
+			Gui::DhuumInfo::Config,
+			Gui::Dialogs::Config,
+			Gui::Energybar::Config,
+			Gui::Healthbar::Config,
+			Gui::InstanceTimer::Config,
+			Gui::Inventory::Config,
+			Gui::Settings::Config,
+			Gui::Skillbar::Config,
+			Gui::TargetInfo::Config,
+			Gui::UwTimesGui::Config>;
+
+
 	struct Instance {
-		using Modules =
-			std::tuple<
-				ConsumablesMgr,
-				ChainedSoul,
-				DhuumBot,
-				DhuumsJudgement,
-				UwTimer,
-				WindowMgr,
-				AgentFilter,
-				ChatCommands,
-				ChatFilter,
-				CursorFix,
-				NotifyEffectLoss,
-				ReturnToOutpost,
-				ShowKitUses,
-				SuppressSpeechBubbles,
-				Gui::ChainedSoulGui,
-				Gui::Energybar,
-				Gui::DhuumBotGui,
-				Gui::DhuumInfo,
-				Gui::Dialogs,
-				Gui::Healthbar,
-				Gui::InstanceTimer,
-				Gui::Inventory,
-				Gui::Settings,
-				Gui::Skillbar,
-				Gui::TargetInfo,
-				Gui::UwTimesGui>;
-
-		using Configuration =
-			std::tuple<
-				ConsumablesMgr::Config,
-				AgentFilter::Config,
-				ChatCommands::Config,
-				ChatFilter::Config,
-				NotifyEffectLoss::Config,
-				ReturnToOutpost::Config,
-				ShowKitUses::Config,
-				SuppressSpeechBubbles::Config,
-				Gui::ChainedSoulGui::Config,
-				Gui::DhuumBotGui::Config,
-				Gui::DhuumInfo::Config,
-				Gui::Dialogs::Config,
-				Gui::Energybar::Config,
-				Gui::Healthbar::Config,
-				Gui::InstanceTimer::Config,
-				Gui::Inventory::Config,
-				Gui::Settings::Config,
-				Gui::Skillbar::Config,
-				Gui::TargetInfo::Config,
-				Gui::UwTimesGui::Config>;
-
-
 		Modules modules;
 		Configuration config;
+
+
+	private:
+		Instance() = default;
+		friend auto make_instance() -> std::unique_ptr<Instance>;
 	};
 
+
+	auto make_instance() -> std::unique_ptr<Instance>;
 
 	void Update( Instance& );
 	void Display( Instance& );

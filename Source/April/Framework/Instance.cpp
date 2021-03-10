@@ -1,6 +1,91 @@
 
 #include "April/Framework/Instance.h"
 
+#include "April/Utility/FileIO.h"
+
+
+namespace {
+
+	template<typename T>
+	auto load_config()
+	{
+		auto const config = April::IO::from_file<T>( T::path );
+		if ( config == std::nullopt )
+			return T::LoadDefault();
+
+		return *config;
+	}
+
+}
+
+
+auto April::make_instance() -> std::unique_ptr<Instance>
+{
+	auto config = Configuration{
+		load_config<ConsumablesMgr::Config>(),
+		load_config<AgentFilter::Config>(),
+		load_config<ChatCommands::Config>(),
+		load_config<ChatFilter::Config>(),
+		load_config<NotifyEffectLoss::Config>(),
+		load_config<ReturnToOutpost::Config>(),
+		load_config<ShowKitUses::Config>(),
+		load_config<SuppressSpeechBubbles::Config>(),
+		load_config<Gui::ChainedSoulGui::Config>(),
+		load_config<Gui::DhuumBotGui::Config>(),
+		load_config<Gui::DhuumInfo::Config>(),
+		load_config<Gui::Dialogs::Config>(),
+		load_config<Gui::Energybar::Config>(),
+		load_config<Gui::Healthbar::Config>(),
+		load_config<Gui::InstanceTimer::Config>(),
+		load_config<Gui::Inventory::Config>(),
+		load_config<Gui::Settings::Config>(),
+		load_config<Gui::Skillbar::Config>(),
+		load_config<Gui::TargetInfo::Config>(),
+		load_config<Gui::UwTimesGui::Config>()
+	};
+
+	auto modules = Modules{
+		ConsumablesMgr{},
+		ChainedSoul{},
+		DhuumBot{},
+		DhuumsJudgement{},
+		UwTimer{},
+		WindowMgr{},
+		AgentFilter{},
+		ChatCommands{},
+		ChatFilter{},
+		CursorFix{},
+		NotifyEffectLoss{},
+		ReturnToOutpost{},
+		ShowKitUses{},
+		SuppressSpeechBubbles{},
+		Gui::ChainedSoulGui{},
+		Gui::Energybar{
+			std::get<Gui::Energybar::Config>( config )
+		},
+		Gui::DhuumBotGui{},
+		Gui::DhuumInfo{},
+		Gui::Dialogs{},
+		Gui::Healthbar{
+			std::get<Gui::Healthbar::Config>( config )
+		},
+		Gui::InstanceTimer{
+			std::get<Gui::InstanceTimer::Config>( config )
+		},
+		Gui::Inventory{
+			std::get<Gui::Inventory::Config>( config )
+		},
+		Gui::Settings{},
+		Gui::Skillbar{
+			std::get<Gui::Skillbar::Config>( config )
+		},
+		Gui::TargetInfo{},
+		Gui::UwTimesGui{}
+	};
+
+	return std::make_unique<Instance>(
+		Instance{ std::move( modules ), std::move( config ) } );
+}
 
 void April::Update( Instance& instance )
 {

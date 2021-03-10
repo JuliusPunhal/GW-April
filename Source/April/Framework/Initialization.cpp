@@ -3,7 +3,6 @@
 
 #include "April/Framework/Instance.h"
 #include "April/Framework/WndProc.h"
-#include "April/Utility/FileIO.h"
 
 #include "Dependencies/GWCA.hpp"
 #include "Dependencies/ImGui.hpp"
@@ -159,16 +158,6 @@ namespace {
 		//col[ImGuiCol_NavWindowingHighlight] = { 1.00f, 1.00f, 1.00f, 0.70f };
 		//col[ImGuiCol_NavWindowingDimBg]     = { 0.80f, 0.80f, 0.80f, 0.20f };
 		//col[ImGuiCol_ModalWindowDimBg]      = { 0.80f, 0.80f, 0.80f, 0.35f };
-	}
-
-	template<typename T>
-	auto load_config()
-	{
-		auto const config = April::IO::from_file<T>( T::path );
-		if ( config == std::nullopt )
-			return T::LoadDefault();
-
-		return *config;
 	}
 
 
@@ -454,73 +443,7 @@ namespace {
 		default_style( ImGui::GetStyle() );
 
 
-		using namespace April;
-
-		auto config = Instance::Configuration{
-			load_config<ConsumablesMgr::Config>(),
-			load_config<AgentFilter::Config>(),
-			load_config<ChatCommands::Config>(),
-			load_config<ChatFilter::Config>(),
-			load_config<NotifyEffectLoss::Config>(),
-			load_config<ReturnToOutpost::Config>(),
-			load_config<ShowKitUses::Config>(),
-			load_config<SuppressSpeechBubbles::Config>(),
-			load_config<Gui::ChainedSoulGui::Config>(),
-			load_config<Gui::DhuumBotGui::Config>(),
-			load_config<Gui::DhuumInfo::Config>(),
-			load_config<Gui::Dialogs::Config>(),
-			load_config<Gui::Energybar::Config>(),
-			load_config<Gui::Healthbar::Config>(),
-			load_config<Gui::InstanceTimer::Config>(),
-			load_config<Gui::Inventory::Config>(),
-			load_config<Gui::Settings::Config>(),
-			load_config<Gui::Skillbar::Config>(),
-			load_config<Gui::TargetInfo::Config>(),
-			load_config<Gui::UwTimesGui::Config>()
-		};
-
-		auto modules = Instance::Modules{
-			ConsumablesMgr{},
-			ChainedSoul{},
-			DhuumBot{},
-			DhuumsJudgement{},
-			UwTimer{},
-			WindowMgr{},
-			AgentFilter{},
-			ChatCommands{},
-			ChatFilter{},
-			CursorFix{},
-			NotifyEffectLoss{},
-			ReturnToOutpost{},
-			ShowKitUses{},
-			SuppressSpeechBubbles{},
-			Gui::ChainedSoulGui{},
-			Gui::Energybar{
-				std::get<Gui::Energybar::Config>( config )
-			},
-			Gui::DhuumBotGui{},
-			Gui::DhuumInfo{},
-			Gui::Dialogs{},
-			Gui::Healthbar{
-				std::get<Gui::Healthbar::Config>( config )
-			},
-			Gui::InstanceTimer{
-				std::get<Gui::InstanceTimer::Config>( config )
-			},
-			Gui::Inventory{
-				std::get<Gui::Inventory::Config>( config )
-			},
-			Gui::Settings{},
-			Gui::Skillbar{
-				std::get<Gui::Skillbar::Config>( config )
-			},
-			Gui::TargetInfo{},
-			Gui::UwTimesGui{}
-		};
-
-		instance =
-			std::make_shared<Instance>(
-				Instance{ std::move( modules ), std::move( config ) } );
+		instance = April::make_instance();
 
 		RegisterCallbacks( instance );
 
