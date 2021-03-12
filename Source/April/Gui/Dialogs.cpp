@@ -9,7 +9,7 @@
 using namespace std::chrono;
 
 
-void April::Gui::Dialogs::Dialogs::Display( Config const& config )
+auto April::Gui::Dialogs::Dialogs::Display( Config const& config ) -> Command
 {
 	if ( awaiting_confirmation
 		&& steady_clock::now() - awaiting_confirmation->time
@@ -17,6 +17,8 @@ void April::Gui::Dialogs::Dialogs::Display( Config const& config )
 	{
 		awaiting_confirmation = std::nullopt;
 	}
+
+	auto command = NoCommand;
 
 	if ( ImGui::Begin( config.window ) )
 	{
@@ -41,7 +43,7 @@ void April::Gui::Dialogs::Dialogs::Display( Config const& config )
 
 				if ( ImGui::Button( "Confirm", { width, 0 } ) )
 				{
-					GW::Agents::SendDialog( dialog.dialog );
+					command = SendDialog{ dialog.dialog };
 					awaiting_confirmation = std::nullopt;
 				}
 
@@ -58,6 +60,8 @@ void April::Gui::Dialogs::Dialogs::Display( Config const& config )
 		ImGui::Text( "Last Dialog: %d (0x%08X)", last_dialog, last_dialog );
 	}
 	ImGui::End();
+
+	return command;
 }
 
 auto April::Gui::Dialogs::Config::LoadDefault() -> Config

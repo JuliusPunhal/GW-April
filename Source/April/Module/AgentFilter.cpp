@@ -49,57 +49,37 @@ namespace {
 }
 
 
-void April::AgentFilter::DisplaySuppressedItems()
+bool April::AgentFilter::should_suppress(
+	AgentAdd const& packet, Config const& config ) const
 {
-	for ( auto const& packet : suppressed_packets )
-	{
-		GW::GameThread::Enqueue(
-			[copy = packet]() mutable
-			{
-				GW::StoC::EmulatePacket( &copy );
-			} );
-	}
-	suppressed_packets.clear();
+	if ( not config.active )
+		return false;
+
+	auto const* item = is_item( packet );
+	if ( not item ) return false;
+
+	auto const player = GW::Agents::GetCharacter();
+	if ( player == nullptr )
+		return false; // spectating, do not suppress
+
+	auto const it_owner = item_owners.find( item->item_id );
+	auto const can_pick_up =
+		it_owner == item_owners.end()            // not reserved
+		|| it_owner->second == player->agent_id; // reserved for user
+
+	if ( can_pick_up )
+		return not want_to_display(
+			*item,
+			config.visible_user_items,
+			config.visible_user_rarities );
+	else
+		return not want_to_display(
+			*item,
+			config.visible_party_items,
+			config.visible_party_rarities );
 }
 
-void April::AgentFilter::OnSpawn(
-	GW::HookStatus* status, AgentAdd const& packet, Config const& config )
-{
-	auto const want_to_display = [&]( auto const& packet )
-	{
-		auto const* item = is_item( packet );
-		if ( not item ) return true;
-
-		auto const player = GW::Agents::GetCharacter();
-		if ( player == nullptr )
-			return true; // spectating, do not suppress
-
-		auto const it_owner = item_owners.find( item->item_id );
-		auto const can_pick_up =
-			it_owner == item_owners.end()				// not reserved
-			|| it_owner->second == player->agent_id;	// reserved for user
-
-		if ( can_pick_up )
-			return ::want_to_display(
-				*item,
-				config.visible_user_items,
-				config.visible_user_rarities );
-		else
-			return ::want_to_display(
-				*item,
-				config.visible_party_items,
-				config.visible_party_rarities );
-	};
-
-	if ( config.active && not want_to_display( packet ) )
-	{
-		suppressed_packets.emplace_back( packet );
-		status->blocked = true;
-	}
-}
-
-void April::AgentFilter::OnDespawn(
-	GW::HookStatus* status, AgentRemove const& packet )
+bool April::AgentFilter::should_suppress( AgentRemove const& packet )
 {
 	auto const found_iter =
 		std::find_if(
@@ -111,9 +91,15 @@ void April::AgentFilter::OnDespawn(
 
 	if ( found_iter != std::end( suppressed_packets ) )
 	{
-		status->blocked = true;
 		suppressed_packets.erase( found_iter );
+		return true;
 	}
+	else return false;
+}
+
+void April::AgentFilter::register_suppressed( AgentAdd const& packet )
+{
+	suppressed_packets.push_back( packet );
 }
 
 void April::AgentFilter::UpdateOwner( UpdateItemOwner const& packet )

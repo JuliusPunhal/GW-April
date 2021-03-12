@@ -24,19 +24,20 @@ namespace April {
 
 		AgentFilter() = default;
 
-		void DisplaySuppressedItems();
-
 		auto size() const noexcept { return suppressed_packets.size(); }
+		auto clear() noexcept { return suppressed_packets.clear(); }
 
+		bool should_suppress(
+			GW::Packet::StoC::AgentAdd const&, Config const& ) const;
 
-		void OnSpawn(
-			GW::HookStatus*,
-			GW::Packet::StoC::AgentAdd const&,
-			Config const& );
+		bool should_suppress( GW::Packet::StoC::AgentRemove const& );
 
-		void OnDespawn(
-			GW::HookStatus*,
-			GW::Packet::StoC::AgentRemove const& );
+		void register_suppressed( GW::Packet::StoC::AgentAdd const& );
+
+		auto get_suppressed() const noexcept -> auto const&
+		{
+			return suppressed_packets;
+		}
 
 
 		void UpdateOwner( GW::Packet::StoC::UpdateItemOwner const& );

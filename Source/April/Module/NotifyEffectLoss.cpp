@@ -25,16 +25,17 @@ namespace {
 }
 
 
-void April::NotifyEffectLoss::OnEffectLoss(
+auto April::NotifyEffectLoss::OnEffectLoss(
 	RemoveEffect const& packet, Config const& config ) const
+	-> Command
 {
 	auto const* player = GW::Agents::GetCharacter();
 	if ( player == nullptr || player->agent_id != packet.agent_id )
-		return;
+		return NoCommand;
 
 	auto effect = get_effect_by_id( packet.effect_id );
 	if ( effect == nullptr )
-		return;
+		return NoCommand;
 
 	auto const skill_id = static_cast<GW::SkillID>( effect->skill_id );
 	auto const found =
@@ -47,8 +48,10 @@ void April::NotifyEffectLoss::OnEffectLoss(
 
 	if ( found != std::end( config.notifications ) )
 	{
-		GW::WriteChat( GW::Chat::CHANNEL_GWCA2, found->message );
+		return WriteChat{ GW::Chat::CHANNEL_GWCA2, found->message };
 	}
+
+	return NoCommand;
 }
 
 auto April::NotifyEffectLoss::Config::LoadDefault() -> Config

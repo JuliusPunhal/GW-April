@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Dependencies/GWCA.hpp"
-
 
 namespace April {
 
@@ -17,7 +15,7 @@ namespace April {
 
 		SuppressSpeechBubbles() = default;
 
-		void Suppress( GW::HookStatus*, Config const& ) const;
+		bool should_suppress( Config const& ) const;
 	};
 
 }

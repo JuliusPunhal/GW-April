@@ -2,7 +2,6 @@
 #include "April/Module/DhuumBot.h"
 
 #include "Dependencies/GWCA.hpp"
-#include "Dependencies/ImGui.hpp"
 
 using namespace std::chrono;
 
@@ -70,74 +69,73 @@ namespace {
 		return nullptr;
 	}
 
-	bool used_rest()
+	auto rest() -> April::Command
 	{
 		auto const* skillbar = GW::SkillbarMgr::GetPlayerSkillbar();
 		if ( skillbar == nullptr || not skillbar->IsValid() )
-			return false;
+			return April::NoCommand;
 
 		auto const rest = skillbar->skills[0];
 		auto const id = static_cast<GW::SkillID>( rest.skill_id );
 
 		if ( rest.GetRecharge() != 0 || id != GW::SkillID::Dhuums_Rest )
-			return false;
+			return April::NoCommand;
 
-		GW::UseSkill( 0 );
-		return true;
+		return April::UseSkill{ 0 };
 	}
 
-	bool used_fury( GW::AgentID& dhuum_id )
+	auto fury( GW::AgentID& dhuum_id ) -> April::Command
 	{
 		auto const* dhuum = find_dhuum( dhuum_id );
 		if ( dhuum == nullptr || dhuum->allegiance != hostile )
-			return false;
+			return April::NoCommand;
 
 		auto const* skillbar = GW::SkillbarMgr::GetPlayerSkillbar();
 		if ( skillbar == nullptr || not skillbar->IsValid() )
-			return false;
+			return April::NoCommand;
 
 		auto const fury = skillbar->skills[4];
 		auto const id = static_cast<GW::SkillID>( fury.skill_id );
 
 		if ( fury.GetRecharge() != 0 || id != GW::SkillID::Ghostly_Fury )
-			return false;
+			return April::NoCommand;
 
-		GW::UseSkill( 4, *dhuum );
-		return true;
-	}
-
-	bool used_spirit_skill( GW::AgentID& dhuum_id )
-	{
-		return GW::GetMissionProgress() < 1.f
-			? used_rest() : used_fury( dhuum_id );
+		return April::UseSkill{ 4, dhuum };
 	}
 
 }
 
 
-void April::DhuumBot::Update()
+auto April::DhuumBot::Update() -> Command
 {
-	if ( not active ) return;
-	if ( steady_clock::now() - last_cast < 1s ) return;
+	if ( not active ) return NoCommand;
+	if ( steady_clock::now() - last_cast < 1s ) return NoCommand;
 
 	auto const* player = GW::Agents::GetCharacter();
 	if ( not player_is_valid( player ) || player->GetIsDead() )
-		return;
+		return NoCommand;
 
 	if ( GW::GetEnergyPoints( *player ) <= 7 )
-		return;
+		return NoCommand;
 
 	if ( not at_dhuum( *player ) )
 	{
 		active = false;
-		return;
+		return NoCommand;
 	}
 
 	if ( player->GetIsCasting() || player->skill != 0 )
-		return;
+		return NoCommand;
 
-	if ( used_spirit_skill( dhuum_id ) )
+	auto const command =
+		GW::GetMissionProgress() < 1.f ? rest() : fury( dhuum_id );
+
+	if ( not std::holds_alternative<NoCommand_t>( command ) )
+	{
 		last_cast = steady_clock::now();
+	}
+
+	return command;
 }
 
 void April::DhuumBot::Update( GW::Packet::StoC::ObjectiveDone const& packet )

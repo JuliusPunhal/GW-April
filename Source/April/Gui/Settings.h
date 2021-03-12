@@ -20,6 +20,7 @@
 #include "April/Gui/TargetInfo.h"
 #include "April/Gui/UwTimes.h"
 
+#include "April/Framework/Command.h"
 #include "April/Utility/DrawStructures.h"
 
 #include <tuple>
@@ -39,7 +40,7 @@ namespace April::Gui {
 
 		Settings() = default;
 
-		void Display(
+		auto Display(
 			std::tuple<
 				ConsumablesMgr::Config&,
 				AgentFilter::Config&,
@@ -60,7 +61,7 @@ namespace April::Gui {
 				Gui::Settings::Config&,
 				Gui::Skillbar::Config&,
 				Gui::TargetInfo::Config&,
-				Gui::UwTimesGui::Config&> ) const;
+				Gui::UwTimesGui::Config&> ) const -> Command;
 	};
 
 }

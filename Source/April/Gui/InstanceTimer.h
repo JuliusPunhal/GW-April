@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Framework/Command.h"
 #include "April/Utility/DrawStructures.h"
 
 
@@ -22,7 +23,7 @@ namespace April::Gui {
 
 		InstanceTimer( Config const& );
 
-		void Display( Config const& ) const;
+		auto Display( Config const& ) const -> Command;
 
 
 	private:

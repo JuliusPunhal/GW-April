@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Framework/Command.h"
 #include "April/Utility/Consumable.h"
 #include "April/Utility/unique_vector.h"
 
@@ -25,7 +26,7 @@ namespace April {
 
 		ConsumablesMgr() = default;
 
-		void Update( Config const& );
+		auto Update( Config const& ) -> Command;
 
 		void Update( GW::Packet::StoC::ObjectiveDone const& );
 		void Update( GW::Packet::StoC::MapLoaded const& );

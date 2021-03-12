@@ -13,12 +13,12 @@ April::Gui::InstanceTimer::InstanceTimer( Config const& config )
 {
 }
 
-void April::Gui::InstanceTimer::Display( Config const& config ) const
+auto April::Gui::InstanceTimer::Display( Config const& config ) const
+	-> Command
 {
-	// Update
-	auto const label = to_string( GW::GetInstanceTime(), HMMSS );
+	auto command = NoCommand;
 
-	// Draw
+	auto label = to_string( GW::GetInstanceTime(), HMMSS );
 	if ( ImGui::Begin( config.window ) )
 	{
 		ImGui::PushFont( font );
@@ -46,13 +46,15 @@ void April::Gui::InstanceTimer::Display( Config const& config ) const
 		ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, { 0, 0 } );
 		if ( ImGui::Button( label ) )
 		{
-			GW::SendChat( '#', "[Now] " + label );
+			command = SendChat{ '#', "[Now] " + std::move( label ) };
 		}
 		ImGui::PopStyleColor( 4 );
 		ImGui::PopStyleVar();
 		ImGui::PopFont();
 	}
 	ImGui::End();
+
+	return command;
 }
 
 auto April::Gui::InstanceTimer::Config::LoadDefault() -> Config

@@ -31,6 +31,7 @@ struct IDirect3DDevice9;
 
 #include <memory>
 #include <tuple>
+#include <vector>
 
 
 namespace April {
@@ -106,6 +107,10 @@ namespace April {
 
 	void Update( Instance& );
 	void Display( Instance& );
+
+	void CallCommand( Command const&, Instance& );
+	void CallCommand( std::vector<Command> const&, Instance& );
+
 	void Shutdown( Instance& );
 
 	void OnDeviceReset( IDirect3DDevice9* );

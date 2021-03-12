@@ -1,8 +1,11 @@
 #pragma once
 
+#include "April/Framework/Command.h"
 #include "April/Module/ConsumablesMgr.h"
 
 #include "April/Utility/DrawStructures.h"
+
+#include <vector>
 
 
 namespace April::Gui {
@@ -41,7 +44,8 @@ namespace April::Gui {
 
 		Inventory( Config const& );
 
-		void Display( ConsumablesMgr&, Config const& ) const;
+		auto Display( ConsumablesMgr const&, Config const& ) const
+			-> std::vector<Command>;
 
 
 	private:

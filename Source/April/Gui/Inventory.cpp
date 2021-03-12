@@ -69,21 +69,6 @@ namespace {
 		return ImGui::GetIO().KeyCtrl || ImGui::GetIO().KeyShift;
 	}
 
-	void activate_or_promote( GW::ItemID const id, ConsumablesMgr& mgr )
-	{
-		auto const active = mgr.is_active( id );
-		if ( active.temporary )
-			mgr.activate_persistent( id );
-		else if ( not active.persistent )
-			mgr.activate_temporary( id );
-	}
-
-	void deactivate( GW::ItemID const id, ConsumablesMgr& mgr )
-	{
-		mgr.deactivate_persistent( id );
-		mgr.deactivate_temporary( id );
-	}
-
 	bool next_slot_fits_on_same_line( WH const& slot_size )
 	{
 		auto const last_slot_end = ImGui::GetItemRectMax().x;
@@ -102,11 +87,14 @@ April::Gui::Inventory::Inventory( Config const& config )
 {
 }
 
-void April::Gui::Inventory::Display(
-	ConsumablesMgr& cons_mgr, Config const& config ) const
+auto April::Gui::Inventory::Display(
+	ConsumablesMgr const& cons_mgr, Config const& config ) const
+	-> std::vector<Command>
 {
+	auto commands = std::vector<Command>{};
+
 	auto const bags = GW::Items::GetBagArray();
-	if ( bags == nullptr ) return;
+	if ( bags == nullptr ) return commands;
 
 	if ( ImGui::Begin( config.window ) )
 	{
@@ -136,11 +124,30 @@ void April::Gui::Inventory::Display(
 						WndProc::BlockMouseInput();
 						if ( ImGui::GetIO().MouseClicked[0] && item )
 						{
-							activate_or_promote( item->model_id, cons_mgr );
+							auto const active =
+								cons_mgr.is_active( item->model_id );
+
+							if ( active.temporary )
+							{
+								commands.push_back(
+									EnableConsumables{
+										{ item->model_id }, true
+									} );
+							}
+							else if ( not active.persistent )
+							{
+								commands.push_back(
+									EnableConsumables{
+										{ item->model_id }, false
+									} );
+							}
 						}
 						else if ( ImGui::GetIO().MouseClicked[1] && item )
 						{
-							deactivate( item->model_id, cons_mgr );
+							commands = std::vector<Command>{
+								DisableConsumables{ { item->model_id }, false },
+								DisableConsumables{ { item->model_id }, true },
+							};
 						}
 					}
 				}
@@ -155,6 +162,8 @@ void April::Gui::Inventory::Display(
 		ImGui::PopFont();
 	}
 	ImGui::End();
+
+	return commands;
 }
 
 auto April::Gui::Inventory::Config::LoadDefault() -> Config

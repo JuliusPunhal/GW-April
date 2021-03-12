@@ -1,5 +1,7 @@
 #pragma once
 
+#include "April/Framework/Command.h"
+
 #include "Dependencies/GWCA.hpp"
 
 #include <string>
@@ -25,8 +27,9 @@ namespace April {
 
 		NotifyEffectLoss() = default;
 
-		void OnEffectLoss(
-			GW::Packet::StoC::RemoveEffect const&, Config const& ) const;
+		auto OnEffectLoss(
+			GW::Packet::StoC::RemoveEffect const&, Config const& ) const
+			-> Command;
 	};
 
 }

@@ -1,6 +1,8 @@
 
 #include "April/Module/ChatFilter.h"
 
+#include "Dependencies/GWCA.hpp"
+
 using Config = April::ChatFilter::Config;
 
 
@@ -293,27 +295,10 @@ namespace {
 }
 
 
-void April::ChatFilter::OnMessage(
-	GW::HookStatus* status, Config const& config ) const
+bool April::ChatFilter::should_suppress(
+	wchar_t const* msg, Config const& config ) const
 {
-	auto& buf = GW::GameContext::instance()->world->message_buff;
-	if ( buf.valid() && should_ignore( buf.begin(), config ) )
-	{
-		status->blocked = true;
-		buf.clear();
-	}
-}
-
-void April::ChatFilter::OnMessage(
-	GW::HookStatus* status, wchar_t const* msg, Config const& config ) const
-{
-	if ( should_ignore( msg, config ) )
-	{
-		status->blocked = true;
-		auto& buf = GW::GameContext::instance()->world->message_buff;
-		if ( buf.valid() )
-			buf.clear();
-	}
+	return should_ignore( msg, config );
 }
 
 auto April::ChatFilter::Config::LoadDefault() -> Config

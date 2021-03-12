@@ -1,5 +1,6 @@
 
 #include "April/Framework/Instance.h"
+#include "April/Framework/Instance.OnCommand.hpp"
 
 #include "April/Utility/FileIO.h"
 
@@ -156,42 +157,6 @@ namespace {
 		return *config;
 	}
 
-
-	namespace detail {
-
-		template<typename, typename = void>
-		struct has_window : std::false_type {};
-
-		template<typename T>
-		struct has_window<T, std::void_t<decltype(std::declval<T>().window)>>
-			: std::true_type {};
-
-		template<typename T>
-		void get_windows_impl( std::vector<April::Window*>& windows, T& config )
-		{
-			if constexpr ( has_window<stl::remove_cvref_t<T>>::value )
-			{
-				windows.push_back( &config.window );
-			}
-		}
-
-	}
-
-	auto get_windows( April::Instance& inst )
-	{
-		auto impl = []( auto&... module )
-		{
-			auto windows = std::vector<April::Window*>{};
-
-			( detail::get_windows_impl( windows, module ), ... );
-
-			return windows;
-		};
-
-		return std::apply( impl, inst.config );
-	}
-
-
 	void RegisterCallbacks( std::shared_ptr<April::Instance> inst )
 	{
 		auto* entry = reinterpret_cast<GW::HookEntry*>( inst.get() );
@@ -204,10 +169,14 @@ namespace {
 			entry,
 			[inst]( auto* status, auto* packet )
 			{
-				std::get<AgentFilter>( inst->modules ).OnSpawn(
-					status,
-					*packet,
-					std::get<AgentFilter::Config>( inst->config ) );
+				auto& agent_filter = std::get<AgentFilter>( inst->modules );
+				auto& config = std::get<AgentFilter::Config>( inst->config );
+
+				if ( agent_filter.should_suppress( *packet, config ) )
+				{
+					status->blocked = true;
+					agent_filter.register_suppressed( *packet );
+				}
 			} );
 
 		GW::StoC::RegisterPacketCallback<AgentName>(
@@ -221,8 +190,12 @@ namespace {
 			entry,
 			[inst]( auto* status, auto* packet )
 			{
-				std::get<AgentFilter>( inst->modules ).OnDespawn(
-					status, *packet );
+				auto& agent_filter = std::get<AgentFilter>( inst->modules );
+
+				if ( agent_filter.should_suppress( *packet ) )
+				{
+					status->blocked = true;
+				}
 			} );
 
 		GW::StoC::RegisterPacketCallback<AgentUpdateAllegiance>(
@@ -230,10 +203,9 @@ namespace {
 			[inst]( auto*, auto* packet )
 			{
 				std::get<UwTimer>( inst->modules ).Update( *packet );
-				std::get<WindowMgr>( inst->modules ).Update(
-					*packet,
-					std::get<Gui::DhuumBotGui::Config>( inst->config ),
-					std::get<Gui::DhuumInfo::Config>( inst->config ) );
+				CallCommand(
+					std::get<WindowMgr>( inst->modules ).Update( *packet ),
+					*inst );
 			} );
 
 		GW::StoC::RegisterPacketCallback<ItemGeneral>(
@@ -262,36 +234,57 @@ namespace {
 				std::get<ConsumablesMgr>( inst->modules ).Update( *packet );
 				std::get<DhuumsJudgement>( inst->modules ).Update( *packet );
 				std::get<UwTimer>( inst->modules ).Reset();
-				std::get<WindowMgr>( inst->modules ).Update(
-					*packet,
-					std::get<Gui::ChainedSoulGui::Config>( inst->config ),
-					std::get<Gui::DhuumBotGui::Config>( inst->config ),
-					std::get<Gui::DhuumInfo::Config>( inst->config ),
-					std::get<Gui::UwTimesGui::Config>( inst->config ) );
+				CallCommand(
+					std::get<WindowMgr>( inst->modules ).Update( *packet ),
+					*inst );
 			} );
 
 		GW::StoC::RegisterPacketCallback<MessageGlobal>(
 			entry,
 			[inst] ( auto* status, auto* )
 			{
-				std::get<ChatFilter>( inst->modules ).OnMessage(
-					status, std::get<ChatFilter::Config>( inst->config ) );
+				auto const& chat_filter = std::get<ChatFilter>( inst->modules );
+				auto const& cfg = std::get<ChatFilter::Config>( inst->config );
+
+				auto& buf = GW::GameContext::instance()->world->message_buff;
+				if ( buf.valid()
+					&& chat_filter.should_suppress( buf.begin(), cfg ) )
+				{
+					status->blocked = true;
+					buf.clear();
+				}
 			} );
 
 		GW::StoC::RegisterPacketCallback<MessageLocal>(
 			entry,
 			[inst] ( auto* status, auto* )
 			{
-				std::get<ChatFilter>( inst->modules ).OnMessage(
-					status, std::get<ChatFilter::Config>( inst->config ) );
+				auto const& chat_filter = std::get<ChatFilter>( inst->modules );
+				auto const& cfg = std::get<ChatFilter::Config>( inst->config );
+
+				auto& buf = GW::GameContext::instance()->world->message_buff;
+				if ( buf.valid()
+					&& chat_filter.should_suppress( buf.begin(), cfg ) )
+				{
+					status->blocked = true;
+					buf.clear();
+				}
 			} );
 
 		GW::StoC::RegisterPacketCallback<MessageServer>(
 			entry,
 			[inst] ( auto* status, auto* )
 			{
-				std::get<ChatFilter>( inst->modules ).OnMessage(
-					status, std::get<ChatFilter::Config>( inst->config ) );
+				auto const& chat_filter = std::get<ChatFilter>( inst->modules );
+				auto const& cfg = std::get<ChatFilter::Config>( inst->config );
+
+				auto& buf = GW::GameContext::instance()->world->message_buff;
+				if ( buf.valid()
+					&& chat_filter.should_suppress( buf.begin(), cfg ) )
+				{
+					status->blocked = true;
+					buf.clear();
+				}
 			} );
 
 		GW::StoC::RegisterPacketCallback<ObjectiveAdd>(
@@ -308,10 +301,9 @@ namespace {
 				std::get<ConsumablesMgr>( inst->modules ).Update( *packet );
 				std::get<DhuumBot>( inst->modules ).Update( *packet );
 				std::get<UwTimer>( inst->modules ).Update( *packet );
-				std::get<WindowMgr>( inst->modules ).Update(
-					*packet,
-					std::get<Gui::DhuumBotGui::Config>( inst->config ),
-					std::get<Gui::DhuumInfo::Config>( inst->config ) );
+				CallCommand(
+					std::get<WindowMgr>( inst->modules ).Update( *packet ),
+					*inst );
 			} );
 
 		GW::StoC::RegisterPacketCallback<ObjectiveUpdateName>(
@@ -325,17 +317,21 @@ namespace {
 			entry,
 			[inst]( auto*, auto* )
 			{
-				std::get<ReturnToOutpost>( inst->modules ).OnDefeated(
-					std::get<ReturnToOutpost::Config>( inst->config ) );
+				CallCommand(
+					std::get<ReturnToOutpost>( inst->modules ).OnDefeated(
+						std::get<ReturnToOutpost::Config>( inst->config ) ),
+					*inst );
 			} );
 
 		GW::StoC::RegisterPacketCallback<RemoveEffect>(
 			entry,
 			[inst]( auto*, auto* packet )
 			{
-				std::get<NotifyEffectLoss>( inst->modules ).OnEffectLoss(
-					*packet,
-					std::get<NotifyEffectLoss::Config>( inst->config ) );
+				CallCommand(
+					std::get<NotifyEffectLoss>( inst->modules ).OnEffectLoss(
+						*packet,
+						std::get<NotifyEffectLoss::Config>( inst->config ) ),
+					*inst );
 			} );
 
 		GW::StoC::RegisterPacketCallback<SkillRecharge>(
@@ -356,9 +352,13 @@ namespace {
 			entry,
 			[inst]( auto* status, auto* )
 			{
-				std::get<SuppressSpeechBubbles>( inst->modules ).Suppress(
-					status,
-					std::get<SuppressSpeechBubbles::Config>( inst->config ) );
+				auto const& bubbles =
+					std::get<SuppressSpeechBubbles>( inst->modules );
+				auto const& config =
+					std::get<SuppressSpeechBubbles::Config>( inst->config );
+
+				if ( bubbles.should_suppress( config ) )
+					status->blocked = true;
 			} );
 
 		GW::StoC::RegisterPacketCallback<UpdateItemOwner>(
@@ -372,8 +372,13 @@ namespace {
 			entry,
 			[inst]( GW::HookStatus* status, int, wchar_t const* msg )
 			{
-				std::get<ChatFilter>( inst->modules ).OnMessage(
-					status, msg, std::get<ChatFilter::Config>( inst->config ) );
+				auto const& chat_filter = std::get<ChatFilter>( inst->modules );
+				auto const& cfg = std::get<ChatFilter::Config>( inst->config );
+
+				if ( chat_filter.should_suppress( msg, cfg ) )
+				{
+					status->blocked = true;
+				}
 			} );
 
 		GW::Chat::RegisterSendChatCallback(
@@ -382,17 +387,13 @@ namespace {
 				GW::HookStatus* status, GW::Chat::Channel channel, wchar_t* msg )
 			{
 				auto& chat_commands = std::get<ChatCommands>( inst->modules );
-				auto windows = get_windows( *inst );
+				auto& config = std::get<ChatCommands::Config>( inst->config );
 
-				chat_commands.OnMessage(
-					status,
-					channel,
-					msg,
-					std::get<AgentFilter>( inst->modules ),
-					std::get<ConsumablesMgr>( inst->modules ),
-					windows,
-					inst->terminate,
-					std::get<ChatCommands::Config>( inst->config ) );
+				auto cmds = chat_commands.ParseMessage( channel, msg, config );
+				CallCommand( cmds, *inst );
+
+				if ( cmds.size() > 0 )
+					status->blocked = true;
 			} );
 	}
 
@@ -489,14 +490,16 @@ auto April::make_instance( IDirect3DDevice9* device )
 
 void April::Update( Instance& instance )
 {
-	std::get<ConsumablesMgr>( instance.modules ).Update(
-		std::get<ConsumablesMgr::Config>( instance.config ) );
+	CallCommand(
+		std::get<ConsumablesMgr>( instance.modules ).Update(
+			std::get<ConsumablesMgr::Config>( instance.config ) ),
+		instance );
+
 	std::get<ChainedSoul>( instance.modules ).Update();
-	std::get<DhuumBot>( instance.modules ).Update();
+	CallCommand( std::get<DhuumBot>( instance.modules ).Update(), instance );
 	std::get<DhuumsJudgement>( instance.modules ).Update();
 	std::get<UwTimer>( instance.modules ).Update();
-	std::get<WindowMgr>( instance.modules ).Update(
-		std::get<Gui::ChainedSoulGui::Config>( instance.config ) );
+	CallCommand( std::get<WindowMgr>( instance.modules ).Update(), instance );
 }
 
 void April::Display( Instance& instance )
@@ -505,9 +508,11 @@ void April::Display( Instance& instance )
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	std::get<Gui::ChainedSoulGui>( instance.modules ).Display(
-		std::get<ChainedSoul>( instance.modules ),
-		std::get<Gui::ChainedSoulGui::Config>( instance.config ) );
+	CallCommand(
+		std::get<Gui::ChainedSoulGui>( instance.modules ).Display(
+			std::get<ChainedSoul>( instance.modules ).get(),
+			std::get<Gui::ChainedSoulGui::Config>( instance.config ) ),
+		instance );
 
 	std::get<Gui::Energybar>( instance.modules ).Display(
 		std::get<Gui::Energybar::Config>( instance.config ) );
@@ -516,45 +521,55 @@ void April::Display( Instance& instance )
 		std::get<DhuumBot>( instance.modules ),
 		std::get<Gui::DhuumBotGui::Config>( instance.config ) );
 
-	std::get<Gui::DhuumInfo>( instance.modules ).Display(
-		std::get<DhuumsJudgement>( instance.modules ),
-		std::get<Gui::DhuumInfo::Config>( instance.config ) );
+	CallCommand(
+		std::get<Gui::DhuumInfo>( instance.modules ).Display(
+			std::get<DhuumsJudgement>( instance.modules ),
+			std::get<Gui::DhuumInfo::Config>( instance.config ) ),
+		instance );
 
-	std::get<Gui::Dialogs>( instance.modules ).Display(
-		std::get<Gui::Dialogs::Config>( instance.config ) );
+	CallCommand(
+		std::get<Gui::Dialogs>( instance.modules ).Display(
+			std::get<Gui::Dialogs::Config>( instance.config ) ),
+		instance );
 
 	std::get<Gui::Healthbar>( instance.modules ).Display(
 		std::get<Gui::Healthbar::Config>( instance.config ) );
 
-	std::get<Gui::InstanceTimer>( instance.modules ).Display(
-		std::get<Gui::InstanceTimer::Config>( instance.config ) );
+	CallCommand(
+		std::get<Gui::InstanceTimer>( instance.modules ).Display(
+			std::get<Gui::InstanceTimer::Config>( instance.config ) ),
+		instance );
 
-	std::get<Gui::Inventory>( instance.modules ).Display(
-		std::get<ConsumablesMgr>( instance.modules ),
-		std::get<Gui::Inventory::Config>( instance.config ) );
+	CallCommand(
+		std::get<Gui::Inventory>( instance.modules ).Display(
+			std::get<ConsumablesMgr>( instance.modules ),
+			std::get<Gui::Inventory::Config>( instance.config ) ),
+		instance );
 
-	std::get<Gui::Settings>( instance.modules ).Display(
-		std::forward_as_tuple(
-			std::get<ConsumablesMgr::Config>( instance.config ),
-			std::get<AgentFilter::Config>( instance.config ),
-			std::get<ChatCommands::Config>( instance.config ),
-			std::get<ChatFilter::Config>( instance.config ),
-			std::get<NotifyEffectLoss::Config>( instance.config ),
-			std::get<ReturnToOutpost::Config>( instance.config ),
-			std::get<ShowKitUses::Config>( instance.config ),
-			std::get<SuppressSpeechBubbles::Config>( instance.config ),
-			std::get<Gui::ChainedSoulGui::Config>( instance.config ),
-			std::get<Gui::DhuumBotGui::Config>( instance.config ),
-			std::get<Gui::DhuumInfo::Config>( instance.config ),
-			std::get<Gui::Dialogs::Config>( instance.config ),
-			std::get<Gui::Energybar::Config>( instance.config ),
-			std::get<Gui::Healthbar::Config>( instance.config ),
-			std::get<Gui::InstanceTimer::Config>( instance.config ),
-			std::get<Gui::Inventory::Config>( instance.config ),
-			std::get<Gui::Settings::Config>( instance.config ),
-			std::get<Gui::Skillbar::Config>( instance.config ),
-			std::get<Gui::TargetInfo::Config>( instance.config ),
-			std::get<Gui::UwTimesGui::Config>( instance.config ) ) );
+	CallCommand(
+		std::get<Gui::Settings>( instance.modules ).Display(
+			std::forward_as_tuple(
+				std::get<ConsumablesMgr::Config>( instance.config ),
+				std::get<AgentFilter::Config>( instance.config ),
+				std::get<ChatCommands::Config>( instance.config ),
+				std::get<ChatFilter::Config>( instance.config ),
+				std::get<NotifyEffectLoss::Config>( instance.config ),
+				std::get<ReturnToOutpost::Config>( instance.config ),
+				std::get<ShowKitUses::Config>( instance.config ),
+				std::get<SuppressSpeechBubbles::Config>( instance.config ),
+				std::get<Gui::ChainedSoulGui::Config>( instance.config ),
+				std::get<Gui::DhuumBotGui::Config>( instance.config ),
+				std::get<Gui::DhuumInfo::Config>( instance.config ),
+				std::get<Gui::Dialogs::Config>( instance.config ),
+				std::get<Gui::Energybar::Config>( instance.config ),
+				std::get<Gui::Healthbar::Config>( instance.config ),
+				std::get<Gui::InstanceTimer::Config>( instance.config ),
+				std::get<Gui::Inventory::Config>( instance.config ),
+				std::get<Gui::Settings::Config>( instance.config ),
+				std::get<Gui::Skillbar::Config>( instance.config ),
+				std::get<Gui::TargetInfo::Config>( instance.config ),
+				std::get<Gui::UwTimesGui::Config>( instance.config ) ) ),
+		instance );
 
 	std::get<Gui::Skillbar>( instance.modules ).Display(
 		std::get<Gui::Skillbar::Config>( instance.config ) );
@@ -562,13 +577,29 @@ void April::Display( Instance& instance )
 	std::get<Gui::TargetInfo>( instance.modules ).Display(
 		std::get<Gui::TargetInfo::Config>( instance.config ) );
 
-	std::get<Gui::UwTimesGui>( instance.modules ).Display(
-		std::get<UwTimer>( instance.modules ),
-		std::get<Gui::UwTimesGui::Config>( instance.config ) );
+	CallCommand(
+		std::get<Gui::UwTimesGui>( instance.modules ).Display(
+			std::get<UwTimer>( instance.modules ),
+			std::get<Gui::UwTimesGui::Config>( instance.config ) ),
+		instance );
 
 	ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX9_RenderDrawData( ImGui::GetDrawData() );
+}
+
+void April::CallCommand( Command const& cmd, Instance& instance )
+{
+	std::visit( OnCommand{ instance }, cmd );
+}
+
+void April::CallCommand(
+	std::vector<Command> const& commands, Instance& instance )
+{
+	for ( auto const& command : commands )
+	{
+		CallCommand( command, instance );
+	}
 }
 
 void April::Shutdown( Instance& instance )
@@ -577,7 +608,7 @@ void April::Shutdown( Instance& instance )
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
-	std::get<AgentFilter>( instance.modules ).DisplaySuppressedItems();
+	CallCommand( ShowSuppresedAgents{}, instance );
 }
 
 void April::OnDeviceReset( IDirect3DDevice9* )

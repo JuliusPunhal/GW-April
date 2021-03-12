@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Framework/Command.h"
 #include "April/Module/ChainedSoul.h"
 #include "April/Utility/DrawStructures.h"
 
@@ -18,7 +19,8 @@ namespace April::Gui {
 
 		ChainedSoulGui() = default;
 
-		void Display( ChainedSoul const&, Config const& ) const;
+		auto Display( ChainedSoul::SoulState const&, Config const& ) const
+			-> Command;
 	};
 
 }

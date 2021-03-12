@@ -2,11 +2,9 @@
 #include "April/Module/SuppressSpeechBubbles.h"
 
 
-void April::SuppressSpeechBubbles::Suppress(
-	GW::HookStatus* status, Config const& config ) const
+bool April::SuppressSpeechBubbles::should_suppress( Config const& config ) const
 {
-	if ( config.active )
-		status->blocked = true;
+	return config.active;
 }
 
 auto April::SuppressSpeechBubbles::Config::LoadDefault() -> Config

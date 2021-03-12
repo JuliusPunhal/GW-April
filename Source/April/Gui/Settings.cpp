@@ -172,7 +172,7 @@ namespace {
 		}
 	}
 
-	void draw( April::AgentFilter::Config& config )
+	auto draw( April::AgentFilter::Config& config ) -> April::Command
 	{
 		auto const draw = []( auto& rarities, auto& ids )
 		{
@@ -231,6 +231,8 @@ namespace {
 		};
 
 
+		auto command = April::NoCommand;
+
 		if ( ImGui::CollapsingHeader( "Agent Filter" ) )
 		{
 			ImGui::Indent();
@@ -241,10 +243,7 @@ namespace {
 
 			if ( ImGui::Button( "Show suppressed items" ) )
 			{
-				// This is a horrible solution but since cmd_show_suppressed is
-				// now a compiletime-constant, it should not break.
-				auto const cmd = April::ChatCommands::cmd_show_suppressed;
-				GW::SendChat( '/', &cmd[1] );
+				command = April::ShowSuppresedAgents{};
 			}
 
 			if ( ImGui::CollapsingHeader( "Visible Player Items" ) )
@@ -282,6 +281,8 @@ namespace {
 
 			ImGui::Unindent();
 		}
+
+		return command;
 	}
 
 	void draw( April::ChatCommands::Config& config )
@@ -1038,7 +1039,7 @@ namespace {
 }
 
 
-void April::Gui::Settings::Display(
+auto April::Gui::Settings::Display(
 	std::tuple<
 		ConsumablesMgr::Config&,
 		AgentFilter::Config&,
@@ -1059,8 +1060,10 @@ void April::Gui::Settings::Display(
 		Gui::Settings::Config&,
 		Gui::Skillbar::Config&,
 		Gui::TargetInfo::Config&,
-		Gui::UwTimesGui::Config&> configs ) const
+		Gui::UwTimesGui::Config&> configs ) const -> Command
 {
+	auto command = NoCommand;
+
 	if ( ImGui::Begin( std::get<Settings::Config&>( configs ).window ) )
 	{
 		ImGui::PushStyleVar( ImGuiStyleVar_IndentSpacing, 28 );
@@ -1072,7 +1075,7 @@ void April::Gui::Settings::Display(
 
 		ImGui::Text( "Module Settings" );
 		draw( std::get<ConsumablesMgr::Config&>( configs ) );
-		draw( std::get<AgentFilter::Config&>( configs ) );
+		command = draw( std::get<AgentFilter::Config&>( configs ) );
 		draw( std::get<ChatCommands::Config&>( configs ) );
 		draw( std::get<ChatFilter::Config&>( configs ) );
 		draw( std::get<NotifyEffectLoss::Config&>( configs ) );
@@ -1103,6 +1106,8 @@ void April::Gui::Settings::Display(
 		ImGui::PopStyleVar();
 	}
 	ImGui::End();
+
+	return command;
 }
 
 auto April::Gui::Settings::Config::LoadDefault() -> Config

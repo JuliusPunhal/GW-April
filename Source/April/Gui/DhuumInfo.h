@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Framework/Command.h"
 #include "April/Module/DhuumsJudgement.h"
 #include "April/Utility/DrawStructures.h"
 
@@ -18,7 +19,8 @@ namespace April::Gui {
 
 		DhuumInfo() = default;
 
-		void Display( DhuumsJudgement const&, Config const& ) const;
+		auto Display( DhuumsJudgement const&, Config const& ) const
+			-> Command;
 	};
 
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "April/Framework/Command.h"
+
 
 namespace April {
 
@@ -15,7 +17,7 @@ namespace April {
 
 		ReturnToOutpost() = default;
 
-		void OnDefeated( Config const& ) const;
+		auto OnDefeated( Config const& ) const -> Command;
 	};
 
 }

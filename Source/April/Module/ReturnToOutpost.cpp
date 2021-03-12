@@ -31,12 +31,14 @@ namespace {
 }
 
 
-void April::ReturnToOutpost::OnDefeated( Config const& config ) const
+auto April::ReturnToOutpost::OnDefeated( Config const& config ) const
+	-> Command
 {
 	if ( config.active && player_is_leader() )
 	{
-		GW::CtoS::SendPacket( 0x4, GAME_CMSG_PARTY_RETURN_TO_OUTPOST );
+		return Return_to_Outpost{};
 	}
+	else return NoCommand;
 }
 
 auto April::ReturnToOutpost::Config::LoadDefault() -> Config

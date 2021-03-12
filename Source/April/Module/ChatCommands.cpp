@@ -8,16 +8,10 @@
 #include <optional>
 #include <string>
 #include <string_view>
-#include <type_traits>
-#include <variant>
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
-using April::AgentFilter;
-using April::ChatCommands;
-using April::ConsumablesMgr;
-using April::Window;
 using Config = April::ChatCommands::Config;
 
 
@@ -200,28 +194,7 @@ namespace {
 		str.erase( std::remove( str.begin(), str.end(), '"' ), str.end() );
 	}
 
-
-	bool toggle_window_by_name(
-		std::string_view name, std::vector<Window*>& windows )
-	{
-		for ( auto* window : windows )
-		{
-			if ( window->name == name )
-			{
-				window->visible = !window->visible;
-				return true;
-			}
-		}
-		return false;
-	}
-
-
-	bool call_command(
-		cli const& cmd,
-		AgentFilter& agent_filter,
-		ConsumablesMgr& consumables,
-		std::vector<Window*>& windows,
-		bool& terminate )
+	auto parse_command( cli const& cmd ) -> std::optional<April::Command>
 	{
 		using namespace April;
 
@@ -231,8 +204,8 @@ namespace {
 			{
 				auto str = std::string{ cmd.arguments };
 				remove_quotes( str );
-				GW::Chat::SendChat( static_cast<char>( str[0] ), &str[1] );
-				return true;
+
+				return SendChat{ static_cast<char>( str[0] ), &str[1] };
 			}
 		}
 
@@ -242,8 +215,8 @@ namespace {
 			{
 				auto str = std::string{ cmd.arguments };
 				remove_quotes( str );
-				GW::WriteChat( PARTY, str );
-				return true;
+
+				return WriteChat{ PARTY, str };
 			}
 		}
 
@@ -251,24 +224,17 @@ namespace {
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "off" )
 			{
-				consumables.deactivate_all_temporary();
-				return true;
+				return DisableAllConsumables{ false };
 			}
 
-			auto const ids = str_to_ids( cmd.arguments );
+			auto ids = str_to_ids( cmd.arguments );
 			if ( ids.empty() )
 			{
-				auto const error = "Could not parse all arguments in: "s;
-				GW::WriteChat( PARTY, error + std::string{ cmd.message } );
-				return true;
+				auto const error = "Could not parse all arguments in: ";
+				return WriteChat{ PARTY, error + std::string{ cmd.message } };
 			}
 
-			for ( auto const id : ids )
-			{
-				consumables.activate_temporary( id );
-			}
-
-			return true;
+			return EnableConsumables{ std::move( ids ), false };
 		}
 
 		// TODO: CLI-Argument to specify persistence (--persistent?)
@@ -276,48 +242,34 @@ namespace {
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "off" )
 			{
-				consumables.deactivate_all_persistent();
-				return true;
+				return DisableAllConsumables{ true };
 			}
 
-			auto const ids = str_to_ids( cmd.arguments );
+			auto ids = str_to_ids( cmd.arguments );
 			if ( ids.empty() )
 			{
-				auto const error = "Could not parse all arguments in: "s;
-				GW::WriteChat( PARTY, error + std::string{ cmd.message } );
-				return true;
+				auto const error = "Could not parse all arguments in: ";
+				return WriteChat{ PARTY, error + std::string{ cmd.message } };
 			}
 
-			for ( auto const id : ids )
-			{
-				consumables.activate_persistent( id );
-			}
-
-			return true;
+			return EnableConsumables{ std::move( ids ), true };
 		}
 
 		else if ( cmd.cmd == ChatCommands::cmd_pcons_off )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "all" )
 			{
-				consumables.deactivate_all_temporary();
-				return true;
+				return DisableAllConsumables{ false };
 			}
 
-			auto const ids = str_to_ids( cmd.arguments );
+			auto ids = str_to_ids( cmd.arguments );
 			if ( ids.empty() )
 			{
-				auto const error = "Could not parse all arguments in: "s;
-				GW::WriteChat( PARTY, error + std::string{ cmd.message } );
-				return true;
+				auto const error = "Could not parse all arguments in: ";
+				return WriteChat{ PARTY, error + std::string{ cmd.message } };
 			}
 
-			for ( auto const& id : ids )
-			{
-				consumables.deactivate_temporary( id );
-			}
-
-			return true;
+			return DisableConsumables{ std::move( ids ), false };
 		}
 
 		// TODO: CLI-Argument to specify persistence (--persistent?)
@@ -325,95 +277,72 @@ namespace {
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "all" )
 			{
-				consumables.deactivate_all_persistent();
-				return true;
+				return DisableAllConsumables{ true };
 			}
 
-			auto const ids = str_to_ids( cmd.arguments );
+			auto ids = str_to_ids( cmd.arguments );
 			if ( ids.empty() )
 			{
-				auto const error = "Could not parse all arguments in: "s;
-				GW::WriteChat( PARTY, error + std::string{ cmd.message } );
-				return true;
+				auto const error = "Could not parse all arguments in: ";
+				return WriteChat{ PARTY, error + std::string{ cmd.message } };
 			}
 
-			for ( auto const& id : ids )
-			{
-				consumables.deactivate_persistent( id );
-			}
-
-			return true;
+			return DisableConsumables{ std::move( ids ), true };
 		}
 
 		else if ( cmd.cmd == ChatCommands::cmd_pcons_objective )
 		{
 			if ( cmd.arguments == "" || cmd.arguments == "off" )
 			{
-				consumables.deactivating_quest = 0u;
-				return true;
+				return SetConsumablesObjective{ 0 };
 			}
 
 			if ( not stoi_can_parse( cmd.arguments ) )
 			{
-				auto const error = "Could not parse argument in: "s;
-				GW::WriteChat( PARTY, error + std::string{ cmd.message } );
-				return true;
+				auto const error = "Could not parse argument in: ";
+				return WriteChat{ PARTY, error + std::string{ cmd.message } };
 			}
 
-			auto const obj = std::stoul( std::string{ cmd.arguments } );
-			consumables.deactivating_quest = obj;
-			return true;
+			auto const obj = std::stol( std::string{ cmd.arguments } );
+			return SetConsumablesObjective{ obj };
 		}
 
 		else if ( cmd.cmd == ChatCommands::cmd_openxunlai )
 		{
 			if ( GW::GetInstanceType() != GW::InstanceType::Outpost )
 			{
-				GW::WriteChat(
-					PARTY, "Xunlai Chest can only be opened in Outposts!" );
-				return true;
+				return WriteChat{
+					PARTY, "Xunlai Chest can only be opened in Outposts!"
+				};
 			}
 
 			auto const region = GW::Map::GetCurrentMapInfo()->region;
 			if ( region == GW::Region::Region_Presearing )
 			{
-				GW::WriteChat(
-					PARTY, "Xunlai Chest cannot be opened in Presearing!" );
-				return true;
+				return WriteChat{
+					PARTY, "Xunlai Chest cannot be opened in Presearing!"
+				};
 			}
 
-			GW::GameThread::Enqueue( []() { GW::Items::OpenXunlaiWindow(); } );
-			return true;
+			return OpenXunlai{};
 		}
 
 		else if ( cmd.cmd == ChatCommands::cmd_toggle_gui )
 		{
-			if ( toggle_window_by_name( cmd.arguments, windows ) == false )
-			{
-				auto const window_name = std::string{ cmd.arguments };
-				GW::WriteChat(
-					PARTY, "Window \"" + window_name + "\" not found!" );
-			}
-			return true;
+			return ToggleGui{ std::string{ cmd.arguments } };
 		}
 
 		else if ( cmd.cmd == ChatCommands::cmd_show_suppressed )
 		{
-			auto const size = agent_filter.size();
-			agent_filter.DisplaySuppressedItems();
-			GW::WriteChat(
-				PARTY, "Revealed " + std::to_string( size ) + " items." );
-
-			return true;
+			return ShowSuppresedAgents{};
 		}
 
 		else if ( cmd.cmd == ChatCommands::cmd_exit )
 		{
-			terminate = true; // this is horrible, check commit message.
-			return true;
+			return Exit{};
 		}
 
-		return false;
+		return std::nullopt;
 	}
 
 	auto msg_to_string( wchar_t const* message ) -> std::string
@@ -435,18 +364,16 @@ namespace {
 }
 
 
-void April::ChatCommands::OnMessage(
-	GW::HookStatus* status,
+auto April::ChatCommands::ParseMessage(
 	GW::Chat::Channel const channel,
 	wchar_t const* raw_msg,
-	AgentFilter& agent_filter,
-	ConsumablesMgr& mgr,
-	std::vector<Window*>& windows,
-	bool& terminate,
 	Config const& config ) const
+	-> std::vector<Command>
 {
+	auto commands = std::vector<Command>{};
+
 	if ( channel != GW::Chat::CHANNEL_COMMAND )
-		return;
+		return commands;
 
 	auto msg = msg_to_string( raw_msg );
 	expand_abbreviations( msg, config );
@@ -457,17 +384,19 @@ void April::ChatCommands::OnMessage(
 			find_unquoted( cmd_begin + 1, msg.cend(), '/' );
 
 		auto cmd = make_sv( cmd_begin, cmd_end );
-		while( cmd.size() > 0 && cmd.back() == ' ' )
+		while ( cmd.size() > 0 && cmd.back() == ' ' )
 			cmd.remove_suffix( 1 );
 
 		auto const cli = parse_cmd( cmd );
-		if ( call_command( cli, agent_filter, mgr, windows, terminate ) )
-		{
-			status->blocked = true;
-		}
+		auto parsed_command = parse_command( cli );
+
+		if ( parsed_command.has_value() )
+			commands.push_back( std::move( parsed_command ).value() );
 
 		cmd_begin = cmd_end;
 	}
+
+	return commands;
 }
 
 auto April::ChatCommands::Config::LoadDefault() -> Config

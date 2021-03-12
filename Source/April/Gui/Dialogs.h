@@ -1,9 +1,9 @@
 #pragma once
 
+#include "April/Framework/Command.h"
 #include "April/Utility/DrawStructures.h"
 
 #include <chrono>
-#include <optional>
 #include <string>
 #include <vector>
 
@@ -31,7 +31,7 @@ namespace April::Gui {
 
 		Dialogs() = default;
 
-		void Display( Config const& );
+		auto Display( Config const& ) -> Command;
 
 
 	private:

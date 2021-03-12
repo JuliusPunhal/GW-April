@@ -51,9 +51,12 @@ namespace {
 }
 
 
-void April::Gui::DhuumInfo::Display(
+auto April::Gui::DhuumInfo::Display(
 	DhuumsJudgement const& judgement, Config const& config ) const
+	-> Command
 {
+	auto command = NoCommand;
+
 	if ( ImGui::Begin( config.window ) )
 	{
 		if ( ImGui::IsWindowHovered() )
@@ -74,16 +77,18 @@ void April::Gui::DhuumInfo::Display(
 		ImGui::PushStyleColor( ImGuiCol_Button, Invisible() );
 		if ( ImGui::Button( label_rest, { -1, 0 } ) )
 		{
-			GW::SendChat( '#', "Dhuum's Rest: " + label_rest );
+			command = SendChat{ '#', "Dhuum's Rest: " + label_rest };
 		}
 		ImGui::PopStyleColor();
 
 		if ( ImGui::Button( label_judgement, { -1, 0 } ) )
 		{
-			GW::SendChat( '#', label_judgement );
+			command = SendChat{ '#', label_judgement };
 		}
 	}
 	ImGui::End();
+
+	return command;
 }
 
 auto April::Gui::DhuumInfo::Config::LoadDefault() -> Config

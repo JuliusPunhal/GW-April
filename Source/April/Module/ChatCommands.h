@@ -1,8 +1,6 @@
 #pragma once
 
-#include "April/Module/AgentFilter.h"
-#include "April/Module/ConsumablesMgr.h"
-#include "April/Utility/DrawStructures.h"
+#include "April/Framework/Command.h"
 
 #include "Dependencies/GWCA.hpp"
 
@@ -29,15 +27,9 @@ namespace April {
 
 		ChatCommands() = default;
 
-		void OnMessage(
-			GW::HookStatus*,
-			GW::Chat::Channel,
-			wchar_t const*,
-			AgentFilter&,
-			ConsumablesMgr&,
-			std::vector<Window*>&,
-			bool& terminate,
-			Config const& ) const;
+		auto ParseMessage(
+			GW::Chat::Channel, wchar_t const*, Config const& ) const
+			-> std::vector<Command>;
 
 
 		static constexpr auto cmd_sendchat =		"/sendchat";

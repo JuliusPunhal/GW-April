@@ -1,5 +1,7 @@
 #pragma once
 
+#include "April/Framework/Command.h"
+
 #include "Dependencies/GWCA.hpp"
 
 #include <chrono>
@@ -11,7 +13,7 @@ namespace April {
 	public:
 		DhuumBot() = default;
 
-		void Update();
+		auto Update() -> Command;
 		void Update( GW::Packet::StoC::ObjectiveDone const& );
 
 		constexpr bool is_active() const noexcept { return active; }

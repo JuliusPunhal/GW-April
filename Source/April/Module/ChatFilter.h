@@ -1,8 +1,5 @@
 #pragma once
 
-#include "Dependencies/GWCA.hpp"
-
-
 namespace April {
 
 	// Based off of https://github.com/HasKha/GWToolboxpp.git
@@ -66,9 +63,7 @@ namespace April {
 
 		ChatFilter() = default;
 
-		void OnMessage( GW::HookStatus* status, Config const& ) const;
-		void OnMessage(
-			GW::HookStatus* status, wchar_t const* msg, Config const& ) const;
+		bool should_suppress( wchar_t const* msg, Config const& ) const;
 	};
 
 }

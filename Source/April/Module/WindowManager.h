@@ -1,11 +1,10 @@
 #pragma once
 
-#include "April/Gui/ChainedSoulInfo.h"
-#include "April/Gui/DhuumBotGui.h"
-#include "April/Gui/DhuumInfo.h"
-#include "April/Gui/UwTimes.h"
+#include "April/Framework/Command.h"
 
 #include "Dependencies/GWCA.hpp"
+
+#include <vector>
 
 
 namespace April {
@@ -14,24 +13,16 @@ namespace April {
 	public:
 		WindowMgr() = default;
 
-		void Update( Gui::ChainedSoulGui::Config& );
+		auto Update() -> Command;
 
-		void Update(
-			GW::Packet::StoC::ObjectiveDone const&,
-			Gui::DhuumBotGui::Config&,
-			Gui::DhuumInfo::Config& ) const;
+		auto Update( GW::Packet::StoC::ObjectiveDone const& ) const
+			 -> Command;
 
-		void Update(
-			GW::Packet::StoC::AgentUpdateAllegiance const&,
-			Gui::DhuumBotGui::Config&,
-			Gui::DhuumInfo::Config& ) const;
+		auto Update( GW::Packet::StoC::AgentUpdateAllegiance const& ) const
+			-> Command;
 
-		void Update(
-			GW::Packet::StoC::MapLoaded const&,
-			Gui::ChainedSoulGui::Config&,
-			Gui::DhuumBotGui::Config&,
-			Gui::DhuumInfo::Config&,
-			Gui::UwTimesGui::Config& ) const;
+		auto Update( GW::Packet::StoC::MapLoaded const& ) const
+			-> std::vector<Command>;
 
 
 	private:

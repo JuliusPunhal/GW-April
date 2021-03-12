@@ -17,38 +17,15 @@ using namespace std::chrono;
 
 namespace {
 
-	void use_item( April::Consumable const& consumable, GW::Item const& item )
-	{
-		using namespace April;
-
-		auto const visitor = std::overloaded{
-			[=]( Trivial const& )			{ return GW::UseItem( item ); },
-			[=]( RockCandy const& )			{ return GW::UseItem( item ); },
-			[=]( Conset const& )			{ return GW::UseItem( item ); },
-			[=]( LunarFortune const& )		{ return GW::UseItem( item ); },
-			[=]( Alcohol const& )			{ return GW::UseItem( item ); },
-			[=]( SummoningStone const& )	{ return GW::UseItem( item ); },
-			[=]( IdentKit const& )
-			{
-				auto const* unident_item = GW::FindUnidentGold();
-				if ( unident_item )
-					GW::IdentifyItem( *unident_item, item );
-			},
-			[=]( MoraleBooster const& )		{ return GW::UseItem( item ); },
-			[=]( Tonic const& )				{ return GW::UseItem( item ); }
-		};
-
-		return std::visit( visitor, consumable );
-	}
-
 	auto get_model_id( April::Consumable const cons )
 	{
 		auto const get_id = []( auto const& cons ) { return cons.model_id; };
 		return std::visit( get_id, cons );
 	}
 
-	bool use_consumables(
+	auto use_consumables(
 		April::unique_vector<April::Consumable> const& container )
+		-> std::optional<April::Command>
 	{
 		for ( auto const& consumable : container )
 		{
@@ -61,29 +38,35 @@ namespace {
 			if ( item == nullptr )
 				continue;
 
-			use_item( consumable, *item );
-			return true;
+			return April::UseConsumable{ consumable, item };
 		}
 
-		return false;
+		return std::nullopt;
 	}
 
 }
 
 
-void April::ConsumablesMgr::Update( Config const& config )
+auto April::ConsumablesMgr::Update( Config const& config ) -> Command
 {
 	if ( steady_clock::now() - last_use < config.timeout )
-		return;
+		return NoCommand;
 
 	auto const* player = GW::Agents::GetCharacter();
 	if ( player == nullptr || player->GetIsDead() )
-		return;
+		return NoCommand;
 
-	if ( use_consumables( persistent ) || use_consumables( temporary ) )
+	if ( auto persist = use_consumables( persistent ); persist.has_value() )
 	{
 		last_use = steady_clock::now();
+		return *persist;
 	}
+	else if ( auto temp = use_consumables( temporary ); temp.has_value() )
+	{
+		last_use = steady_clock::now();
+		return *temp;
+	}
+	else return NoCommand;
 }
 
 void April::ConsumablesMgr::Update(

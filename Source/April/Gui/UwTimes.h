@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Framework/Command.h"
 #include "April/Module/UwTimer.h"
 #include "April/Utility/DrawStructures.h"
 
@@ -24,7 +25,8 @@ namespace April::Gui {
 
 		UwTimesGui() = default;
 
-		void Display( UwTimer const&, Config const& ) const;
+		auto Display( UwTimer const&, Config const& ) const
+			-> Command;
 	};
 
 }

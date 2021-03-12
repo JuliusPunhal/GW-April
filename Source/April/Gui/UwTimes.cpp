@@ -211,12 +211,14 @@ namespace {
 }
 
 
-void April::Gui::UwTimesGui::Display(
-	UwTimer const& timer, Config const& config ) const
+auto April::Gui::UwTimesGui::Display(
+	UwTimer const& timer, Config const& config ) const -> Command
 {
+	auto command = NoCommand;
+
 	auto const times = timer.current();
 	auto const strings = uwtimes_to_strings( times );
-	auto const instance_time_str =
+	auto instance_time_str =
 		to_string( times.instance_time, instance_time_fmt );
 
 	if ( ImGui::Begin( config.window ) )
@@ -234,7 +236,9 @@ void April::Gui::UwTimesGui::Display(
 		// Current Time
 		if ( ImGui::SmallButton( instance_time_str ) )
 		{
-			GW::SendChat( '#', "[/age] " + instance_time_str );
+			command = SendChat{
+				'#', "[/age] " + std::move( instance_time_str )
+			};
 		}
 		ImGui::NextColumn();
 
@@ -253,14 +257,17 @@ void April::Gui::UwTimesGui::Display(
 			if ( clicked == std::nullopt )
 				continue;
 
-			GW::SendChat(
-				'#', chat_message( objective, *clicked, strings, config ) );
+			command = SendChat{
+				'#', chat_message( objective, *clicked, strings, config )
+			};
 		}
 		ImGui::Separator();
 		if ( auto const clicked = draw_objective( dhuum, strings, config );
 			clicked )
 		{
-			GW::SendChat( '#', dhuum_message( *clicked, strings, config ) );
+			command = SendChat{
+				'#', dhuum_message( *clicked, strings, config )
+			};
 		}
 
 		ImGui::Columns( 1 );
@@ -268,6 +275,8 @@ void April::Gui::UwTimesGui::Display(
 		ImGui::PopStyleColor( 3 );
 	}
 	ImGui::End();
+
+	return command;
 }
 
 auto April::Gui::UwTimesGui::Config::LoadDefault() -> Config

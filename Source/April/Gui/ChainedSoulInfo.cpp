@@ -4,7 +4,6 @@
 #include "April/Framework/WndProc.h"
 #include "April/Utility/TimeFormatting.h"
 
-#include "Dependencies/GWCA.hpp"
 #include "Dependencies/ImGui.hpp"
 
 using April::to_string;
@@ -69,10 +68,11 @@ namespace {
 }
 
 
-void April::Gui::ChainedSoulGui::Display(
-	ChainedSoul const& state, Config const& config ) const
+auto April::Gui::ChainedSoulGui::Display(
+	ChainedSoul::SoulState const& state, Config const& config ) const
+	-> Command
 {
-	auto const label = parse_chained_soul_state( state.get() );
+	auto command = NoCommand;
 
 	if ( ImGui::Begin( config.window ) )
 	{
@@ -81,12 +81,15 @@ void April::Gui::ChainedSoulGui::Display(
 			WndProc::BlockMouseInput();
 		}
 
+		auto label = parse_chained_soul_state( state );
 		if ( ImGui::Button( label ) )
 		{
-			GW::SendChat( '#', label );
+			command = SendChat{ '#', std::move( label ) };
 		}
 	}
 	ImGui::End();
+
+	return command;
 }
 
 auto April::Gui::ChainedSoulGui::Config::LoadDefault() -> Config
