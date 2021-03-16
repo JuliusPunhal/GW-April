@@ -490,10 +490,14 @@ auto April::make_instance( IDirect3DDevice9* device )
 
 void April::Update( Instance& instance )
 {
-	CallCommand(
-		std::get<ConsumablesMgr>( instance.modules ).Update(
-			std::get<ConsumablesMgr::Config>( instance.config ) ),
-		instance );
+	if (
+		auto const cons =
+			std::get<ConsumablesMgr>( instance.modules ).should_use_item(
+				std::get<ConsumablesMgr::Config>( instance.config ) );
+		cons.has_value() )
+	{
+		CallCommand( UseConsumable{ cons->consumable, cons->item }, instance );
+	}
 
 	std::get<ChainedSoul>( instance.modules ).Update();
 	CallCommand( std::get<DhuumBot>( instance.modules ).Update(), instance );

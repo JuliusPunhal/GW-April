@@ -12,6 +12,7 @@
 #include <optional>
 #include <variant>
 
+using InactiveConsumable = April::ConsumablesMgr::InactiveConsumable;
 using namespace std::chrono;
 
 
@@ -25,7 +26,7 @@ namespace {
 
 	auto use_consumables(
 		April::unique_vector<April::Consumable> const& container )
-		-> std::optional<April::Command>
+		-> std::optional<InactiveConsumable>
 	{
 		for ( auto const& consumable : container )
 		{
@@ -38,7 +39,7 @@ namespace {
 			if ( item == nullptr )
 				continue;
 
-			return April::UseConsumable{ consumable, item };
+			return InactiveConsumable{ consumable, item };
 		}
 
 		return std::nullopt;
@@ -47,14 +48,15 @@ namespace {
 }
 
 
-auto April::ConsumablesMgr::Update( Config const& config ) -> Command
+auto April::ConsumablesMgr::should_use_item( Config const& config )
+	-> std::optional<InactiveConsumable>
 {
 	if ( steady_clock::now() - last_use < config.timeout )
-		return NoCommand;
+		return std::nullopt;
 
 	auto const* player = GW::Agents::GetCharacter();
 	if ( player == nullptr || player->GetIsDead() )
-		return NoCommand;
+		return std::nullopt;
 
 	if ( auto persist = use_consumables( persistent ); persist.has_value() )
 	{
@@ -66,7 +68,7 @@ auto April::ConsumablesMgr::Update( Config const& config ) -> Command
 		last_use = steady_clock::now();
 		return *temp;
 	}
-	else return NoCommand;
+	else return std::nullopt;
 }
 
 void April::ConsumablesMgr::Update(

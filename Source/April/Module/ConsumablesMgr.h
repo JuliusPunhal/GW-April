@@ -1,6 +1,5 @@
 #pragma once
 
-#include "April/Framework/Command.h"
 #include "April/Utility/Consumable.h"
 #include "April/Utility/unique_vector.h"
 
@@ -8,7 +7,7 @@
 
 #include <chrono>
 #include <cstdint>
-#include <utility>
+#include <optional>
 #include <vector>
 
 
@@ -26,7 +25,12 @@ namespace April {
 
 		ConsumablesMgr() = default;
 
-		auto Update( Config const& ) -> Command;
+		struct InactiveConsumable {
+			Consumable      consumable;
+			GW::Item const* item;
+		};
+		auto should_use_item( Config const& )
+			-> std::optional<InactiveConsumable>;
 
 		void Update( GW::Packet::StoC::ObjectiveDone const& );
 		void Update( GW::Packet::StoC::MapLoaded const& );
