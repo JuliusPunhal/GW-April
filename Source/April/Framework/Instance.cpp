@@ -500,7 +500,14 @@ void April::Update( Instance& instance )
 	}
 
 	std::get<ChainedSoul>( instance.modules ).Update();
-	CallCommand( std::get<DhuumBot>( instance.modules ).Update(), instance );
+	if (
+		auto const skill =
+			std::get<DhuumBot>( instance.modules ).should_use_skill();
+		skill.has_value() )
+	{
+		CallCommand( UseSkill{ skill->slot, skill->target }, instance );
+	}
+
 	std::get<DhuumsJudgement>( instance.modules ).Update();
 	std::get<UwTimer>( instance.modules ).Update();
 	CallCommand( std::get<WindowMgr>( instance.modules ).Update(), instance );

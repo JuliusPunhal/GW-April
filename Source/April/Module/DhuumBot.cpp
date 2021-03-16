@@ -69,68 +69,68 @@ namespace {
 		return nullptr;
 	}
 
-	auto rest() -> April::Command
+	auto rest() -> std::optional<April::DhuumBot::Skill>
 	{
 		auto const* skillbar = GW::SkillbarMgr::GetPlayerSkillbar();
 		if ( skillbar == nullptr || not skillbar->IsValid() )
-			return April::NoCommand;
+			return std::nullopt;
 
 		auto const rest = skillbar->skills[0];
 		auto const id = static_cast<GW::SkillID>( rest.skill_id );
 
 		if ( rest.GetRecharge() != 0 || id != GW::SkillID::Dhuums_Rest )
-			return April::NoCommand;
+			return std::nullopt;
 
-		return April::UseSkill{ 0 };
+		return April::DhuumBot::Skill{ 0u, nullptr };
 	}
 
-	auto fury( GW::AgentID& dhuum_id ) -> April::Command
+	auto fury( GW::AgentID& dhuum_id ) -> std::optional<April::DhuumBot::Skill>
 	{
 		auto const* dhuum = find_dhuum( dhuum_id );
 		if ( dhuum == nullptr || dhuum->allegiance != hostile )
-			return April::NoCommand;
+			return std::nullopt;
 
 		auto const* skillbar = GW::SkillbarMgr::GetPlayerSkillbar();
 		if ( skillbar == nullptr || not skillbar->IsValid() )
-			return April::NoCommand;
+			return std::nullopt;
 
 		auto const fury = skillbar->skills[4];
 		auto const id = static_cast<GW::SkillID>( fury.skill_id );
 
 		if ( fury.GetRecharge() != 0 || id != GW::SkillID::Ghostly_Fury )
-			return April::NoCommand;
+			return std::nullopt;
 
-		return April::UseSkill{ 4, dhuum };
+		return April::DhuumBot::Skill{ 4u, dhuum };
 	}
 
 }
 
 
-auto April::DhuumBot::Update() -> Command
+auto April::DhuumBot::should_use_skill() -> std::optional<Skill>
 {
-	if ( not active ) return NoCommand;
-	if ( steady_clock::now() - last_cast < 1s ) return NoCommand;
+	if ( not active ) return std::nullopt;
+	if ( steady_clock::now() - last_cast < 1s ) return std::nullopt;
 
 	auto const* player = GW::Agents::GetCharacter();
 	if ( not player_is_valid( player ) || player->GetIsDead() )
-		return NoCommand;
+		return std::nullopt;
 
 	if ( GW::GetEnergyPoints( *player ) <= 7 )
-		return NoCommand;
+		return std::nullopt;
 
 	if ( not at_dhuum( *player ) )
 	{
 		active = false;
-		return NoCommand;
+		return std::nullopt;
 	}
 
 	if ( player->GetIsCasting() || player->skill != 0 )
-		return NoCommand;
+		return std::nullopt;
 
 	auto const command =
 		GW::GetMissionProgress() < 1.f ? rest() : fury( dhuum_id );
 
-	if ( not std::holds_alternative<NoCommand_t>( command ) )
+	if ( command.has_value() )
 	{
 		last_cast = steady_clock::now();
 	}

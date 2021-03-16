@@ -1,19 +1,24 @@
 #pragma once
 
-#include "April/Framework/Command.h"
-
 #include "Dependencies/GWCA.hpp"
 
 #include <chrono>
+#include <optional>
 
 
 namespace April {
 
 	class DhuumBot {
 	public:
+		struct Skill {
+			unsigned         slot;   // 0 ... 7
+			GW::Agent const* target;
+		};
+
+
 		DhuumBot() = default;
 
-		auto Update() -> Command;
+		auto should_use_skill() -> std::optional<Skill>;
 		void Update( GW::Packet::StoC::ObjectiveDone const& );
 
 		constexpr bool is_active() const noexcept { return active; }
