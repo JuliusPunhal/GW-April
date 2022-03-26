@@ -1,5 +1,6 @@
 
 #include "April/Framework/WndProc.h"
+#include "April/Gui/InstanceTimer.h"
 #include "April/Utility/Fonts.h"
 #include "April/Utility/Mouse.h"
 
@@ -17,6 +18,7 @@ struct IDirect3DDevice9;
 namespace {
 
 	auto mouse = std::shared_ptr<April::Mouse>{};
+	auto gui_instancetimer = std::unique_ptr<April::Gui::InstanceTimer>{};
 
 	bool running = true;
 	auto gw_wndproc = WNDPROC{};
@@ -30,7 +32,7 @@ namespace {
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 		{
-			ImGui::ShowDemoWindow();
+			gui_instancetimer->Display();
 		}
 		ImGui::EndFrame();
 		ImGui::Render();
@@ -57,6 +59,10 @@ namespace {
 
 		if ( auto const abz16 = April::LoadFont( "ABeeZee-Regular.ttf", 16 ) )
 			ImGui::GetIO().Fonts->AddFontDefault( abz16->ConfigData );
+
+		gui_instancetimer =
+			std::make_unique<April::Gui::InstanceTimer>(
+				April::LoadFont( "ABeeZee-Regular.ttf", 40 ), mouse );
 
 		GW::SetRenderCallback( RenderCallback );
 	}

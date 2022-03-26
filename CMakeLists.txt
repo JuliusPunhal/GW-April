@@ -20,10 +20,14 @@ target_sources(
 		src/DllMain.cpp
 		src/April/Framework/WndProc.h
 		src/April/Framework/WndProc.cpp
+		src/April/Gui/InstanceTimer.h
+		src/April/Gui/InstanceTimer.cpp
 		src/April/Utility/Fonts.h
 		src/April/Utility/Fonts.cpp
 		src/April/Utility/Mouse.h
 		src/April/Utility/Mouse.cpp
+		src/April/Utility/TimeFormatting.h
+		src/April/Utility/TimeFormatting.cpp
 		src/GWCA/GWCA.hpp
 		src/GWCA/GWCA.cpp
 		src/ImGui/ImGui.hpp

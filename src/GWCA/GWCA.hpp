@@ -49,6 +49,7 @@ using DWORD = unsigned long;
 #include "GWCA/GWCA.h"
 #pragma warning( pop )
 
+#include <chrono>
 #include <functional>
 
 #define WIN32_LEAN_AND_MEAN
@@ -56,6 +57,56 @@ using DWORD = unsigned long;
 #include <Windows.h>
 
 
+// Utility
+namespace GW {
+
+	using ms32 = std::chrono::duration<long, std::milli>;
+
+	namespace literals {
+
+		constexpr auto operator"" _ms ( unsigned long long const ms )
+		{
+			return ms32{ ms };
+		}
+
+	}
+
+}
+
+// Map
+namespace GW {
+
+	using InstanceTime = ms32;
+
+
+	auto GetInstanceTime() -> InstanceTime;
+
+}
+
+// Chat
+namespace GW {
+
+	struct ChatChannel {
+		int channel;
+	};
+
+	inline constexpr auto EMOTE = ChatChannel{  6 };
+	inline constexpr auto PARTY = ChatChannel{ 11 };
+
+
+	void SendChat( char channel, const char* msg );
+	void SendChat( char channel, const wchar_t* msg );
+	void SendChat( char channel, std::string const& msg );
+	void SendChat( char channel, std::wstring const& msg );
+
+	void WriteChat( ChatChannel, const char* msg );
+	void WriteChat( ChatChannel, const wchar_t* msg );
+	void WriteChat( ChatChannel, std::string const& msg );
+	void WriteChat( ChatChannel, std::wstring const& msg );
+
+}
+
+// Render
 namespace GW {
 
 	auto GetWindowHandle() -> HWND;
