@@ -24,10 +24,14 @@ target_sources(
 		src/April/Framework/WndProc.cpp
 		src/April/Gui/InstanceTimer.h
 		src/April/Gui/InstanceTimer.cpp
+		src/April/Utility/FontAtlas.h
+		src/April/Utility/FontAtlas.cpp
 		src/April/Utility/Fonts.h
 		src/April/Utility/Fonts.cpp
 		src/April/Utility/Mouse.h
 		src/April/Utility/Mouse.cpp
+		src/April/Utility/stl.h
+		src/April/Utility/stl.cpp
 		src/April/Utility/TimeFormatting.h
 		src/April/Utility/TimeFormatting.cpp
 		src/GWCA/GWCA.hpp

@@ -1,6 +1,7 @@
 
 #include "April/Framework/Features.h"
 #include "April/Framework/WndProc.h"
+#include "April/Utility/FontAtlas.h"
 
 #include "GWCA/GWCA.hpp"
 
@@ -46,6 +47,9 @@ namespace {
 		ImGui::EndFrame();
 		ImGui::Render();
 		ImGui_ImplDX9_RenderDrawData( ImGui::GetDrawData() );
+
+		using FontAtlas = std::shared_ptr<April::FontAtlas>;
+		std::get<FontAtlas>( *features )->LoadRequestedFonts();
 
 		if ( GetAsyncKeyState( VK_END ) )
 		{

@@ -39,10 +39,12 @@ auto April::make_Features() -> Features
 
 	auto const abz40 = LoadFont( "ABeeZee-Regular.ttf", 40 );
 
+	auto const font_atlas = std::make_shared<FontAtlas>();
 	auto const mouse = std::make_shared<Mouse>();
 
 	return Features{
 		std::make_unique<Gui::InstanceTimer>( abz40, mouse ),
+		font_atlas,
 		mouse
 	};
 }
