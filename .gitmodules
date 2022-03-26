@@ -1,3 +1,6 @@
 [submodule "GWCA"]
 	path = external/GWCA
 	url = https://github.com/GregLando113/GWCA.git
+[submodule "ImGui"]
+	path = external/ImGui
+	url = https://github.com/ocornut/ImGui.git
