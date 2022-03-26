@@ -1,8 +1,6 @@
 
+#include "April/Framework/Features.h"
 #include "April/Framework/WndProc.h"
-#include "April/Gui/InstanceTimer.h"
-#include "April/Utility/Fonts.h"
-#include "April/Utility/Mouse.h"
 
 #include "GWCA/GWCA.hpp"
 
@@ -17,22 +15,33 @@ struct IDirect3DDevice9;
 
 namespace {
 
-	auto mouse = std::shared_ptr<April::Mouse>{};
-	auto gui_instancetimer = std::unique_ptr<April::Gui::InstanceTimer>{};
+	auto features = std::unique_ptr<April::Features>{};
 
 	bool running = true;
 	auto gw_wndproc = WNDPROC{};
 
 
+	auto WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+		-> LRESULT
+	{
+		auto const& mouse =
+			std::get<std::shared_ptr<April::Mouse>>( *features );
+
+		if ( April::WndProc( hWnd, msg, wParam, lParam, *mouse ) )
+			return 0;
+
+		return CallWindowProc( gw_wndproc, hWnd, msg, wParam, lParam );
+	}
+
 	void RenderCallback( IDirect3DDevice9* )
 	{
-		mouse->restore();
+		std::get<std::shared_ptr<April::Mouse>>( *features )->restore();
 
 		ImGui_ImplDX9_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 		{
-			gui_instancetimer->Display();
+			April::Display( *features );
 		}
 		ImGui::EndFrame();
 		ImGui::Render();
@@ -55,14 +64,11 @@ namespace {
 		ImGui_ImplWin32_Init( GW::GetWindowHandle() );
 		ImGui_ImplDX9_Init( device );
 
-		ImGui::GetIO().IniFilename = "GW-April.ini";
+		features = std::make_unique<April::Features>( April::make_Features() );
 
-		if ( auto const abz16 = April::LoadFont( "ABeeZee-Regular.ttf", 16 ) )
-			ImGui::GetIO().Fonts->AddFontDefault( abz16->ConfigData );
-
-		gui_instancetimer =
-			std::make_unique<April::Gui::InstanceTimer>(
-				April::LoadFont( "ABeeZee-Regular.ttf", 40 ), mouse );
+		gw_wndproc =
+			(WNDPROC)SetWindowLongPtr(
+				GW::GetWindowHandle(), GWLP_WNDPROC, (LONG)WndProc );
 
 		GW::SetRenderCallback( RenderCallback );
 	}
@@ -72,25 +78,11 @@ namespace {
 		ImGui_ImplDX9_InvalidateDeviceObjects();
 	}
 
-	auto WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
-		-> LRESULT
-	{
-		if ( April::WndProc( hWnd, msg, wParam, lParam, *mouse ) )
-			return 0;
-
-		return CallWindowProc( gw_wndproc, hWnd, msg, wParam, lParam );
-	}
-
 	void Init( HINSTANCE hDll )
 	{
 		GW::Initialize(); Sleep( 100 );
 		GW::SetRenderCallback( RenderCallback_Setup );
 		GW::SetResetCallback( ResetCallback );
-
-		mouse = std::make_shared<April::Mouse>();
-		gw_wndproc =
-			(WNDPROC)SetWindowLongPtr(
-				GW::GetWindowHandle(), GWLP_WNDPROC, (LONG)WndProc );
 
 		while ( running )
 		{

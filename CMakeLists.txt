@@ -18,6 +18,8 @@ target_sources(
 	GW-April
 	PRIVATE
 		src/DllMain.cpp
+		src/April/Framework/Features.h
+		src/April/Framework/Features.cpp
 		src/April/Framework/WndProc.h
 		src/April/Framework/WndProc.cpp
 		src/April/Gui/InstanceTimer.h
