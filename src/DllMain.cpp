@@ -1,6 +1,7 @@
 
 #include "April/Framework/WndProc.h"
 #include "April/Utility/Fonts.h"
+#include "April/Utility/Mouse.h"
 
 #include "GWCA/GWCA.hpp"
 
@@ -15,12 +16,16 @@ struct IDirect3DDevice9;
 
 namespace {
 
+	auto mouse = std::shared_ptr<April::Mouse>{};
+
 	bool running = true;
 	auto gw_wndproc = WNDPROC{};
 
 
 	void RenderCallback( IDirect3DDevice9* )
 	{
+		mouse->restore();
+
 		ImGui_ImplDX9_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
@@ -64,7 +69,7 @@ namespace {
 	auto WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 		-> LRESULT
 	{
-		if ( April::WndProc( hWnd, msg, wParam, lParam ) )
+		if ( April::WndProc( hWnd, msg, wParam, lParam, *mouse ) )
 			return 0;
 
 		return CallWindowProc( gw_wndproc, hWnd, msg, wParam, lParam );
@@ -76,6 +81,7 @@ namespace {
 		GW::SetRenderCallback( RenderCallback_Setup );
 		GW::SetResetCallback( ResetCallback );
 
+		mouse = std::make_shared<April::Mouse>();
 		gw_wndproc =
 			(WNDPROC)SetWindowLongPtr(
 				GW::GetWindowHandle(), GWLP_WNDPROC, (LONG)WndProc );

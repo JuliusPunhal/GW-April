@@ -22,6 +22,8 @@ target_sources(
 		src/April/Framework/WndProc.cpp
 		src/April/Utility/Fonts.h
 		src/April/Utility/Fonts.cpp
+		src/April/Utility/Mouse.h
+		src/April/Utility/Mouse.cpp
 		src/GWCA/GWCA.hpp
 		src/GWCA/GWCA.cpp
 		src/ImGui/ImGui.hpp

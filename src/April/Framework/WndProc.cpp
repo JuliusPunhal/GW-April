@@ -4,7 +4,8 @@
 #include "ImGui/ImGui.hpp"
 
 
-bool April::WndProc( HWND, UINT msg, WPARAM wParam, LPARAM )
+bool April::WndProc(
+	HWND, UINT msg, WPARAM wParam, LPARAM, Mouse const& mouse )
 {
 	// This is basically a copy of ImGui_ImplWin32_WndProcHandler() but
 	// ::SetCapture() and ::ReleaseCapture() seem to mess with window-
@@ -33,7 +34,7 @@ bool April::WndProc( HWND, UINT msg, WPARAM wParam, LPARAM )
 				button = (GET_XBUTTON_WPARAM( wParam ) == XBUTTON1) ? 3 : 4;
 
 			io.MouseDown[button] = true;
-			return false;
+			return mouse.is_suppressed();
 		}
 		case WM_LBUTTONUP:
 		case WM_RBUTTONUP:
@@ -54,13 +55,13 @@ bool April::WndProc( HWND, UINT msg, WPARAM wParam, LPARAM )
 		{
 			auto const scroll_distance = GET_WHEEL_DELTA_WPARAM( wParam );
 			io.MouseWheel += (float)scroll_distance / (float)WHEEL_DELTA;
-			return false;
+			return mouse.is_suppressed();
 		}
 		case WM_MOUSEHWHEEL:
 		{
 			auto const scroll_distance = GET_WHEEL_DELTA_WPARAM( wParam );
 			io.MouseWheelH += (float)scroll_distance / (float)WHEEL_DELTA;
-			return false;
+			return mouse.is_suppressed();
 		}
 		case WM_KEYDOWN:
 		case WM_SYSKEYDOWN:
