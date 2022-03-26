@@ -1,10 +1,6 @@
 
 #include "GWCA/GWCA.hpp"
 
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <Windows.h>
-
 #pragma warning( push, 0 )
 #include "GWCA/Managers/AgentMgr.h"
 #include "GWCA/Managers/CameraMgr.h"
@@ -27,6 +23,11 @@
 #include "GWCA/Managers/UIMgr.h"
 #pragma warning(pop)
 
+
+auto GW::GetWindowHandle() -> HWND
+{
+	return GW::MemoryMgr::GetGWWindowHandle();
+}
 
 void GW::SetRenderCallback( std::function<void( IDirect3DDevice9* )> fn )
 {

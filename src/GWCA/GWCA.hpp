@@ -51,9 +51,14 @@ using DWORD = unsigned long;
 
 #include <functional>
 
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <Windows.h>
+
 
 namespace GW {
 
+	auto GetWindowHandle() -> HWND;
 	void SetRenderCallback( std::function<void( IDirect3DDevice9* )> );
 	void SetResetCallback( std::function<void( IDirect3DDevice9* )> );
 
