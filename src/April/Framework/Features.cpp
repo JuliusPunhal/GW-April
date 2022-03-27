@@ -1,5 +1,6 @@
 
 #include "April/Framework/Features.h"
+#include "April/Utility/FileIO.h"
 
 #include <type_traits>
 
@@ -38,9 +39,11 @@ auto April::make_Features() -> Features
 	font_atlas->Get( FontInfo{ "ABeeZee-Regular.ttf", 16 } );
 	font_atlas->LoadRequestedFonts(); // loads default font
 
+	auto const json = load_json_from_file();
+
 	return Features{
 		std::make_unique<Gui::InstanceTimer>(
-			std::make_shared<Gui::InstanceTimer::Config>(),
+			from_json<Gui::InstanceTimer::Config>( json ),
 			font_atlas,
 			mouse ),
 		font_atlas,
