@@ -12,7 +12,8 @@ target_include_directories(
 	GW-April
 	PRIVATE
 		src/
-		external/ImGui/ )
+		external/ImGui/
+		external/json/single_include/ )
 
 target_sources(
 	GW-April
@@ -24,6 +25,14 @@ target_sources(
 		src/April/Framework/WndProc.cpp
 		src/April/Gui/InstanceTimer.h
 		src/April/Gui/InstanceTimer.cpp
+		src/April/Utility/FileIO.h
+		src/April/Utility/FileIO.cpp
+		src/April/Utility/FileIO.BasicTypes.h
+		src/April/Utility/FileIO.BasicTypes.cpp
+		src/April/Utility/FileIO.ConfigTypes.h
+		src/April/Utility/FileIO.ConfigTypes.cpp
+		src/April/Utility/FileIO.JsonKey.h
+		src/April/Utility/FileIO.JsonKey.cpp
 		src/April/Utility/FontAtlas.h
 		src/April/Utility/FontAtlas.cpp
 		src/April/Utility/Mouse.h
@@ -48,7 +57,8 @@ target_sources(
 		external/ImGui/backends/imgui_impl_win32.h
 		external/ImGui/backends/imgui_impl_win32.cpp
 		external/ImGui/misc/cpp/imgui_stdlib.h
-		external/ImGui/misc/cpp/imgui_stdlib.cpp )
+		external/ImGui/misc/cpp/imgui_stdlib.cpp
+		external/json/single_include/nlohmann/json.hpp )
 
 if ( MSVC )
 	target_compile_options(
