@@ -8,6 +8,15 @@
 namespace {
 
 	template<typename T, typename = void>
+	struct has_Update : std::false_type {};
+
+	template<typename T>
+	struct has_Update<T, std::void_t<decltype( std::declval<T>().Update() )>>
+		: std::true_type
+	{
+	};
+
+	template<typename T, typename = void>
 	struct has_Display : std::false_type {};
 
 	template<typename T>
@@ -16,6 +25,15 @@ namespace {
 	{
 	};
 
+
+	template<typename T>
+	void update( T& ft )
+	{
+		if constexpr ( has_Update<typename T::element_type>::value )
+		{
+			ft->Update();
+		}
+	}
 
 	template<typename T>
 	void display( T& ft )
@@ -35,6 +53,7 @@ auto April::make_Features() -> Features
 
 	auto const font_atlas = std::make_shared<FontAtlas>();
 	auto const mouse = std::make_shared<Mouse>();
+	auto const uwtimes = std::make_shared<UwTimesHistory>();
 
 	font_atlas->Get( FontInfo{ "ABeeZee-Regular.ttf", 16 } );
 	font_atlas->LoadRequestedFonts(); // loads default font
@@ -46,9 +65,15 @@ auto April::make_Features() -> Features
 			from_json<Gui::InstanceTimer::Config>( json ),
 			font_atlas,
 			mouse ),
+		std::make_unique<Module::UwTimer>( uwtimes ),
 		font_atlas,
 		mouse
 	};
+}
+
+void April::Update( Features& features )
+{
+	std::apply( []( auto&... ft ) { (..., update( ft )); }, features );
 }
 
 void April::Display( Features& features )

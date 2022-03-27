@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 
 struct IDirect3DDevice9;
 
@@ -44,13 +45,15 @@ using DWORD = unsigned long;
 #include "GWCA/Context/TradeContext.h"
 #include "GWCA/Context/WorldContext.h"
 
+#include "GWCA/Utilities/Hook.h"
+#include "GWCA/Utilities/Hooker.h"
+
 #include "GWCA/Packets/StoC.h"
 
 #include "GWCA/GWCA.h"
 #pragma warning( pop )
 
 #include <chrono>
-#include <functional>
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -73,13 +76,28 @@ namespace GW {
 
 }
 
+// Agent
+namespace GW {
+
+	auto GetAsAgentGadget( GW::Agent const* ) -> GW::AgentGadget const*;
+	auto GetAsAgentItem( GW::Agent const* ) -> GW::AgentItem const*;
+	auto GetAsAgentLiving( GW::Agent const* ) -> GW::AgentLiving const*;
+
+	auto GetAgentByID( GW::AgentID ) -> GW::Agent const*;
+	auto GetAgentLivingByID( GW::AgentID ) -> GW::AgentLiving const*;
+
+}
+
 // Map
 namespace GW {
 
 	using InstanceTime = ms32;
+	using Constants::MapID;
+	using ObjectiveID = uint32_t;
 
 
 	auto GetInstanceTime() -> InstanceTime;
+	auto GetMapID() -> MapID;
 
 }
 
@@ -106,11 +124,70 @@ namespace GW {
 
 }
 
+// StoC
+namespace GW {
+
+	namespace detail {
+		void RegisterCallback(
+			GW::HookEntry*,
+			uint32_t header,
+			GW::HookCallback<Packet::StoC::PacketBase*> const& );
+	}
+
+	template <typename T>
+	void RegisterCallback(
+		GW::HookEntry* entry,
+		std::function<void( GW::HookStatus&, T& )> handler )
+	{
+		detail::RegisterCallback(
+			entry,
+			GW::Packet::StoC::Packet<T>::STATIC_HEADER,
+			[handler](
+				GW::HookStatus* status, GW::Packet::StoC::PacketBase* packet )
+			{
+				return handler( *status, *static_cast<T*>( packet ) );
+			} );
+	}
+
+	template <typename T>
+	void RegisterCallback(
+		GW::HookEntry* entry, std::function<void( T& )> handler )
+	{
+		detail::RegisterCallback(
+			entry,
+			GW::Packet::StoC::Packet<T>::STATIC_HEADER,
+			[handler](
+				GW::HookStatus*, GW::Packet::StoC::PacketBase* packet )
+			{
+				return handler( *static_cast<T*>( packet ) );
+			} );
+	}
+
+}
+
 // Render
 namespace GW {
 
 	auto GetWindowHandle() -> HWND;
 	void SetRenderCallback( std::function<void( IDirect3DDevice9* )> );
 	void SetResetCallback( std::function<void( IDirect3DDevice9* )> );
+
+}
+
+// Other
+namespace GW::Constants::ObjectiveID {
+
+	inline constexpr GW::ObjectiveID Chamber = 146;
+	inline constexpr GW::ObjectiveID Restore = 147;
+	inline constexpr GW::ObjectiveID Escort = 148;
+	inline constexpr GW::ObjectiveID UWG = 149;
+	inline constexpr GW::ObjectiveID Vale = 150;
+	inline constexpr GW::ObjectiveID Wastes = 151;
+	inline constexpr GW::ObjectiveID Pits = 152;
+	inline constexpr GW::ObjectiveID Planes = 153;
+	inline constexpr GW::ObjectiveID Mnts = 154;
+	inline constexpr GW::ObjectiveID Pools = 155;
+	inline constexpr GW::ObjectiveID Completed_X_of_10_quests = 156;
+	inline constexpr GW::ObjectiveID Dhuum = 157;
 
 }

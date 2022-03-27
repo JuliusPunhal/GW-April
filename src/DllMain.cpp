@@ -42,6 +42,7 @@ namespace {
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 		{
+			April::Update( *features );
 			April::Display( *features );
 		}
 		ImGui::EndFrame();
@@ -69,6 +70,18 @@ namespace {
 		ImGui_ImplDX9_Init( device );
 
 		features = std::make_unique<April::Features>( April::make_Features() );
+
+		auto entry = GW::HookEntry{};
+		auto on_packet =
+			[]( auto const& packet ) { April::Update( *features, packet ); };
+
+		using namespace GW::Packet::StoC;
+		GW::RegisterCallback<AgentName>(             &entry, on_packet );
+		GW::RegisterCallback<AgentUpdateAllegiance>( &entry, on_packet );
+		GW::RegisterCallback<MapLoaded>(             &entry, on_packet );
+		GW::RegisterCallback<ObjectiveAdd>(          &entry, on_packet );
+		GW::RegisterCallback<ObjectiveDone>(         &entry, on_packet );
+		GW::RegisterCallback<ObjectiveUpdateName>(   &entry, on_packet );
 
 		gw_wndproc =
 			(WNDPROC)SetWindowLongPtr(

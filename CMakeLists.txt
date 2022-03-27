@@ -25,6 +25,8 @@ target_sources(
 		src/April/Framework/WndProc.cpp
 		src/April/Gui/InstanceTimer.h
 		src/April/Gui/InstanceTimer.cpp
+		src/April/Module/UwTimer.h
+		src/April/Module/UwTimer.cpp
 		src/April/Utility/FileIO.h
 		src/April/Utility/FileIO.cpp
 		src/April/Utility/FileIO.BasicTypes.h
@@ -37,10 +39,14 @@ target_sources(
 		src/April/Utility/FontAtlas.cpp
 		src/April/Utility/Mouse.h
 		src/April/Utility/Mouse.cpp
+		src/April/Utility/Reaper.h
+		src/April/Utility/Reaper.cpp
 		src/April/Utility/stl.h
 		src/April/Utility/stl.cpp
 		src/April/Utility/TimeFormatting.h
 		src/April/Utility/TimeFormatting.cpp
+		src/April/Utility/UwTimesHistory.h
+		src/April/Utility/UwTimesHistory.cpp
 		src/GWCA/GWCA.hpp
 		src/GWCA/GWCA.cpp
 		src/ImGui/ImGui.hpp

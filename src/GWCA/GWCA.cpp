@@ -26,9 +26,39 @@
 #include <array>
 
 
+auto GW::GetAsAgentGadget( GW::Agent const* agent ) -> GW::AgentGadget const*
+{
+	return agent ? agent->GetAsAgentGadget() : nullptr;
+}
+
+auto GW::GetAsAgentItem( GW::Agent const* agent ) -> GW::AgentItem const*
+{
+	return agent ? agent->GetAsAgentItem() : nullptr;
+}
+
+auto GW::GetAsAgentLiving( GW::Agent const* agent ) -> GW::AgentLiving const*
+{
+	return agent ? agent->GetAsAgentLiving() : nullptr;
+}
+
+auto GW::GetAgentByID( GW::AgentID const id ) -> GW::Agent const*
+{
+	return GW::Agents::GetAgentByID( id );
+}
+
+auto GW::GetAgentLivingByID( GW::AgentID const id ) -> GW::AgentLiving const*
+{
+	return GetAsAgentLiving( GetAgentByID( id ) );
+}
+
 auto GW::GetInstanceTime() -> InstanceTime
 {
 	return InstanceTime{ GW::Map::GetInstanceTime() };
+}
+
+auto GW::GetMapID() -> MapID
+{
+	return GW::Map::GetMapID();
 }
 
 void GW::SendChat( char const channel, const char* str )
@@ -78,6 +108,14 @@ void GW::WriteChat( GW::ChatChannel const channel, std::wstring const& msg )
 {
 	GW::Chat::WriteChat(
 		static_cast<GW::Chat::Channel>( channel.channel ), msg.c_str() );
+}
+
+void GW::detail::RegisterCallback(
+	GW::HookEntry* entry,
+	uint32_t const header,
+	GW::HookCallback<Packet::StoC::PacketBase*> const& fn )
+{
+	GW::StoC::RegisterPacketCallback( entry, header, fn );
 }
 
 auto GW::GetWindowHandle() -> HWND
