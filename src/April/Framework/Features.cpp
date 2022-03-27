@@ -65,6 +65,10 @@ auto April::make_Features() -> Features
 			from_json<Gui::InstanceTimer::Config>( json ),
 			font_atlas,
 			mouse ),
+		std::make_unique<Gui::UwTimer>(
+			from_json<Gui::UwTimer::Config>( json ),
+			mouse,
+			uwtimes ),
 		std::make_unique<Module::UwTimer>( uwtimes ),
 		font_atlas,
 		mouse

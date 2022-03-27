@@ -38,12 +38,23 @@ bool ImGui::Button( std::string const& label, ImVec2 const& size )
 	return ImGui::Button( label.c_str(), size );
 }
 
+bool ImGui::CollapsingHeader(
+	std::string const& label, ImGuiTreeNodeFlags const flags )
+{
+	return ImGui::CollapsingHeader( label.c_str(), flags );
+}
+
 void ImGui::SetNextWindowPosCentered( ImGuiCond const cond )
 {
 	auto const& display = ImGui::GetIO().DisplaySize;
 	auto const size = ImVec2{ display.x * 0.5f, display.y * 0.5f };
 
 	ImGui::SetNextWindowPos( size, cond, { 0.5f, 0.5f } );
+}
+
+bool ImGui::SmallButton( std::string const& label )
+{
+	return ImGui::SmallButton( label.c_str() );
 }
 
 void ImGui::Text( std::string const& str )
@@ -59,6 +70,11 @@ auto April::Invisible() -> ImVec4
 auto April::Black( float alpha ) -> ImVec4
 {
 	return { 0, 0, 0, alpha };
+}
+
+auto April::Grey( float alpha ) -> ImVec4
+{
+	return { .5f, .5f, .5f, alpha };
 }
 
 auto April::White( float alpha ) -> ImVec4

@@ -25,7 +25,9 @@ namespace ImGui {
 	bool Begin( Window& );
 	bool Begin( Window&, April::Mouse& );
 	bool Button( std::string const&, ImVec2 const& = { 0, 0 } );
+	bool CollapsingHeader( std::string const&, ImGuiTreeNodeFlags = 0 );
 	void SetNextWindowPosCentered( ImGuiCond );
+	bool SmallButton( std::string const& );
 	void Text( std::string const& );
 
 }
@@ -38,6 +40,7 @@ namespace April {
 	auto Invisible() -> ImVec4;
 
 	auto Black( float alpha = 1 ) -> ImVec4;
+	auto Grey( float alpha = 1 ) -> ImVec4;
 	auto White( float alpha = 1 ) -> ImVec4;
 
 	auto Blue( float alpha = 1 ) -> ImVec4;

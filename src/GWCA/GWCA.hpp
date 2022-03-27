@@ -92,11 +92,13 @@ namespace GW {
 namespace GW {
 
 	using InstanceTime = ms32;
+	using Constants::InstanceType;
 	using Constants::MapID;
 	using ObjectiveID = uint32_t;
 
 
 	auto GetInstanceTime() -> InstanceTime;
+	auto GetInstanceType() -> InstanceType;
 	auto GetMapID() -> MapID;
 
 }

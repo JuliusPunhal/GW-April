@@ -56,6 +56,11 @@ auto GW::GetInstanceTime() -> InstanceTime
 	return InstanceTime{ GW::Map::GetInstanceTime() };
 }
 
+auto GW::GetInstanceType() -> GW::InstanceType
+{
+	return GW::Map::GetInstanceType();
+}
+
 auto GW::GetMapID() -> MapID
 {
 	return GW::Map::GetMapID();

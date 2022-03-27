@@ -2,11 +2,30 @@
 #include "April/Utility/TimeFormatting.h"
 
 #include <array>
+#include <iomanip>
+#include <sstream>
+#include <time.h>
 
 using namespace GW::literals;
 using namespace std::chrono;
 using sec32 = duration<long>;
 
+
+auto April::to_string_mmss( GW::ms32 const ms ) -> std::string
+{
+	auto const time = abs( ms );
+
+	auto const m = duration_cast<minutes>( time );
+	auto const s = duration_cast<sec32>( time - m );
+
+	auto buf = std::array<char, 16>{};
+	snprintf(
+		buf.data(), buf.size(),
+		ms < 0_ms ? "-%02d:%02d" : "%02d:%02d",
+		m.count(), s.count() );
+
+	return std::string{ buf.data() };
+}
 
 auto April::to_string_hmmss( GW::ms32 const ms ) -> std::string
 {
@@ -23,4 +42,17 @@ auto April::to_string_hmmss( GW::ms32 const ms ) -> std::string
 		h.count(), m.count(), s.count() );
 
 	return std::string{ buf.data() };
+}
+
+auto April::to_date_str( system_clock::time_point const date_time )
+	-> std::string
+{
+	auto time_buf = std::tm{};
+	auto const to_time_t = system_clock::to_time_t( date_time );
+	localtime_s( &time_buf, &to_time_t );
+
+	auto ss = std::stringstream{};
+	ss << std::put_time( &time_buf, "%Y-%m-%d %X" );
+
+	return ss.str();
 }

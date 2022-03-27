@@ -1,6 +1,7 @@
 #pragma once
 
 #include "April/Gui/InstanceTimer.h"
+#include "April/Gui/UwTimer.h"
 #include "April/Module/UwTimer.h"
 #include "April/Utility/FontAtlas.h"
 #include "April/Utility/Mouse.h"
@@ -14,6 +15,7 @@ namespace April {
 	using Features =
 		std::tuple<
 			std::unique_ptr<Gui::InstanceTimer>,
+			std::unique_ptr<Gui::UwTimer>,
 			std::unique_ptr<Module::UwTimer>,
 			std::shared_ptr<FontAtlas>,
 			std::shared_ptr<Mouse>>;

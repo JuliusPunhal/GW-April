@@ -25,6 +25,8 @@ target_sources(
 		src/April/Framework/WndProc.cpp
 		src/April/Gui/InstanceTimer.h
 		src/April/Gui/InstanceTimer.cpp
+		src/April/Gui/UwTimer.h
+		src/April/Gui/UwTimer.cpp
 		src/April/Module/UwTimer.h
 		src/April/Module/UwTimer.cpp
 		src/April/Utility/FileIO.h
