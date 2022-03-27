@@ -8,17 +8,32 @@
 #include "misc/cpp/imgui_stdlib.h"
 #pragma warning( pop )
 
+#include "April/Utility/Mouse.h"
+
 #include <string>
 
 
 namespace ImGui {
 
+	struct Window {
+		std::string      name;
+		bool             visible;
+		ImGuiWindowFlags flags;
+	};
+
+
+	bool Begin( Window& );
+	bool Begin( Window&, April::Mouse& );
 	bool Button( std::string const&, ImVec2 const& = { 0, 0 } );
+	void SetNextWindowPosCentered( ImGuiCond );
 	void Text( std::string const& );
 
 }
 
 namespace April {
+
+	using ImGui::Window;
+
 
 	auto Invisible() -> ImVec4;
 

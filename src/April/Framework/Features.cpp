@@ -1,8 +1,6 @@
 
 #include "April/Framework/Features.h"
 
-#include "April/Utility/Fonts.h"
-
 #include <type_traits>
 
 
@@ -34,16 +32,17 @@ auto April::make_Features() -> Features
 {
 	ImGui::GetIO().IniFilename = "GW-April.ini";
 
-	if ( auto const abz16 = LoadFont( "ABeeZee-Regular.ttf", 16 ) )
-		ImGui::GetIO().Fonts->AddFontDefault( abz16->ConfigData );
-
-	auto const abz40 = LoadFont( "ABeeZee-Regular.ttf", 40 );
-
 	auto const font_atlas = std::make_shared<FontAtlas>();
 	auto const mouse = std::make_shared<Mouse>();
 
+	font_atlas->Get( FontInfo{ "ABeeZee-Regular.ttf", 16 } );
+	font_atlas->LoadRequestedFonts(); // loads default font
+
 	return Features{
-		std::make_unique<Gui::InstanceTimer>( abz40, mouse ),
+		std::make_unique<Gui::InstanceTimer>(
+			std::make_shared<Gui::InstanceTimer::Config>(),
+			font_atlas,
+			mouse ),
 		font_atlas,
 		mouse
 	};

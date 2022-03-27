@@ -26,8 +26,6 @@ target_sources(
 		src/April/Gui/InstanceTimer.cpp
 		src/April/Utility/FontAtlas.h
 		src/April/Utility/FontAtlas.cpp
-		src/April/Utility/Fonts.h
-		src/April/Utility/Fonts.cpp
 		src/April/Utility/Mouse.h
 		src/April/Utility/Mouse.cpp
 		src/April/Utility/stl.h
