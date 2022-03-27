@@ -25,6 +25,8 @@ target_sources(
 		src/April/Framework/WndProc.cpp
 		src/April/Gui/InstanceTimer.h
 		src/April/Gui/InstanceTimer.cpp
+		src/April/Gui/Skillbar.h
+		src/April/Gui/Skillbar.cpp
 		src/April/Gui/UwTimer.h
 		src/April/Gui/UwTimer.cpp
 		src/April/Module/UwTimer.h
@@ -43,6 +45,10 @@ target_sources(
 		src/April/Utility/Mouse.cpp
 		src/April/Utility/Reaper.h
 		src/April/Utility/Reaper.cpp
+		src/April/Utility/ReducedSkillRecharge.h
+		src/April/Utility/ReducedSkillRecharge.cpp
+		src/April/Utility/sorted_vector.h
+		src/April/Utility/sorted_vector.cpp
 		src/April/Utility/stl.h
 		src/April/Utility/stl.cpp
 		src/April/Utility/TimeFormatting.h

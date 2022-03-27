@@ -64,12 +64,18 @@ using DWORD = unsigned long;
 namespace GW {
 
 	using ms32 = std::chrono::duration<long, std::milli>;
+	using sec32 = std::chrono::duration<long>;
 
 	namespace literals {
 
 		constexpr auto operator"" _ms ( unsigned long long const ms )
 		{
 			return ms32{ ms };
+		}
+
+		constexpr auto operator"" _s ( unsigned long long const sec )
+		{
+			return sec32{ sec };
 		}
 
 	}
@@ -79,12 +85,20 @@ namespace GW {
 // Agent
 namespace GW {
 
+	using Constants::Profession;
+	using AttributeID = Constants::Attribute;
+
+
 	auto GetAsAgentGadget( GW::Agent const* ) -> GW::AgentGadget const*;
 	auto GetAsAgentItem( GW::Agent const* ) -> GW::AgentItem const*;
 	auto GetAsAgentLiving( GW::Agent const* ) -> GW::AgentLiving const*;
 
 	auto GetAgentByID( GW::AgentID ) -> GW::Agent const*;
 	auto GetAgentLivingByID( GW::AgentID ) -> GW::AgentLiving const*;
+
+	auto GetCharacter() -> GW::AgentLiving const*;
+
+	auto GetPlayerAttribute( GW::AttributeID ) -> GW::Attribute const*;
 
 }
 
@@ -100,6 +114,45 @@ namespace GW {
 	auto GetInstanceTime() -> InstanceTime;
 	auto GetInstanceType() -> InstanceType;
 	auto GetMapID() -> MapID;
+
+}
+
+// Skills
+namespace GW {
+
+	using Constants::SkillID;
+	using Constants::SkillType;
+
+	using SkillDataArray =
+		std::array<
+			GW::Skill,
+			static_cast<int>( GW::SkillID::Heroic_Refrain ) + 1>;
+
+
+	auto GetSkillConstantData() -> SkillDataArray const&;
+	auto GetSkillConstantData( GW::SkillID ) -> GW::Skill const&;
+
+	auto GetSkillType( GW::SkillID ) -> GW::SkillType;
+
+
+	auto GetPlayerSkillbar() -> GW::Skillbar const*;
+
+	auto GetRecharge( GW::SkillbarSkill const& ) -> GW::ms32;
+	auto GetSkillID( GW::SkillbarSkill const& ) -> GW::SkillID;
+
+}
+
+// Effects
+namespace GW {
+
+	auto GetPartyEffects() -> GW::AgentEffectsArray const&;
+	auto GetPlayerEffects() -> GW::EffectArray const*;
+	auto GetPlayerEffect( GW::SkillID ) -> GW::Effect const*;
+
+	auto GetSkillID( GW::Effect const& ) -> GW::SkillID;
+
+	auto GetTimeRemaining( GW::Effect const& ) -> GW::ms32;
+	auto GetTimeRemaining( GW::SkillID ) -> GW::ms32;
 
 }
 
@@ -191,5 +244,17 @@ namespace GW::Constants::ObjectiveID {
 	inline constexpr GW::ObjectiveID Pools = 155;
 	inline constexpr GW::ObjectiveID Completed_X_of_10_quests = 156;
 	inline constexpr GW::ObjectiveID Dhuum = 157;
+
+}
+
+namespace GW::Packet::StoC {
+
+	struct SkillRecharged : Packet<SkillRecharged> {
+		uint32_t agent_id;
+		uint32_t skill_id;
+		uint32_t skill_instance;
+	};
+	unsigned const Packet<SkillRecharged>::STATIC_HEADER =
+		GAME_SMSG_SKILL_RECHARGED;
 
 }

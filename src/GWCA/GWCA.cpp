@@ -25,6 +25,8 @@
 
 #include <array>
 
+using namespace GW::literals;
+
 
 auto GW::GetAsAgentGadget( GW::Agent const* agent ) -> GW::AgentGadget const*
 {
@@ -51,6 +53,42 @@ auto GW::GetAgentLivingByID( GW::AgentID const id ) -> GW::AgentLiving const*
 	return GetAsAgentLiving( GetAgentByID( id ) );
 }
 
+auto GW::GetCharacter() -> GW::AgentLiving const*
+{
+	auto const player = GW::Agents::GetCharacter();
+	if (
+		player == nullptr
+		|| player->max_energy == 0     // spectating other player
+		|| player->login_number == 0 ) // spectating hero
+	{
+		return nullptr;
+	}
+
+	return player;
+}
+
+auto GW::GetPlayerAttribute( GW::AttributeID const id ) -> GW::Attribute const*
+{
+	auto const& party = GW::GameContext::instance()->world->attributes;
+
+	auto const player = GW::GetCharacter();
+	if ( player == nullptr )
+		return nullptr;
+
+	auto const player_attrs =
+		std::find_if(
+			party.begin(), party.end(),
+			[player]( auto const& attr )
+			{
+				return attr.agent_id == player->agent_id;
+			} );
+
+	if ( player_attrs == party.end() || player_attrs == nullptr )
+		return nullptr;
+
+	return &player_attrs->attribute[static_cast<int>( id )];
+}
+
 auto GW::GetInstanceTime() -> InstanceTime
 {
 	return InstanceTime{ GW::Map::GetInstanceTime() };
@@ -64,6 +102,101 @@ auto GW::GetInstanceType() -> GW::InstanceType
 auto GW::GetMapID() -> MapID
 {
 	return GW::Map::GetMapID();
+}
+
+auto GW::GetSkillConstantData() -> GW::SkillDataArray const&
+{
+	auto const begin = &GW::SkillbarMgr::GetSkillConstantData( 0 );
+	return *reinterpret_cast<GW::SkillDataArray const*>( begin );
+}
+
+auto GW::GetSkillConstantData( GW::SkillID const id ) -> GW::Skill const&
+{
+	auto const raw_id = static_cast<uint32_t>( id );
+	return GW::GetSkillConstantData()[raw_id];
+}
+
+auto GW::GetSkillType( GW::SkillID const skill_id ) -> GW::SkillType
+{
+	auto const& skill = GW::GetSkillConstantData( skill_id );
+	return static_cast<SkillType>( skill.type );
+}
+
+auto GW::GetPlayerSkillbar() -> GW::Skillbar const*
+{
+	return GW::SkillbarMgr::GetPlayerSkillbar();
+}
+
+auto GW::GetRecharge( GW::SkillbarSkill const& skill ) -> GW::ms32
+{
+	return ms32{ skill.GetRecharge() };
+}
+
+auto GW::GetSkillID( GW::SkillbarSkill const& skill ) -> GW::SkillID
+{
+	return static_cast<GW::SkillID>( skill.skill_id );
+}
+
+auto GW::GetPartyEffects() -> GW::AgentEffectsArray const&
+{
+	return GW::GameContext::instance()->world->party_effects;
+}
+
+auto GW::GetPlayerEffects() -> GW::EffectArray const*
+{
+	auto const player = GW::GetCharacter();
+	if ( player == nullptr )
+		return nullptr;
+
+	for ( auto const& effects : GW::GetPartyEffects() )
+	{
+		if ( effects.agent_id == player->agent_id )
+			return &effects.effects;
+	}
+
+	return nullptr;
+}
+
+auto GW::GetPlayerEffect( GW::SkillID const id ) -> GW::Effect const*
+{
+	auto const effects = GW::GetPlayerEffects();
+	if ( effects == nullptr )
+		return nullptr;
+
+	for ( auto const& effect : *effects )
+	{
+		if ( GW::GetSkillID( effect ) == id )
+			return &effect;
+	}
+
+	return nullptr;
+}
+
+auto GW::GetSkillID( GW::Effect const& effect ) -> GW::SkillID
+{
+	return static_cast<GW::SkillID>( effect.skill_id );
+}
+
+auto GW::GetTimeRemaining( GW::Effect const& effect ) -> GW::ms32
+{
+	return ms32{ effect.GetTimeRemaining() };
+}
+
+auto GW::GetTimeRemaining( GW::SkillID const id ) -> GW::ms32
+{
+	auto longest = 0_ms;
+
+	auto const effects = GW::GetPlayerEffects();
+	if ( effects == nullptr )
+		return longest;
+
+	for ( auto const& effect : *effects )
+	{
+		if ( GW::GetSkillID( effect ) == id )
+			longest = std::max( longest, GW::GetTimeRemaining( effect ) );
+	}
+
+	return longest;
 }
 
 void GW::SendChat( char const channel, const char* str )

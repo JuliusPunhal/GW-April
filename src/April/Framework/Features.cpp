@@ -53,6 +53,7 @@ auto April::make_Features() -> Features
 
 	auto const font_atlas = std::make_shared<FontAtlas>();
 	auto const mouse = std::make_shared<Mouse>();
+	auto const reduced_recharge = std::make_shared<ReducedSkillRecharge>();
 	auto const uwtimes = std::make_shared<UwTimesHistory>();
 
 	font_atlas->Get( FontInfo{ "ABeeZee-Regular.ttf", 16 } );
@@ -65,13 +66,18 @@ auto April::make_Features() -> Features
 			from_json<Gui::InstanceTimer::Config>( json ),
 			font_atlas,
 			mouse ),
+		std::make_unique<Gui::Skillbar>(
+			from_json<Gui::Skillbar::Config>( json ),
+			font_atlas,
+			reduced_recharge ),
 		std::make_unique<Gui::UwTimer>(
 			from_json<Gui::UwTimer::Config>( json ),
 			mouse,
 			uwtimes ),
 		std::make_unique<Module::UwTimer>( uwtimes ),
 		font_atlas,
-		mouse
+		mouse,
+		reduced_recharge
 	};
 }
 

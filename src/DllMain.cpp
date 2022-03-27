@@ -82,6 +82,8 @@ namespace {
 		GW::RegisterCallback<ObjectiveAdd>(          &entry, on_packet );
 		GW::RegisterCallback<ObjectiveDone>(         &entry, on_packet );
 		GW::RegisterCallback<ObjectiveUpdateName>(   &entry, on_packet );
+		GW::RegisterCallback<SkillRecharge>(         &entry, on_packet );
+		GW::RegisterCallback<SkillRecharged>(        &entry, on_packet );
 
 		gw_wndproc =
 			(WNDPROC)SetWindowLongPtr(
