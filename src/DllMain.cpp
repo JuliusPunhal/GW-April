@@ -99,7 +99,7 @@ namespace {
 
 	void Init( HINSTANCE hDll )
 	{
-		GW::Initialize(); Sleep( 100 );
+		GW::InitializeEx(); Sleep( 100 );
 		GW::SetRenderCallback( RenderCallback_Setup );
 		GW::SetResetCallback( ResetCallback );
 

@@ -60,11 +60,18 @@ using DWORD = unsigned long;
 #include <Windows.h>
 
 
+namespace GW {
+
+	bool InitializeEx();
+
+}
+
 // Utility
 namespace GW {
 
 	using ms32 = std::chrono::duration<long, std::milli>;
 	using sec32 = std::chrono::duration<long>;
+	using min32 = std::chrono::duration<long, std::ratio<60>>;
 
 	namespace literals {
 
@@ -76,6 +83,11 @@ namespace GW {
 		constexpr auto operator"" _s ( unsigned long long const sec )
 		{
 			return sec32{ sec };
+		}
+
+		constexpr auto operator"" _min ( unsigned long long const min )
+		{
+			return min32{ min };
 		}
 
 	}
@@ -153,6 +165,8 @@ namespace GW {
 
 	auto GetTimeRemaining( GW::Effect const& ) -> GW::ms32;
 	auto GetTimeRemaining( GW::SkillID ) -> GW::ms32;
+
+	auto GetDrunkTime() -> GW::ms32;
 
 }
 
@@ -256,5 +270,11 @@ namespace GW::Packet::StoC {
 	};
 	unsigned const Packet<SkillRecharged>::STATIC_HEADER =
 		GAME_SMSG_SKILL_RECHARGED;
+
+	struct UpdateTitle : Packet<UpdateTitle> {
+		uint32_t title_id;
+		uint32_t new_value;
+	};
+	unsigned const Packet<UpdateTitle>::STATIC_HEADER = 244;
 
 }

@@ -28,6 +28,75 @@
 using namespace GW::literals;
 
 
+namespace {
+
+	class Drunk {
+	public:
+		Drunk() = default;
+
+		auto GetDrunkTime() const -> GW::ms32
+		{
+			auto const time_since_update = GW::GetInstanceTime() - last_update;
+			auto const remaining = duration - time_since_update;
+
+			return std::max( remaining, 0_ms );
+		}
+
+		void Update( GW::Packet::StoC::UpdateTitle const& packet )
+		{
+			constexpr auto drunkard_title_id = 7;
+
+			if ( packet.title_id != drunkard_title_id )
+				return;
+
+			auto const& titles = GW::GameContext::instance()->world->titles;
+			auto const gained_points =
+				packet.new_value - titles[drunkard_title_id].current_points;
+
+			if ( gained_points == 1 )
+			{
+				g_Drunk.last_update = GW::GetInstanceTime();
+				g_Drunk.duration =
+					std::min( GW::GetDrunkTime() + 1_min, 5_min + 0_ms );
+			}
+			else if ( gained_points >= 3 )
+			{
+				g_Drunk.last_update = GW::GetInstanceTime();
+				g_Drunk.duration = 5_min;
+			}
+		}
+
+		void Update( GW::Packet::StoC::MapLoaded const& )
+		{
+			*this = {};
+		}
+
+
+	private:
+		GW::ms32 last_update = 0_ms;
+		GW::ms32 duration = 0_ms;
+	} g_Drunk;
+
+}
+
+
+bool GW::InitializeEx()
+{
+	using namespace GW::Packet::StoC;
+
+	auto const success = Initialize();
+	if ( not success )
+		return false;
+
+	static auto entry = GW::HookEntry{};
+	auto on_packet = []( auto const& packet ) { g_Drunk.Update( packet ); };
+
+	GW::RegisterCallback<MapLoaded>( &entry, on_packet );
+	GW::RegisterCallback<UpdateTitle>( &entry, on_packet );
+
+	return success;
+}
+
 auto GW::GetAsAgentGadget( GW::Agent const* agent ) -> GW::AgentGadget const*
 {
 	return agent ? agent->GetAsAgentGadget() : nullptr;
@@ -197,6 +266,11 @@ auto GW::GetTimeRemaining( GW::SkillID const id ) -> GW::ms32
 	}
 
 	return longest;
+}
+
+auto GW::GetDrunkTime() -> GW::ms32
+{
+	return g_Drunk.GetDrunkTime();
 }
 
 void GW::SendChat( char const channel, const char* str )
