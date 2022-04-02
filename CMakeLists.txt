@@ -31,6 +31,10 @@ target_sources(
 		src/April/Gui/UwTimer.cpp
 		src/April/Module/UwTimer.h
 		src/April/Module/UwTimer.cpp
+		src/April/Utility/Consumables.h
+		src/April/Utility/Consumables.cpp
+		src/April/Utility/ConsumableState.h
+		src/April/Utility/ConsumableState.cpp
 		src/April/Utility/FileIO.h
 		src/April/Utility/FileIO.cpp
 		src/April/Utility/FileIO.BasicTypes.h

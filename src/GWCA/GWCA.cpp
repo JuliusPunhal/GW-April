@@ -23,8 +23,6 @@
 #include "GWCA/Managers/UIMgr.h"
 #pragma warning(pop)
 
-#include <array>
-
 using namespace GW::literals;
 
 
@@ -158,6 +156,33 @@ auto GW::GetPlayerAttribute( GW::AttributeID const id ) -> GW::Attribute const*
 	return &player_attrs->attribute[static_cast<int>( id )];
 }
 
+auto GW::GetMorale( GW::AgentID const agent_id ) -> Morale
+{
+	struct Sub {
+		char unk[0x18];
+		int morale;
+	};
+	struct Unk {
+		char unk[8];
+		Sub* sub;
+	};
+
+	// world->h62c does not seem to ever be nullptr,
+	// garbage values when loading
+	auto const* p_array =
+		reinterpret_cast<GW::Array<Unk>*>(
+			&GW::GameContext::instance()->world->h062C );
+
+	auto const index = agent_id & p_array->m_param;
+	auto const morale = (*p_array)[index].sub->morale;
+	return morale - 100;
+}
+
+auto GW::GetMorale() -> Morale
+{
+	return GW::GetMorale( GW::Agents::GetPlayerId() );
+}
+
 auto GW::GetInstanceTime() -> InstanceTime
 {
 	return InstanceTime{ GW::Map::GetInstanceTime() };
@@ -171,6 +196,11 @@ auto GW::GetInstanceType() -> GW::InstanceType
 auto GW::GetMapID() -> MapID
 {
 	return GW::Map::GetMapID();
+}
+
+auto GW::GetCurrentMapInfo() -> GW::AreaInfo const&
+{
+	return *GW::Map::GetCurrentMapInfo();
 }
 
 auto GW::GetSkillConstantData() -> GW::SkillDataArray const&
@@ -271,6 +301,25 @@ auto GW::GetTimeRemaining( GW::SkillID const id ) -> GW::ms32
 auto GW::GetDrunkTime() -> GW::ms32
 {
 	return g_Drunk.GetDrunkTime();
+}
+
+bool GW::IsIdentified( GW::Item const& item )
+{
+	return item.interaction & 1;
+}
+
+auto GW::GetInventoryBags() -> InventoryBags const*
+{
+	auto const* inventory = GameContext::instance()->items->inventory;
+	if ( inventory == nullptr )
+		return nullptr;
+
+	return reinterpret_cast<InventoryBags const*>( &inventory->backpack );
+}
+
+bool GW::GetIsPartyLoaded()
+{
+	return GW::PartyMgr::GetIsPartyLoaded();
 }
 
 void GW::SendChat( char const channel, const char* str )

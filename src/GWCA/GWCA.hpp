@@ -53,6 +53,7 @@ using DWORD = unsigned long;
 #include "GWCA/GWCA.h"
 #pragma warning( pop )
 
+#include <array>
 #include <chrono>
 
 #define WIN32_LEAN_AND_MEAN
@@ -99,6 +100,7 @@ namespace GW {
 
 	using Constants::Profession;
 	using AttributeID = Constants::Attribute;
+	using Morale = int;                       // -60 ... +10
 
 
 	auto GetAsAgentGadget( GW::Agent const* ) -> GW::AgentGadget const*;
@@ -111,6 +113,9 @@ namespace GW {
 	auto GetCharacter() -> GW::AgentLiving const*;
 
 	auto GetPlayerAttribute( GW::AttributeID ) -> GW::Attribute const*;
+
+	auto GetMorale( GW::AgentID ) -> Morale;
+	auto GetMorale() -> Morale;
 
 }
 
@@ -126,6 +131,8 @@ namespace GW {
 	auto GetInstanceTime() -> InstanceTime;
 	auto GetInstanceType() -> InstanceType;
 	auto GetMapID() -> MapID;
+
+	auto GetCurrentMapInfo() -> GW::AreaInfo const&;
 
 }
 
@@ -167,6 +174,30 @@ namespace GW {
 	auto GetTimeRemaining( GW::SkillID ) -> GW::ms32;
 
 	auto GetDrunkTime() -> GW::ms32;
+
+}
+
+// Items
+namespace GW {
+
+	namespace Constants {
+		namespace ItemModelID = ItemID;
+	}
+
+	using InventoryBags = std::array<GW::Bag const*, 4>;
+	using ItemModelID = decltype( GW::Item::model_id );
+
+
+	bool IsIdentified( GW::Item const& );
+
+	auto GetInventoryBags() -> InventoryBags const*;
+
+}
+
+// Party
+namespace GW {
+
+	bool GetIsPartyLoaded();
 
 }
 
@@ -258,6 +289,50 @@ namespace GW::Constants::ObjectiveID {
 	inline constexpr GW::ObjectiveID Pools = 155;
 	inline constexpr GW::ObjectiveID Completed_X_of_10_quests = 156;
 	inline constexpr GW::ObjectiveID Dhuum = 157;
+
+}
+
+namespace GW::Constants::ItemID {
+
+	// Consumables
+	inline constexpr int IdentificationKit = 2989;
+	inline constexpr int IdentificationKit_Superior = 5899;
+
+	// Alcohol
+	inline constexpr int BattleIsleIcedTea = 36682;
+	inline constexpr int BottleOfJuniberryGin = 19172;
+	inline constexpr int BottleOfVabbianWine = 19173;
+	inline constexpr int ZehtukasJug = 19171;
+
+	// DP
+	inline constexpr int FourLeafClover = 22191; // party-wide
+	inline constexpr int OathOfPurity = 30206;   // party-wide
+	inline constexpr int PeppermintCandyCane = 6370;
+	inline constexpr int RefinedJelly = 19039;
+	inline constexpr int ShiningBladeRations = 35127;
+	inline constexpr int WintergreenCandyCane = 21488;
+
+	// Morale
+	inline constexpr int ElixirOfValor = 21227;         // party-wide
+	inline constexpr int Honeycomb = 26784;             // party-wide
+	inline constexpr int PumpkinCookie = 28433;
+	inline constexpr int RainbowCandyCane = 21489;      // party-wide
+	inline constexpr int SealOfTheDragonEmpire = 30211; // party-wide
+
+	// Summons
+	inline constexpr int GakiSummon = 30960;
+	inline constexpr int TurtleSummon = 30966;
+
+	// Summons x3
+	inline constexpr int TenguSummon = 30209;
+	inline constexpr int ImperialGuardSummon = 30210;
+	inline constexpr int WarhornSummon = 35126;
+
+	// Tonics
+	inline constexpr int ELGwen = 36442;
+	inline constexpr int ELMiku = 36451;
+	inline constexpr int ELMargo = 36456;
+	inline constexpr int ELZenmai = 36493;
 
 }
 
