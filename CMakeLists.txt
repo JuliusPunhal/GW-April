@@ -25,6 +25,8 @@ target_sources(
 		src/April/Framework/WndProc.cpp
 		src/April/Gui/InstanceTimer.h
 		src/April/Gui/InstanceTimer.cpp
+		src/April/Gui/Inventory.h
+		src/April/Gui/Inventory.cpp
 		src/April/Gui/Skillbar.h
 		src/April/Gui/Skillbar.cpp
 		src/April/Gui/UwTimer.h

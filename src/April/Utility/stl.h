@@ -27,6 +27,21 @@ namespace stl {
 	}
 
 
+	#if defined(_MSC_VER) && _MSC_VER >= 1900 && _MSC_FULL_VER >= 190023918 && _MSC_VER < 2000
+		#define EMPTY_BASES __declspec(empty_bases)
+	#else // defined(_MSC_VER) && _MSC_VER >= 1900 && _MSC_FULL_VER >= 190023918 && _MSC_VER < 2000
+		#define EMPTY_BASES
+	#endif
+
+	template<class... Ts>
+	struct EMPTY_BASES overloaded : Ts... {
+		using Ts::operator()...;
+	};
+
+	template<class... Ts>
+	overloaded(Ts...) -> overloaded<Ts...>;
+
+
 	template<typename T>
 	struct remove_cvref {
 		using type = std::remove_cv_t<std::remove_reference_t<T>>;

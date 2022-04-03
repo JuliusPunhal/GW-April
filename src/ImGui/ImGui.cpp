@@ -44,6 +44,22 @@ bool ImGui::CollapsingHeader(
 	return ImGui::CollapsingHeader( label.c_str(), flags );
 }
 
+void ImGui::MoveCursorPos( ImVec2 const& new_pos )
+{
+	auto const cursor = ImGui::GetCursorPos();
+	ImGui::SetCursorPos( { cursor.x + new_pos.x, cursor.y + new_pos.y } );
+}
+
+void ImGui::MoveCursorPosX( float const new_x )
+{
+	ImGui::SetCursorPosX( ImGui::GetCursorPosX() + new_x );
+}
+
+void ImGui::MoveCursorPosY( float const new_y )
+{
+	ImGui::SetCursorPosY( ImGui::GetCursorPosY() + new_y);
+}
+
 void ImGui::SetNextWindowPosCentered( ImGuiCond const cond )
 {
 	auto const& display = ImGui::GetIO().DisplaySize;

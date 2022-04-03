@@ -66,6 +66,8 @@ auto April::make_Features() -> Features
 			from_json<Gui::InstanceTimer::Config>( json ),
 			font_atlas,
 			mouse ),
+		std::make_unique<Gui::Inventory>(
+			from_json<Gui::Inventory::Config>( json ) ),
 		std::make_unique<Gui::Skillbar>(
 			from_json<Gui::Skillbar::Config>( json ),
 			font_atlas,

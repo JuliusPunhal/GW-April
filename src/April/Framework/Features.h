@@ -1,6 +1,7 @@
 #pragma once
 
 #include "April/Gui/InstanceTimer.h"
+#include "April/Gui/Inventory.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
 #include "April/Module/UwTimer.h"
@@ -17,6 +18,7 @@ namespace April {
 	using Features =
 		std::tuple<
 			std::unique_ptr<Gui::InstanceTimer>,
+			std::unique_ptr<Gui::Inventory>,
 			std::unique_ptr<Gui::Skillbar>,
 			std::unique_ptr<Gui::UwTimer>,
 			std::unique_ptr<Module::UwTimer>,

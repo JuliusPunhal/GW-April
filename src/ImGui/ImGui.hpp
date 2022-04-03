@@ -26,6 +26,9 @@ namespace ImGui {
 	bool Begin( Window&, April::Mouse& );
 	bool Button( std::string const&, ImVec2 const& = { 0, 0 } );
 	bool CollapsingHeader( std::string const&, ImGuiTreeNodeFlags = 0 );
+	void MoveCursorPos( ImVec2 const& );
+	void MoveCursorPosX( float );
+	void MoveCursorPosY( float );
 	void SetNextWindowPosCentered( ImGuiCond );
 	bool SmallButton( std::string const& );
 	void Text( std::string const& );
