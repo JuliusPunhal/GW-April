@@ -163,8 +163,8 @@ auto April::detail::ConsumableState<IdentKit>::get_State( IdentKit ) -> State
 	if ( GW::GetInstanceType() == GW::InstanceType::Loading )
 		return WrongInstanceType{};
 
-	if ( find_unident() )
-		return UnidentFound{};
+	if ( auto const* unident = find_unident() )
+		return UnidentFound{ unident };
 
 	return AllIdent{};
 }

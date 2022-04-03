@@ -5,19 +5,6 @@ using namespace April;
 using namespace GW::Constants::ItemModelID;
 
 
-namespace April {
-
-	bool operator==( Consumable const& consumable, GW::ItemModelID const id )
-	{
-		return
-			std::visit(
-				[id]( auto const& cons ) { return cons.model_id == id; },
-				consumable );
-	}
-
-}
-
-
 namespace {
 
 	Consumable cons[] = {
@@ -104,4 +91,13 @@ auto April::is_Consumable( GW::ItemModelID const id ) -> Consumable const*
 {
 	auto const it = std::find( std::begin( cons ), std::end( cons ), id );
 	return it != std::end( cons ) ? it : nullptr;
+}
+
+bool April::operator==(
+	Consumable const& consumable, GW::ItemModelID const id )
+{
+	return
+		std::visit(
+			[id]( auto const& cons ) { return cons.model_id == id; },
+			consumable );
 }

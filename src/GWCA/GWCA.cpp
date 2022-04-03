@@ -203,6 +203,11 @@ auto GW::GetCurrentMapInfo() -> GW::AreaInfo const&
 	return *GW::Map::GetCurrentMapInfo();
 }
 
+bool GW::InCinematic()
+{
+	return GW::Map::GetIsInCinematic();
+}
+
 auto GW::GetSkillConstantData() -> GW::SkillDataArray const&
 {
 	auto const begin = &GW::SkillbarMgr::GetSkillConstantData( 0 );
@@ -315,6 +320,62 @@ auto GW::GetInventoryBags() -> InventoryBags const*
 		return nullptr;
 
 	return reinterpret_cast<InventoryBags const*>( &inventory->backpack );
+}
+
+auto GW::SearchInventory( GW::ItemModelID const id ) -> GW::Item const*
+{
+	auto const* bags = GW::GetInventoryBags();
+	if ( bags == nullptr )
+		return nullptr;
+
+	for ( auto const* bag : *bags )
+	{
+		if ( bag == nullptr )
+			continue;
+
+		for ( auto const* item : bag->items )
+		{
+			if ( item && item->model_id == id )
+				return item;
+		}
+	}
+	return nullptr;
+}
+
+void GW::UseItem( GW::Item const& item )
+{
+	return GW::Items::UseItem( &item );
+}
+
+void GW::IdentifyItem( GW::Item const& item, GW::Item const& kit )
+{
+	GW::CtoS::SendPacket(
+		0xC, GAME_CMSG_ITEM_IDENTIFY, kit.item_id, item.item_id );
+}
+
+bool GW::GetIsPlayerLoaded()
+{
+	auto const* party = GW::PartyMgr::GetPartyInfo();
+
+	if ( party == nullptr || not party->players.valid() )
+		return false;
+
+	auto const* player = GW::GetCharacter();
+	if ( player == nullptr )
+		return false;
+
+	auto const* player_in_party =
+		std::find_if(
+			party->players.begin(), party->players.end(),
+			[player]( auto const& member )
+			{
+				return member.login_number == player->login_number;
+			} );
+
+	if ( player_in_party == party->players.end() )
+		return false;
+
+	return player_in_party->connected();
 }
 
 bool GW::GetIsPartyLoaded()

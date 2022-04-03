@@ -60,4 +60,6 @@ namespace April {
 
 	auto is_Consumable( GW::ItemModelID const ) -> Consumable const*;
 
+	bool operator==( Consumable const&, GW::ItemModelID );
+
 }

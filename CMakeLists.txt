@@ -31,6 +31,8 @@ target_sources(
 		src/April/Gui/Skillbar.cpp
 		src/April/Gui/UwTimer.h
 		src/April/Gui/UwTimer.cpp
+		src/April/Module/ConsumablesMgr.h
+		src/April/Module/ConsumablesMgr.cpp
 		src/April/Module/UwTimer.h
 		src/April/Module/UwTimer.cpp
 		src/April/Utility/Consumables.h

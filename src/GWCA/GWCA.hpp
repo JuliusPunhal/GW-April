@@ -134,6 +134,8 @@ namespace GW {
 
 	auto GetCurrentMapInfo() -> GW::AreaInfo const&;
 
+	bool InCinematic();
+
 }
 
 // Skills
@@ -192,11 +194,17 @@ namespace GW {
 
 	auto GetInventoryBags() -> InventoryBags const*;
 
+	auto SearchInventory( GW::ItemModelID ) -> GW::Item const*;
+
+	void UseItem( GW::Item const& );
+	void IdentifyItem( GW::Item const&, GW::Item const& ident_kit );
+
 }
 
 // Party
 namespace GW {
 
+	bool GetIsPlayerLoaded();
 	bool GetIsPartyLoaded();
 
 }

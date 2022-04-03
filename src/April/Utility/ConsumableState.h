@@ -85,7 +85,7 @@ namespace April::detail {
 	template<>
 	struct ConsumableState<IdentKit> {
 		struct WrongInstanceType {};
-		struct UnidentFound {};
+		struct UnidentFound { GW::Item const* unident; };
 		struct AllIdent {};
 
 		using State = std::variant<WrongInstanceType, UnidentFound, AllIdent>;

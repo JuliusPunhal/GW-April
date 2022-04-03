@@ -4,6 +4,7 @@
 #include "April/Gui/Inventory.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
+#include "April/Module/ConsumablesMgr.h"
 #include "April/Module/UwTimer.h"
 #include "April/Utility/FontAtlas.h"
 #include "April/Utility/Mouse.h"
@@ -21,6 +22,7 @@ namespace April {
 			std::unique_ptr<Gui::Inventory>,
 			std::unique_ptr<Gui::Skillbar>,
 			std::unique_ptr<Gui::UwTimer>,
+			std::unique_ptr<Module::ConsumablesMgr>,
 			std::unique_ptr<Module::UwTimer>,
 			std::shared_ptr<FontAtlas>,
 			std::shared_ptr<Mouse>,
