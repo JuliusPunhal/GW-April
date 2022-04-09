@@ -10,6 +10,8 @@
 #include <variant>
 
 using namespace April;
+using namespace April::Module;
+using namespace std::string_literals;
 using Config = April::Gui::Inventory::Config;
 
 template<typename T>
@@ -156,34 +158,88 @@ namespace {
 		return std::visit( get_col, get_ConsumableState( cons ) );
 	}
 
-	void draw_frame( ImVec4 const& border, Config const& config )
+}
+
+namespace {
+
+	void draw_frame( ImVec4 const& border, ImVec2 const& size )
 	{
 		ImGui::PushStyleColor( ImGuiCol_Border, border );
-		ImGui::Button( "##btn", config.slot_size );
+		ImGui::Button( "##btn"s, size );
 		ImGui::PopStyleColor();
 	}
 
-	void draw_frame( GW::Item const* item, Config const& config )
+	void draw_button(
+		ImVec4 const& border,
+		ImVec2 const& size,
+		Mouse& mouse,
+		ConsumablesMgr& mgr,
+		GW::ItemModelID const model_id )
+	{
+		auto const label =
+			mgr.is_active_perm( model_id ) ? "P"
+			: mgr.is_active_temp( model_id ) ? mgr.objective ? "O" : "T"
+			: "";
+
+		ImGui::PushStyleColor( ImGuiCol_Border, border );
+
+		ImGui::Button( label, size );
+		if ( ImGui::IsItemHovered() && ImGui::IsKeyDown( ImGuiKey_LeftShift ) )
+		{
+			mouse.suppress();
+
+			if ( ImGui::GetIO().MouseClicked[0] )
+			{
+				if ( mgr.is_active_temp( model_id ) )
+				{
+					mgr.activate_perm( model_id );
+				}
+				else mgr.activate_temp( model_id );
+			}
+
+			if ( ImGui::GetIO().MouseClicked[1] )
+			{
+				mgr.deactivate_perm( model_id );
+				mgr.deactivate_temp( model_id );
+			}
+		}
+
+		ImGui::PopStyleColor();
+	}
+
+	void draw_item(
+		GW::Item const* item,
+		Config const& config,
+		Mouse& mouse,
+		ConsumablesMgr& mgr )
 	{
 		if ( item == nullptr )
 		{
-			draw_frame( config.no_item, config );
+			draw_frame( config.no_item, config.slot_size );
 		}
 		else if ( auto const* cons = is_Consumable( item->model_id ) )
 		{
-			draw_frame( get_color( *cons, config ), config );
+			auto const color = get_color( *cons, config );
+			draw_button( color, config.slot_size, mouse, mgr, item->model_id );
 		}
-		else draw_frame( config.unknown_item, config );
+		else draw_frame( config.unknown_item, config.slot_size );
 	}
 
-	void draw_bag( GW::Bag const* bag, Config const& config, int& column )
+	void draw_bag(
+		GW::Bag const* bag,
+		Config const& config,
+		Mouse& mouse,
+		ConsumablesMgr& mgr,
+		int& column )
 	{
 		if ( bag == nullptr )
 			return;
 
-		for ( auto const* item : bag->items )
+		for ( auto it = 0u; it < bag->items.size(); ++it )
 		{
-			draw_frame( item, config );
+			ImGui::PushID( it );
+			draw_item( bag->items[it], config, mouse, mgr );
+			ImGui::PopID();
 
 			if ( ++column != config.items_per_row  )
 			{
@@ -196,8 +252,12 @@ namespace {
 }
 
 
-April::Gui::Inventory::Inventory( std::shared_ptr<Config> config )
-	: config{ config }
+April::Gui::Inventory::Inventory(
+	std::shared_ptr<Config>          config,
+	std::shared_ptr<FontAtlas const> fonts,
+	std::shared_ptr<Mouse>           mouse,
+	std::shared_ptr<ConsumablesMgr>  mgr )
+	: config{ config }, fonts{ fonts }, mouse{ mouse }, mgr{ mgr }
 {
 }
 
@@ -211,6 +271,7 @@ void April::Gui::Inventory::Display()
 
 	if ( ImGui::Begin( config->window ) )
 	{
+		ImGui::PushFont( fonts->Get( config->font ) );
 		ImGui::PushStyleColor( ImGuiCol_Button, Invisible() );
 		ImGui::PushStyleColor( ImGuiCol_ButtonActive, Invisible() );
 		ImGui::PushStyleColor( ImGuiCol_ButtonHovered, Invisible() );
@@ -220,17 +281,23 @@ void April::Gui::Inventory::Display()
 		if ( config->collapsed_view ) // draw concatenated bags
 		{
 			auto column = 0;
-			for ( auto const* bag : *bags )
+			for ( auto it = 0u; it < bags->size(); ++it )
 			{
-				draw_bag( bag, *config, column );
+				ImGui::PushID( it );
+				draw_bag( (*bags)[it], *config, *mouse, *mgr, column );
+				ImGui::PopID();
 			}
 		}
 		else // draw bags separately with spacing between them
 		{
-			for ( auto const* bag : *bags )
+			for ( auto it = 0u; it < bags->size(); ++it )
 			{
 				auto column = 0;
-				draw_bag( bag, *config, column );
+
+				ImGui::PushID( it );
+				draw_bag( (*bags)[it], *config, *mouse, *mgr, column );
+				ImGui::PopID();
+
 				ImGui::NewLine();
 				ImGui::MoveCursorPosY(
 					static_cast<float>( config->bag_spacing ) );
@@ -239,6 +306,7 @@ void April::Gui::Inventory::Display()
 
 		ImGui::PopStyleVar( 2 );
 		ImGui::PopStyleColor( 3 );
+		ImGui::PopFont();
 	}
 	ImGui::End();
 }

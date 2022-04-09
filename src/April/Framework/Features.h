@@ -22,7 +22,7 @@ namespace April {
 			std::unique_ptr<Gui::Inventory>,
 			std::unique_ptr<Gui::Skillbar>,
 			std::unique_ptr<Gui::UwTimer>,
-			std::unique_ptr<Module::ConsumablesMgr>,
+			std::shared_ptr<Module::ConsumablesMgr>,
 			std::unique_ptr<Module::UwTimer>,
 			std::shared_ptr<FontAtlas>,
 			std::shared_ptr<Mouse>,

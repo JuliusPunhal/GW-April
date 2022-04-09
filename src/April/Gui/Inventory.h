@@ -1,5 +1,9 @@
 #pragma once
 
+#include "April/Module/ConsumablesMgr.h"
+#include "April/Utility/FontAtlas.h"
+#include "April/Utility/Mouse.h"
+
 #include "ImGui/ImGui.hpp"
 
 #include <memory>
@@ -25,6 +29,7 @@ namespace April::Gui {
 			ImVec4 can_not_use = White();
 			ImVec4 special_state = Yellow();
 
+			Font   font = FontInfo{ "ABeeZee-Regular.ttf", 28 };
 			Window window = {
 				"Inventory",
 				false,
@@ -40,13 +45,20 @@ namespace April::Gui {
 		};
 
 
-		Inventory( std::shared_ptr<Config> );
+		Inventory(
+			std::shared_ptr<Config>,
+			std::shared_ptr<FontAtlas const>,
+			std::shared_ptr<Mouse>,
+			std::shared_ptr<Module::ConsumablesMgr> );
 
 		void Display();
 
 
 	private:
-		std::shared_ptr<Config> config;
+		std::shared_ptr<Config>                 config;
+		std::shared_ptr<FontAtlas const>        fonts;
+		std::shared_ptr<Mouse>                  mouse;
+		std::shared_ptr<Module::ConsumablesMgr> mgr;
 	};
 
 }

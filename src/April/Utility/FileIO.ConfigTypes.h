@@ -20,7 +20,7 @@ namespace April::Gui {
 		items_per_row, collapsed_view, slot_size, bag_spacing,
 		no_item, unknown_item, wrong_instance_type, suggest_use, need_not_use,
 		can_not_use, special_state,
-		window )
+		font, window )
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 		Skillbar::Config,

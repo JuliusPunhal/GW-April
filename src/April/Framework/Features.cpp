@@ -51,6 +51,7 @@ auto April::make_Features() -> Features
 {
 	ImGui::GetIO().IniFilename = "GW-April.ini";
 
+	auto const consumables_mgr = std::make_shared<Module::ConsumablesMgr>();
 	auto const font_atlas = std::make_shared<FontAtlas>();
 	auto const mouse = std::make_shared<Mouse>();
 	auto const reduced_recharge = std::make_shared<ReducedSkillRecharge>();
@@ -67,7 +68,10 @@ auto April::make_Features() -> Features
 			font_atlas,
 			mouse ),
 		std::make_unique<Gui::Inventory>(
-			from_json<Gui::Inventory::Config>( json ) ),
+			from_json<Gui::Inventory::Config>( json ),
+			font_atlas,
+			mouse,
+			consumables_mgr ),
 		std::make_unique<Gui::Skillbar>(
 			from_json<Gui::Skillbar::Config>( json ),
 			font_atlas,
@@ -76,7 +80,7 @@ auto April::make_Features() -> Features
 			from_json<Gui::UwTimer::Config>( json ),
 			mouse,
 			uwtimes ),
-		std::make_unique<Module::ConsumablesMgr>(),
+		consumables_mgr,
 		std::make_unique<Module::UwTimer>( uwtimes ),
 		font_atlas,
 		mouse,

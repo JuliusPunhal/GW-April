@@ -3,9 +3,12 @@
 
 #include "ImGui/ImGui.hpp"
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
+	HWND, UINT, WPARAM, LPARAM );
+
 
 bool April::WndProc(
-	HWND, UINT msg, WPARAM wParam, LPARAM, Mouse const& mouse )
+	HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, Mouse const& mouse )
 {
 	// This is basically a copy of ImGui_ImplWin32_WndProcHandler() but
 	// ::SetCapture() and ::ReleaseCapture() seem to mess with window-
@@ -52,30 +55,24 @@ bool April::WndProc(
 			return false;
 		}
 		case WM_MOUSEWHEEL:
-		{
-			auto const scroll_distance = GET_WHEEL_DELTA_WPARAM( wParam );
-			io.MouseWheel += (float)scroll_distance / (float)WHEEL_DELTA;
-			return mouse.is_suppressed();
-		}
 		case WM_MOUSEHWHEEL:
 		{
-			auto const scroll_distance = GET_WHEEL_DELTA_WPARAM( wParam );
-			io.MouseWheelH += (float)scroll_distance / (float)WHEEL_DELTA;
+			ImGui_ImplWin32_WndProcHandler( hWnd, msg, wParam, lParam );
 			return mouse.is_suppressed();
 		}
 		case WM_KEYDOWN:
 		case WM_SYSKEYDOWN:
-			if ( wParam < 256 )
-				io.KeysDown[wParam] = 1;
+		case WM_CHAR:
+		{
+			ImGui_ImplWin32_WndProcHandler( hWnd, msg, wParam, lParam );
 			return io.WantTextInput;
+		}
 		case WM_KEYUP:
 		case WM_SYSKEYUP:
-			if ( wParam < 256 )
-				io.KeysDown[wParam] = 0;
+		{
+			ImGui_ImplWin32_WndProcHandler( hWnd, msg, wParam, lParam );
 			return false;
-		case WM_CHAR:
-			io.AddInputCharacter( (unsigned int)wParam );
-			return io.WantTextInput;
+		}
 	}
 	return false;
 }
