@@ -17,6 +17,20 @@ namespace {
 	};
 
 	template<typename T, typename = void>
+	struct has_ChatUpdate : std::false_type {};
+
+	template<typename T>
+	struct has_ChatUpdate<
+		T,
+		std::void_t<decltype(
+			std::declval<T>().Update(
+				std::declval<GW::HookStatus&>(),
+				std::declval<GW::SendChatInfo>() ) )>>
+		: std::true_type
+	{
+	};
+
+	template<typename T, typename = void>
 	struct has_Display : std::false_type {};
 
 	template<typename T>
@@ -32,6 +46,15 @@ namespace {
 		if constexpr ( has_Update<typename T::element_type>::value )
 		{
 			ft->Update();
+		}
+	}
+
+	template<typename T>
+	void chat_update( T& ft, GW::HookStatus& status, GW::SendChatInfo info )
+	{
+		if constexpr ( has_ChatUpdate<typename T::element_type>::value )
+		{
+			ft->Update( status, info );
 		}
 	}
 
@@ -61,25 +84,38 @@ auto April::make_Features() -> Features
 	font_atlas->LoadRequestedFonts(); // loads default font
 
 	auto const json = load_json_from_file();
+	auto const cfg_gui_instancetimer =
+		from_json<Gui::InstanceTimer::Config>( json );
+	auto const cfg_gui_inventory = from_json<Gui::Inventory::Config>( json );
+	auto const cfg_gui_skillbar = from_json<Gui::Skillbar::Config>( json );
+	auto const cfg_gui_uwtimer = from_json<Gui::UwTimer::Config>( json );
 
 	return Features{
 		std::make_unique<Gui::InstanceTimer>(
-			from_json<Gui::InstanceTimer::Config>( json ),
+			cfg_gui_instancetimer,
 			font_atlas,
 			mouse ),
 		std::make_unique<Gui::Inventory>(
-			from_json<Gui::Inventory::Config>( json ),
+			cfg_gui_inventory,
 			font_atlas,
 			mouse,
 			consumables_mgr ),
 		std::make_unique<Gui::Skillbar>(
-			from_json<Gui::Skillbar::Config>( json ),
+			cfg_gui_skillbar,
 			font_atlas,
 			reduced_recharge ),
 		std::make_unique<Gui::UwTimer>(
-			from_json<Gui::UwTimer::Config>( json ),
+			cfg_gui_uwtimer,
 			mouse,
 			uwtimes ),
+		std::make_unique<Module::ChatCommands>(
+			from_json<Module::ChatCommands::Config>( json ),
+			consumables_mgr,
+			std::forward_as_tuple(
+				cfg_gui_instancetimer,
+				cfg_gui_inventory,
+				cfg_gui_skillbar,
+				cfg_gui_uwtimer ) ),
 		consumables_mgr,
 		std::make_unique<Module::UwTimer>( uwtimes ),
 		font_atlas,
@@ -91,6 +127,17 @@ auto April::make_Features() -> Features
 void April::Update( Features& features )
 {
 	std::apply( []( auto&... ft ) { (..., update( ft )); }, features );
+}
+
+void April::Update(
+	Features& features, GW::HookStatus& status, GW::SendChatInfo info )
+{
+	std::apply(
+		[&status, info]( auto&... ft )
+		{
+			(..., chat_update( ft, status, info ));
+		},
+		features );
 }
 
 void April::Display( Features& features )

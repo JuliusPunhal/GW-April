@@ -1,6 +1,7 @@
 #pragma once
 
 #include "April/Gui/Skillbar.h"
+#include "April/Module/ChatCommands.h"
 #include "April/Utility/FontAtlas.h"
 #include "April/Utility/sorted_vector.h"
 
@@ -14,6 +15,19 @@
 
 
 namespace nlohmann {
+
+	template<>
+	struct adl_serializer<April::Module::ChatCommands::Abbreviation> {
+		using Abbreviation = April::Module::ChatCommands::Abbreviation;
+
+		static void to_json( json& j, Abbreviation const& );
+		static auto from_json( json const& ) -> Abbreviation;
+
+
+	private:
+		static constexpr auto abbr_key = "abbreviated";
+		static constexpr auto exp_key = "expanded";
+	};
 
 	template<typename T, typename Comp>
 	struct adl_serializer<April::sorted_vector<T, Comp>> {

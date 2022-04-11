@@ -4,6 +4,7 @@
 #include "April/Gui/Inventory.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
+#include "April/Module/ChatCommands.h"
 #include "April/Module/ConsumablesMgr.h"
 #include "April/Module/UwTimer.h"
 #include "April/Utility/FontAtlas.h"
@@ -22,6 +23,7 @@ namespace April {
 			std::unique_ptr<Gui::Inventory>,
 			std::unique_ptr<Gui::Skillbar>,
 			std::unique_ptr<Gui::UwTimer>,
+			std::unique_ptr<Module::ChatCommands>,
 			std::shared_ptr<Module::ConsumablesMgr>,
 			std::unique_ptr<Module::UwTimer>,
 			std::shared_ptr<FontAtlas>,
@@ -32,6 +34,7 @@ namespace April {
 	auto make_Features() -> Features;
 
 	void Update( Features& );
+	void Update( Features&, GW::HookStatus&, GW::SendChatInfo );
 	void Display( Features& );
 
 

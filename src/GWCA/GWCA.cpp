@@ -353,6 +353,11 @@ void GW::IdentifyItem( GW::Item const& item, GW::Item const& kit )
 		0xC, GAME_CMSG_ITEM_IDENTIFY, kit.item_id, item.item_id );
 }
 
+void GW::OpenXunlaiWindow()
+{
+	GW::GameThread::Enqueue( [](){ GW::Items::OpenXunlaiWindow(); } );
+}
+
 bool GW::GetIsPlayerLoaded()
 {
 	auto const* party = GW::PartyMgr::GetPartyInfo();
@@ -430,6 +435,18 @@ void GW::WriteChat( GW::ChatChannel const channel, std::wstring const& msg )
 {
 	GW::Chat::WriteChat(
 		static_cast<GW::Chat::Channel>( channel.channel ), msg.c_str() );
+}
+
+void GW::RegisterSendChatCallback(
+	GW::HookEntry* entry,
+	std::function<void( GW::HookStatus&, SendChatInfo )> const& fn )
+{
+	GW::Chat::RegisterSendChatCallback(
+		entry,
+		[fn]( GW::HookStatus* status, GW::Chat::Channel, wchar_t* msg )
+		{
+			fn( *status, { msg - 1 } );
+		} );
 }
 
 void GW::detail::RegisterCallback(

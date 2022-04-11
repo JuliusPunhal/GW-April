@@ -85,6 +85,13 @@ namespace {
 		GW::RegisterCallback<SkillRecharge>(         &entry, on_packet );
 		GW::RegisterCallback<SkillRecharged>(        &entry, on_packet );
 
+		GW::RegisterSendChatCallback(
+			&entry,
+			[]( GW::HookStatus& status, GW::SendChatInfo info )
+			{
+				April::Update( *features, status, info );
+			} );
+
 		gw_wndproc =
 			(WNDPROC)SetWindowLongPtr(
 				GW::GetWindowHandle(), GWLP_WNDPROC, (LONG)WndProc );

@@ -4,6 +4,7 @@
 #include "April/Gui/Inventory.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
+#include "April/Module/ChatCommands.h"
 #include "April/Utility/FileIO.BasicTypes.h"
 
 #include "nlohmann/json.hpp"
@@ -29,5 +30,11 @@ namespace April::Gui {
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 		UwTimer::Config, window, auto_set_visibility )
+
+}
+
+namespace April::Module {
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( ChatCommands::Config, abbreviations )
 
 }

@@ -199,6 +199,8 @@ namespace GW {
 	void UseItem( GW::Item const& );
 	void IdentifyItem( GW::Item const&, GW::Item const& ident_kit );
 
+	void OpenXunlaiWindow();
+
 }
 
 // Party
@@ -229,6 +231,15 @@ namespace GW {
 	void WriteChat( ChatChannel, const wchar_t* msg );
 	void WriteChat( ChatChannel, std::string const& msg );
 	void WriteChat( ChatChannel, std::wstring const& msg );
+
+
+	struct SendChatInfo {
+		wchar_t* msg; // msg[0] == channel, e.g. !, ", /, ...
+	};
+
+	void RegisterSendChatCallback(
+		GW::HookEntry*,
+		std::function<void( GW::HookStatus&, SendChatInfo )> const& );
 
 }
 
