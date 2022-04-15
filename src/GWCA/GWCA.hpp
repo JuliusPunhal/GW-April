@@ -114,6 +114,12 @@ namespace GW {
 
 	auto GetPlayerAttribute( GW::AttributeID ) -> GW::Attribute const*;
 
+	int GetHealthPoints( GW::AgentLiving const& );
+	int GetEnergyPoints( GW::AgentLiving const& );
+
+	// returns 0...1 percentage how much energy is _not_ affected by overcast
+	float GetMaxAvailableEnergy( GW::AgentLiving const& );
+
 	auto GetMorale( GW::AgentID ) -> Morale;
 	auto GetMorale() -> Morale;
 

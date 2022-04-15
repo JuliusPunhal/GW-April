@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Gui/HealthEnergy.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Module/ChatCommands.h"
 #include "April/Utility/FontAtlas.h"
@@ -97,6 +98,16 @@ namespace April {
 }
 
 namespace April::Gui {
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		Energybar::Config::PipsAlignment, left, right )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		Healthbar::Config::Colors,
+		standard, degen_hexed, deep_wounded, bleeding, poisoned )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		Healthbar::Config::PipsAlignment, left, right )
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 		Skillbar::Config::Threshold, uptime, color )

@@ -84,6 +84,8 @@ auto April::make_Features() -> Features
 	font_atlas->LoadRequestedFonts(); // loads default font
 
 	auto const json = load_json_from_file();
+	auto const cfg_gui_energybar = from_json<Gui::Energybar::Config>( json );
+	auto const cfg_gui_healthbar = from_json<Gui::Healthbar::Config>( json );
 	auto const cfg_gui_instancetimer =
 		from_json<Gui::InstanceTimer::Config>( json );
 	auto const cfg_gui_inventory = from_json<Gui::Inventory::Config>( json );
@@ -91,6 +93,12 @@ auto April::make_Features() -> Features
 	auto const cfg_gui_uwtimer = from_json<Gui::UwTimer::Config>( json );
 
 	return Features{
+		std::make_unique<Gui::Energybar>(
+			cfg_gui_energybar,
+			font_atlas ),
+		std::make_unique<Gui::Healthbar>(
+			cfg_gui_healthbar,
+			font_atlas ),
 		std::make_unique<Gui::InstanceTimer>(
 			cfg_gui_instancetimer,
 			font_atlas,
@@ -112,6 +120,8 @@ auto April::make_Features() -> Features
 			from_json<Module::ChatCommands::Config>( json ),
 			consumables_mgr,
 			std::forward_as_tuple(
+				cfg_gui_energybar,
+				cfg_gui_healthbar,
 				cfg_gui_instancetimer,
 				cfg_gui_inventory,
 				cfg_gui_skillbar,

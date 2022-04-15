@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Gui/HealthEnergy.h"
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Inventory.h"
 #include "April/Gui/Skillbar.h"
@@ -19,6 +20,8 @@ namespace April {
 
 	using Features =
 		std::tuple<
+			std::unique_ptr<Gui::Energybar>,
+			std::unique_ptr<Gui::Healthbar>,
 			std::unique_ptr<Gui::InstanceTimer>,
 			std::unique_ptr<Gui::Inventory>,
 			std::unique_ptr<Gui::Skillbar>,

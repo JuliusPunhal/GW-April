@@ -13,6 +13,15 @@
 namespace April::Gui {
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		Energybar::Config,
+		size, border_color, background_color, color, color_overcast, alignment,
+		font, window )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		Healthbar::Config,
+		size, border_color, background_color, colors, alignment, font, window )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 		InstanceTimer::Config,
 		font, label_color, shadow_color, shadow_offset, window )
 

@@ -23,6 +23,8 @@ target_sources(
 		src/April/Framework/Features.cpp
 		src/April/Framework/WndProc.h
 		src/April/Framework/WndProc.cpp
+		src/April/Gui/HealthEnergy.h
+		src/April/Gui/HealthEnergy.cpp
 		src/April/Gui/InstanceTimer.h
 		src/April/Gui/InstanceTimer.cpp
 		src/April/Gui/Inventory.h

@@ -156,6 +156,21 @@ auto GW::GetPlayerAttribute( GW::AttributeID const id ) -> GW::Attribute const*
 	return &player_attrs->attribute[static_cast<int>( id )];
 }
 
+int GW::GetHealthPoints( GW::AgentLiving const& agent )
+{
+	return static_cast<int>( agent.hp * agent.max_hp );
+}
+
+int GW::GetEnergyPoints( GW::AgentLiving const& agent )
+{
+	return static_cast<int>( agent.energy * agent.max_energy );
+}
+
+float GW::GetMaxAvailableEnergy( GW::AgentLiving const& agent )
+{
+	return *reinterpret_cast<float const*>( &agent.h0118 );
+}
+
 auto GW::GetMorale( GW::AgentID const agent_id ) -> Morale
 {
 	struct Sub {
