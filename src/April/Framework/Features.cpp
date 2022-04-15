@@ -74,8 +74,13 @@ auto April::make_Features() -> Features
 {
 	ImGui::GetIO().IniFilename = "GW-April.ini";
 
+	auto const json = load_json_from_file();
+
 	auto const consumables_mgr = std::make_shared<Module::ConsumablesMgr>();
 	auto const font_atlas = std::make_shared<FontAtlas>();
+	auto const item_filter =
+		std::make_shared<Module::ItemFilter>(
+			from_json<Module::ItemFilter::Config>( json ) );
 	auto const mouse = std::make_shared<Mouse>();
 	auto const reduced_recharge = std::make_shared<ReducedSkillRecharge>();
 	auto const uwtimes = std::make_shared<UwTimesHistory>();
@@ -83,7 +88,6 @@ auto April::make_Features() -> Features
 	font_atlas->Get( FontInfo{ "ABeeZee-Regular.ttf", 16 } );
 	font_atlas->LoadRequestedFonts(); // loads default font
 
-	auto const json = load_json_from_file();
 	auto const cfg_gui_energybar = from_json<Gui::Energybar::Config>( json );
 	auto const cfg_gui_healthbar = from_json<Gui::Healthbar::Config>( json );
 	auto const cfg_gui_instancetimer =
@@ -119,6 +123,7 @@ auto April::make_Features() -> Features
 		std::make_unique<Module::ChatCommands>(
 			from_json<Module::ChatCommands::Config>( json ),
 			consumables_mgr,
+			item_filter,
 			std::forward_as_tuple(
 				cfg_gui_energybar,
 				cfg_gui_healthbar,
@@ -127,11 +132,18 @@ auto April::make_Features() -> Features
 				cfg_gui_skillbar,
 				cfg_gui_uwtimer ) ),
 		consumables_mgr,
+		item_filter,
 		std::make_unique<Module::UwTimer>( uwtimes ),
 		font_atlas,
 		mouse,
 		reduced_recharge
 	};
+}
+
+void April::Shutdown( Features& features )
+{
+	using ItemFilter = std::shared_ptr<Module::ItemFilter>;
+	std::get<ItemFilter>( features )->SpawnSuppressedItems();
 }
 
 void April::Update( Features& features )

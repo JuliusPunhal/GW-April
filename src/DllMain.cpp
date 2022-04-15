@@ -34,6 +34,16 @@ namespace {
 		return CallWindowProc( gw_wndproc, hWnd, msg, wParam, lParam );
 	}
 
+	void RenderCallback_Shutdown( IDirect3DDevice9* )
+	{
+		ImGui_ImplDX9_Shutdown();
+		ImGui_ImplWin32_Shutdown();
+		ImGui::DestroyContext();
+
+		GW::DisableHooks();
+		running = false;
+	}
+
 	void RenderCallback( IDirect3DDevice9* )
 	{
 		std::get<std::shared_ptr<April::Mouse>>( *features )->restore();
@@ -54,12 +64,11 @@ namespace {
 
 		if ( GetAsyncKeyState( VK_END ) )
 		{
-			ImGui_ImplDX9_Shutdown();
-			ImGui_ImplWin32_Shutdown();
-			ImGui::DestroyContext();
+			April::Shutdown( *features );
 
-			GW::DisableHooks();
-			running = false;
+			// Delays shutdown by one frame so that Enqueue()s in
+			// April::Shutdown() are called.
+			GW::SetRenderCallback( RenderCallback_Shutdown );
 		}
 	}
 
@@ -72,11 +81,16 @@ namespace {
 		features = std::make_unique<April::Features>( April::make_Features() );
 
 		auto entry = GW::HookEntry{};
-		auto on_packet =
-			[]( auto const& packet ) { April::Update( *features, packet ); };
+		auto on_packet = []( GW::HookStatus& status, auto const& packet )
+		{
+			April::Update( *features, packet );
+			April::Update( *features, status, packet );
+		};
 
 		using namespace GW::Packet::StoC;
+		GW::RegisterCallback<AgentAdd>(              &entry, on_packet );
 		GW::RegisterCallback<AgentName>(             &entry, on_packet );
+		GW::RegisterCallback<AgentRemove>(           &entry, on_packet );
 		GW::RegisterCallback<AgentUpdateAllegiance>( &entry, on_packet );
 		GW::RegisterCallback<MapLoaded>(             &entry, on_packet );
 		GW::RegisterCallback<ObjectiveAdd>(          &entry, on_packet );

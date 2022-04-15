@@ -19,14 +19,15 @@ using namespace std::string_view_literals;
 
 namespace {
 
-	constexpr auto cmd_openxunlai =      "/april_open_xunlai";
-	constexpr auto cmd_pcons_perm_on =   "/april_pcons_perm_on";
-	constexpr auto cmd_pcons_perm_off =  "/april_pcons_perm_off";
-	constexpr auto cmd_pcons_temp_on =   "/april_pcons_temp_on";
-	constexpr auto cmd_pcons_temp_off =  "/april_pcons_temp_off";
-	constexpr auto cmd_pcons_objective = "/april_pcons_objective";
-	constexpr auto cmd_reset_dx9 =       "/april_reset_dx9";
-	constexpr auto cmd_toggle_window =   "/april_toggle_window";
+	constexpr auto cmd_openxunlai =       "/april_open_xunlai";
+	constexpr auto cmd_pcons_perm_on =    "/april_pcons_perm_on";
+	constexpr auto cmd_pcons_perm_off =   "/april_pcons_perm_off";
+	constexpr auto cmd_pcons_temp_on =    "/april_pcons_temp_on";
+	constexpr auto cmd_pcons_temp_off =   "/april_pcons_temp_off";
+	constexpr auto cmd_pcons_objective =  "/april_pcons_objective";
+	constexpr auto cmd_reset_dx9 =        "/april_reset_dx9";
+	constexpr auto cmd_suppressed_items = "/april_show_suppressed_items";
+	constexpr auto cmd_toggle_window =    "/april_toggle_window";
 
 
 	template<typename Iter_t>
@@ -191,12 +192,14 @@ namespace {
 
 
 April::Module::ChatCommands::ChatCommands(
-	std::shared_ptr<Config const> config,
+	std::shared_ptr<Config const>   config,
 	std::shared_ptr<ConsumablesMgr> consumables_mgr,
-	GuiConfigs gui_configs )
+	std::shared_ptr<ItemFilter>     item_filter,
+	GuiConfigs                      gui_configs )
 	:
 	config{ config },
 	consumables_mgr{ consumables_mgr },
+	item_filter{ item_filter },
 	gui_configs{ gui_configs }
 {
 }
@@ -275,6 +278,21 @@ void April::Module::ChatCommands::Update(
 			}
 			else GW::WriteChat( GW::EMOTE, "Reset Consumables-Objective" );
 		}
+		else if ( cmd == cmd_suppressed_items )
+		{
+			auto chat_msg = [&]() -> std::string
+			{
+				if ( item_filter->size() == 1 )
+					return "Releaving 1 item.";
+
+				auto str = std::to_string( item_filter->size() );
+				return "Revealing " + str + " items.";
+			};
+
+			GW::WriteChat( GW::EMOTE, chat_msg() );
+			item_filter->SpawnSuppressedItems();
+			status.blocked = true;
+		}
 		else if ( cmd == cmd_toggle_window )
 		{
 			if ( args.substr( args.size() - 5, 5 ) == " show" )
@@ -350,14 +368,15 @@ auto April::Module::ChatCommands::Config::default_Abbreviations()
 
 	return std::vector<Abbreviation>{
 		// Commands
-		make( "/x",      cmd_openxunlai ),
-		make( "/sp",     cmd_pcons_perm_on ),
-		make( "/sp_off", cmd_pcons_perm_off ),
-		make( "/s",      cmd_pcons_temp_on ),
-		make( "/s_off",  cmd_pcons_temp_off ),
-		make( "/o",      cmd_pcons_objective ),
-		make( "/texmod", cmd_reset_dx9 ),
-		make( "/wnd",    cmd_toggle_window ),
+		make( "/x",               cmd_openxunlai ),
+		make( "/sp",              cmd_pcons_perm_on ),
+		make( "/sp_off",          cmd_pcons_perm_off ),
+		make( "/s",               cmd_pcons_temp_on ),
+		make( "/s_off",           cmd_pcons_temp_off ),
+		make( "/o",               cmd_pcons_objective ),
+		make( "/texmod",          cmd_reset_dx9 ),
+		make( "/show_suppressed", cmd_suppressed_items ),
+		make( "/wnd",             cmd_toggle_window ),
 
 		// Consumables
 		make( "cupcake",   Cupcakes ),

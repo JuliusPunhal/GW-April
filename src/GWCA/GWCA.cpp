@@ -23,10 +23,28 @@
 #include "GWCA/Managers/UIMgr.h"
 #pragma warning(pop)
 
+#include <tuple>
+#include <type_traits>
+#include <vector>
+
 using namespace GW::literals;
 
 
 namespace {
+
+	template<typename T, typename Packet_t, typename = void>
+	struct has_PacketUpdate : std::false_type {};
+
+	template<typename T, typename Packet_t>
+	struct has_PacketUpdate<
+		T,
+		Packet_t,
+		std::void_t<decltype(
+			std::declval<T>().Update( std::declval<Packet_t&>() ) )>>
+		: std::true_type
+	{
+	};
+
 
 	class Drunk {
 	public:
@@ -75,6 +93,78 @@ namespace {
 		GW::ms32 duration = 0_ms;
 	} g_Drunk;
 
+
+	class ItemOwners {
+	public:
+		ItemOwners() = default;
+
+		auto GetItemOwner( GW::ItemID const id ) const
+			-> std::optional<GW::AgentID>
+		{
+			auto const it = std::find( owners.begin(), owners.end(), id );
+			if ( it == owners.end() )
+				return std::nullopt;
+
+			return it->owner;
+		}
+
+		void Update( GW::Packet::StoC::ItemGeneral_ReuseID const& packet )
+		{
+			auto const it =
+				std::find( owners.begin(), owners.end(), packet.item_id );
+
+			if ( it != owners.end() )
+				owners.erase( it );
+		}
+
+		void Update( GW::Packet::StoC::MapLoaded const& )
+		{
+			owners.clear();
+		}
+
+		void Update( GW::Packet::StoC::UpdateItemOwner const& packet )
+		{
+			auto const it =
+				std::find( owners.begin(), owners.end(), packet.item_id );
+
+			if ( it == owners.end() )
+			{
+				owners.push_back( { packet.item_id, packet.owner_agent_id } );
+			}
+			else it->owner = packet.owner_agent_id;
+		}
+
+
+	private:
+		struct Owner {
+			GW::ItemID  item;
+			GW::AgentID owner;
+
+			bool operator==( GW::ItemID const id ) const { return item == id; }
+		};
+
+		std::vector<Owner> owners;
+	} g_ItemOwners;
+
+
+	template<typename Module_t, typename Packet_t>
+	void impl_UpdateModules( Module_t& mod, Packet_t const& packet  )
+	{
+		if constexpr ( has_PacketUpdate<Module_t, Packet_t>::value )
+			mod.Update( packet );
+	}
+
+	template<typename Packet_t>
+	void UpdateModules( Packet_t const& packet )
+	{
+		std::apply(
+			[&packet]( auto&... mod )
+			{
+				(..., impl_UpdateModules( mod, packet ));
+			},
+			std::forward_as_tuple( g_Drunk, g_ItemOwners ) );
+	}
+
 }
 
 
@@ -87,12 +177,19 @@ bool GW::InitializeEx()
 		return false;
 
 	static auto entry = GW::HookEntry{};
-	auto on_packet = []( auto const& packet ) { g_Drunk.Update( packet ); };
+	auto on_packet = []( auto const& packet ) { UpdateModules( packet ); };
 
+	GW::RegisterCallback<ItemGeneral_ReuseID>( &entry, on_packet );
 	GW::RegisterCallback<MapLoaded>( &entry, on_packet );
+	GW::RegisterCallback<UpdateItemOwner>( &entry, on_packet );
 	GW::RegisterCallback<UpdateTitle>( &entry, on_packet );
 
 	return success;
+}
+
+void GW::detail::Enqueue( std::function<void()> const& fn )
+{
+	GW::GameThread::Enqueue( fn );
 }
 
 auto GW::GetAsAgentGadget( GW::Agent const* agent ) -> GW::AgentGadget const*
@@ -328,6 +425,11 @@ bool GW::IsIdentified( GW::Item const& item )
 	return item.interaction & 1;
 }
 
+auto GW::GetItemArray() -> GW::ItemArray const&
+{
+	return GameContext::instance()->items->item_array;
+}
+
 auto GW::GetInventoryBags() -> InventoryBags const*
 {
 	auto const* inventory = GameContext::instance()->items->inventory;
@@ -335,6 +437,32 @@ auto GW::GetInventoryBags() -> InventoryBags const*
 		return nullptr;
 
 	return reinterpret_cast<InventoryBags const*>( &inventory->backpack );
+}
+
+auto GW::GetItemOwner( GW::ItemID const id ) -> std::optional<GW::AgentID>
+{
+	return g_ItemOwners.GetItemOwner( id );
+}
+
+auto GW::GetItemOwner( GW::Item const& item ) -> std::optional<GW::AgentID>
+{
+	return GW::GetItemOwner( item.item_id );
+}
+
+auto GW::GetRarity( GW::Item const& item ) -> Rarity
+{
+	if ( item.complete_name_enc == nullptr )
+		return Rarity::Unknown;
+
+	switch ( item.complete_name_enc[0] )
+	{
+		case 2621: return Rarity::White;
+		case 2623: return Rarity::Blue;
+		case 2626: return Rarity::Purple;
+		case 2624: return Rarity::Gold;
+		case 2627: return Rarity::Green;
+		default: return Rarity::Unknown;
+	}
 }
 
 auto GW::SearchInventory( GW::ItemModelID const id ) -> GW::Item const*
@@ -470,6 +598,11 @@ void GW::detail::RegisterCallback(
 	GW::HookCallback<Packet::StoC::PacketBase*> const& fn )
 {
 	GW::StoC::RegisterPacketCallback( entry, header, fn );
+}
+
+void GW::detail::EmulatePacket( GW::Packet::StoC::PacketBase* packet )
+{
+	GW::StoC::EmulatePacket( packet );
 }
 
 auto GW::GetWindowHandle() -> HWND

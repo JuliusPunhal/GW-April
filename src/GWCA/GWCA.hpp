@@ -55,6 +55,7 @@ using DWORD = unsigned long;
 
 #include <array>
 #include <chrono>
+#include <optional>
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -64,6 +65,11 @@ using DWORD = unsigned long;
 namespace GW {
 
 	bool InitializeEx();
+
+
+	namespace detail {
+		void Enqueue( std::function<void()> const& );
+	}
 
 }
 
@@ -194,11 +200,19 @@ namespace GW {
 
 	using InventoryBags = std::array<GW::Bag const*, 4>;
 	using ItemModelID = decltype( GW::Item::model_id );
+	enum class Rarity : char {
+		White, Blue, Purple, Gold, Green, Unknown
+	};
 
 
 	bool IsIdentified( GW::Item const& );
 
+	auto GetItemArray() -> GW::ItemArray const&;
 	auto GetInventoryBags() -> InventoryBags const*;
+
+	auto GetItemOwner( GW::ItemID ) -> std::optional<GW::AgentID>;
+	auto GetItemOwner( GW::Item const& ) -> std::optional<GW::AgentID>;
+	auto GetRarity( GW::Item const& ) -> GW::Rarity;
 
 	auto SearchInventory( GW::ItemModelID ) -> GW::Item const*;
 
@@ -288,6 +302,24 @@ namespace GW {
 			} );
 	}
 
+
+	namespace detail {
+		void EmulatePacket( GW::Packet::StoC::PacketBase* );
+	}
+
+	template<typename T>
+	void EmulatePacket( T const& packet )
+	{
+		using namespace GW::Packet::StoC;
+
+		GW::detail::Enqueue(
+			[cpy = packet]() mutable
+			{
+				cpy.header = T::STATIC_HEADER;
+				detail::EmulatePacket( reinterpret_cast<PacketBase*>( &cpy ) );
+			} );
+	}
+
 }
 
 // Render
@@ -322,6 +354,9 @@ namespace GW::Constants::ItemID {
 	// Consumables
 	inline constexpr int IdentificationKit = 2989;
 	inline constexpr int IdentificationKit_Superior = 5899;
+	inline constexpr int SalvageKit = 2992;
+	inline constexpr int SalvageKit_Expert = 2991;
+	inline constexpr int SalvageKit_Superior = 5900;
 
 	// Alcohol
 	inline constexpr int BattleIsleIcedTea = 36682;
@@ -359,9 +394,31 @@ namespace GW::Constants::ItemID {
 	inline constexpr int ELMargo = 36456;
 	inline constexpr int ELZenmai = 36493;
 
+	// Other Consumables
+	inline constexpr int ArmbraceOfTruth = 21127;
+	inline constexpr int Lockpick = 22751;
+	inline constexpr int PhantomKey = 5882;
+	inline constexpr int ResScroll = 26501;
+
+	// Weapons
+	inline constexpr int DSR = 32823;
+	inline constexpr int EternalBlade = 1045;
+	inline constexpr int VoltaicSpear = 2071;
+
+	// Minis
+	inline constexpr int MiniDhuum = 32822;
+
+	// Bundles
+	inline constexpr int UnholyText = 2619;
+
 }
 
 namespace GW::Packet::StoC {
+
+	struct ItemGeneral_ReuseID : ItemGeneral {
+	};
+	unsigned const Packet<ItemGeneral_ReuseID>::STATIC_HEADER =
+		GAME_SMSG_ITEM_GENERAL_INFO + 1;
 
 	struct SkillRecharged : Packet<SkillRecharged> {
 		uint32_t agent_id;
@@ -370,6 +427,13 @@ namespace GW::Packet::StoC {
 	};
 	unsigned const Packet<SkillRecharged>::STATIC_HEADER =
 		GAME_SMSG_SKILL_RECHARGED;
+
+	struct UpdateItemOwner : Packet<UpdateItemOwner> {
+		GW::ItemID  item_id;
+		GW::AgentID owner_agent_id;
+		float       seconds_reserved;
+	};
+	unsigned const Packet<UpdateItemOwner>::STATIC_HEADER = 308;
 
 	struct UpdateTitle : Packet<UpdateTitle> {
 		uint32_t title_id;

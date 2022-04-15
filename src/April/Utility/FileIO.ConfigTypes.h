@@ -5,6 +5,7 @@
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
 #include "April/Module/ChatCommands.h"
+#include "April/Module/ItemFilter.h"
 #include "April/Utility/FileIO.BasicTypes.h"
 
 #include "nlohmann/json.hpp"
@@ -45,5 +46,11 @@ namespace April::Gui {
 namespace April::Module {
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( ChatCommands::Config, abbreviations )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		ItemFilter::Config,
+		active,
+		visible_user_items, visible_party_items, visible_user_rarities,
+		visible_party_rarities )
 
 }

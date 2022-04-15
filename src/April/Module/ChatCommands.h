@@ -6,6 +6,7 @@
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
 #include "April/Module/ConsumablesMgr.h"
+#include "April/Module/ItemFilter.h"
 
 #include "GWCA/GWCA.hpp"
 
@@ -61,6 +62,7 @@ namespace April::Module {
 		ChatCommands(
 			std::shared_ptr<Config const>,
 			std::shared_ptr<ConsumablesMgr>,
+			std::shared_ptr<ItemFilter>,
 			GuiConfigs );
 
 		void Update( GW::HookStatus&, GW::SendChatInfo );
@@ -69,6 +71,7 @@ namespace April::Module {
 	private:
 		std::shared_ptr<Config const>   config;
 		std::shared_ptr<ConsumablesMgr> consumables_mgr;
+		std::shared_ptr<ItemFilter>     item_filter;
 		GuiConfigs                      gui_configs;
 	};
 
