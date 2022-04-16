@@ -5,6 +5,7 @@
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
 #include "April/Module/ChatCommands.h"
+#include "April/Module/GuildEditor.h"
 #include "April/Module/ItemFilter.h"
 #include "April/Utility/FileIO.BasicTypes.h"
 
@@ -46,6 +47,13 @@ namespace April::Gui {
 namespace April::Module {
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( ChatCommands::Config, abbreviations )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		GuildEditor::Config,
+		guild_to_edit,
+		active_cape, new_cape,
+		active_name, new_name,
+		active_tag, new_tag )
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 		ItemFilter::Config,

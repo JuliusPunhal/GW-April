@@ -6,6 +6,7 @@
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
 #include "April/Module/ChatCommands.h"
+#include "April/Module/GuildEditor.h"
 #include "April/Module/ItemFilter.h"
 
 
@@ -48,6 +49,11 @@ namespace April {
 	template<>
 	struct JsonKey<Module::ChatCommands::Config> {
 		static constexpr auto key = "Module/ChatCommands";
+	};
+
+	template<>
+	struct JsonKey<Module::GuildEditor::Config> {
+		static constexpr auto key = "Module/GuildEditor";
 	};
 
 	template<>

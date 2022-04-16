@@ -428,6 +428,31 @@ namespace GW::Packet::StoC {
 	unsigned const Packet<SkillRecharged>::STATIC_HEADER =
 		GAME_SMSG_SKILL_RECHARGED;
 
+	// Corrected version of GuildGeneral
+	struct UpdateGuildInfo : Packet<UpdateGuildInfo> {
+		uint32_t guild_id;
+		std::array<uint32_t, 4> gh_key;
+		std::array<wchar_t, 32> guild_name;
+		std::array<wchar_t, 6>  guild_tag;  // client accepts only 4 + \0
+		uint32_t guild_features;
+		uint32_t territory;
+		uint32_t cape_background_color; // & 0xF0 = hue, & 0x0F = brightness
+		uint32_t cape_detail_color;     // & 0xF0 = hue, & 0x0F = brightness
+		uint32_t cape_emblem_color;     // & 0xF0 = hue, & 0x0F = brightness
+		uint32_t cape_shape;            // 0 -   8
+		uint32_t cape_detail;           // 0 -  31
+		uint32_t cape_emblem;           // 0 - 173
+		uint32_t cape_trim;             // 0 -  13
+		uint32_t faction;
+		uint32_t factions_count;
+		uint32_t qualifier_points;
+		uint32_t rating;
+		uint32_t rank;
+		uint32_t unk;
+	};
+	unsigned const Packet<UpdateGuildInfo>::STATIC_HEADER =
+		GAME_SMSG_GUILD_GENERAL_INFO;
+
 	struct UpdateItemOwner : Packet<UpdateItemOwner> {
 		GW::ItemID  item_id;
 		GW::AgentID owner_agent_id;

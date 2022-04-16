@@ -81,7 +81,7 @@ namespace {
 		features = std::make_unique<April::Features>( April::make_Features() );
 
 		auto entry = GW::HookEntry{};
-		auto on_packet = []( GW::HookStatus& status, auto const& packet )
+		auto on_packet = []( GW::HookStatus& status, auto& packet )
 		{
 			April::Update( *features, packet );
 			April::Update( *features, status, packet );
@@ -98,6 +98,7 @@ namespace {
 		GW::RegisterCallback<ObjectiveUpdateName>(   &entry, on_packet );
 		GW::RegisterCallback<SkillRecharge>(         &entry, on_packet );
 		GW::RegisterCallback<SkillRecharged>(        &entry, on_packet );
+		GW::RegisterCallback<UpdateGuildInfo>(       &entry, on_packet );
 
 		GW::RegisterSendChatCallback(
 			&entry,

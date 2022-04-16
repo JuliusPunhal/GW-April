@@ -3,6 +3,7 @@
 #include "April/Gui/HealthEnergy.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Module/ChatCommands.h"
+#include "April/Module/GuildEditor.h"
 #include "April/Utility/FontAtlas.h"
 #include "April/Utility/sorted_vector.h"
 
@@ -111,5 +112,14 @@ namespace April::Gui {
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 		Skillbar::Config::Threshold, uptime, color )
+
+}
+
+namespace April::Module {
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		GuildEditor::CapeStyle,
+		background_color, detail_color, emblem_color, shape, detail, emblem,
+		trim )
 
 }

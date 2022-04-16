@@ -132,6 +132,8 @@ auto April::make_Features() -> Features
 				cfg_gui_skillbar,
 				cfg_gui_uwtimer ) ),
 		consumables_mgr,
+		std::make_unique<Module::GuildEditor>(
+			from_json<Module::GuildEditor::Config>( json ) ),
 		item_filter,
 		std::make_unique<Module::UwTimer>( uwtimes ),
 		font_atlas,

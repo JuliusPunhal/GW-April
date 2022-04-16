@@ -7,6 +7,7 @@
 #include "April/Gui/UwTimer.h"
 #include "April/Module/ChatCommands.h"
 #include "April/Module/ConsumablesMgr.h"
+#include "April/Module/GuildEditor.h"
 #include "April/Module/ItemFilter.h"
 #include "April/Module/UwTimer.h"
 #include "April/Utility/FontAtlas.h"
@@ -29,6 +30,7 @@ namespace April {
 			std::unique_ptr<Gui::UwTimer>,
 			std::unique_ptr<Module::ChatCommands>,
 			std::shared_ptr<Module::ConsumablesMgr>,
+			std::unique_ptr<Module::GuildEditor>,
 			std::shared_ptr<Module::ItemFilter>,
 			std::unique_ptr<Module::UwTimer>,
 			std::shared_ptr<FontAtlas>,
@@ -54,14 +56,14 @@ namespace April {
 			T,
 			Packet_t,
 			std::void_t<decltype(
-				std::declval<T>().Update( std::declval<Packet_t const&>() ) )>>
+				std::declval<T>().Update( std::declval<Packet_t&>() ) )>>
 			: std::true_type
 		{
 		};
 
 
 		template<typename Feature_t, typename Packet_t>
-		void update( Feature_t& ft, Packet_t const& packet )
+		void update( Feature_t& ft, Packet_t& packet )
 		{
 			using T = typename Feature_t::element_type;
 			if constexpr ( has_PacketUpdate<T, Packet_t>::value )
@@ -74,7 +76,7 @@ namespace April {
 
 
 	template<typename Packet_t>
-	void Update( Features& features, Packet_t const& packet )
+	void Update( Features& features, Packet_t& packet )
 	{
 		std::apply(
 			[&packet]( auto&... ft ) { (..., detail::update( ft, packet )); },
@@ -94,7 +96,7 @@ namespace April {
 			std::void_t<decltype(
 				std::declval<T>().Update(
 					std::declval<GW::HookStatus&>(),
-					std::declval<Packet_t const&>() ) )>>
+					std::declval<Packet_t&>() ) )>>
 			: std::true_type
 		{
 		};
@@ -102,7 +104,7 @@ namespace April {
 
 		template<typename Feature_t, typename Packet_t>
 		void update(
-			Feature_t& ft, GW::HookStatus& status, Packet_t const& packet )
+			Feature_t& ft, GW::HookStatus& status, Packet_t& packet )
 		{
 			using T = typename Feature_t::element_type;
 			if constexpr ( has_BlockablePacketUpdate<T, Packet_t>::value )
@@ -116,7 +118,7 @@ namespace April {
 
 	template<typename Packet_t>
 	void Update(
-		Features& features, GW::HookStatus& status, Packet_t const& packet )
+		Features& features, GW::HookStatus& status, Packet_t& packet )
 	{
 		std::apply(
 			[&status, &packet]( auto&... ft )
