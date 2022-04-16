@@ -141,6 +141,8 @@ auto April::make_Features() -> Features
 			from_json<Module::ResignMessage::Config>( json ) ),
 		std::make_unique<Module::ReturnToOutpost>(
 			from_json<Module::ReturnToOutpost::Config>( json ) ),
+		std::make_unique<Module::ShowKitUses>(
+			from_json<Module::ShowKitUses::Config>( json ) ),
 		std::make_unique<Module::UwTimer>( uwtimes ),
 		font_atlas,
 		mouse,

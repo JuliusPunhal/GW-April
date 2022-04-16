@@ -540,6 +540,55 @@ auto GW::GetRarity( GW::Item const& item ) -> Rarity
 	}
 }
 
+auto GW::GetIdentKitUses(
+	GW::ItemModelID const model_id, uint32_t const value )
+	-> std::optional<uint32_t>
+{
+	using namespace GW::Constants::ItemID;
+
+	switch ( model_id )
+	{
+		case IdentificationKit:
+			return static_cast<uint32_t>( std::round( value / 2.0f ) );
+
+		case IdentificationKit_Superior:
+			return static_cast<uint32_t>( std::round( value / 2.5f ) );
+	}
+
+	return std::nullopt;
+}
+
+auto GW::GetSalvageKitUses(
+	GW::ItemModelID const model_id, uint32_t const value )
+	-> std::optional<uint32_t>
+{
+	using namespace GW::Constants::ItemID;
+
+	switch ( model_id )
+	{
+		case SalvageKit:
+			return static_cast<uint32_t>( std::round( value /  2.f ) );
+
+		case SalvageKit_Expert:
+			return static_cast<uint32_t>( std::round( value /  8.f ) );
+
+		case SalvageKit_Superior:
+			return static_cast<uint32_t>( std::round( value / 10.f ) );
+	}
+
+	return std::nullopt;
+}
+
+auto GW::GetIdentKitUses( GW::Item const& item ) -> std::optional<uint32_t>
+{
+	return GetIdentKitUses( item.model_id, item.value );
+}
+
+auto GW::GetSalvageKitUses( GW::Item const& item ) -> std::optional<uint32_t>
+{
+	return GetSalvageKitUses( item.model_id, item.value );
+}
+
 auto GW::SearchInventory( GW::ItemModelID const id ) -> GW::Item const*
 {
 	auto const* bags = GW::GetInventoryBags();

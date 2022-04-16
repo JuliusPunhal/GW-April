@@ -94,6 +94,8 @@ namespace {
 		GW::RegisterCallback<AgentName>(             &entry, on_packet );
 		GW::RegisterCallback<AgentRemove>(           &entry, on_packet );
 		GW::RegisterCallback<AgentUpdateAllegiance>( &entry, on_packet );
+		GW::RegisterCallback<ItemGeneral>(           &entry, on_packet );
+		GW::RegisterCallback<ItemGeneral_ReuseID>(   &entry, on_packet );
 		GW::RegisterCallback<MapLoaded>(             &entry, on_packet );
 		GW::RegisterCallback<MessageCore>(           &entry, on_packet );
 		GW::RegisterCallback<ObjectiveAdd>(          &entry, on_packet );

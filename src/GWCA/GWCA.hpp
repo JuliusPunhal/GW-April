@@ -215,6 +215,14 @@ namespace GW {
 	auto GetItemOwner( GW::Item const& ) -> std::optional<GW::AgentID>;
 	auto GetRarity( GW::Item const& ) -> GW::Rarity;
 
+	auto GetIdentKitUses( GW::ItemModelID, uint32_t item_value )
+		-> std::optional<uint32_t>;
+	auto GetSalvageKitUses( GW::ItemModelID, uint32_t item_value )
+		-> std::optional<uint32_t>;
+
+	auto GetIdentKitUses( GW::Item const& ) -> std::optional<uint32_t>;
+	auto GetSalvageKitUses( GW::Item const& ) -> std::optional<uint32_t>;
+
 	auto SearchInventory( GW::ItemModelID ) -> GW::Item const*;
 
 	void UseItem( GW::Item const& );
