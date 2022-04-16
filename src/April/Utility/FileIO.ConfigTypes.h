@@ -11,6 +11,7 @@
 #include "April/Module/ResignMessage.h"
 #include "April/Module/ReturnToOutpost.h"
 #include "April/Module/ShowKitUses.h"
+#include "April/Module/SuppressSpeechBubbles.h"
 #include "April/Utility/FileIO.BasicTypes.h"
 
 #include "nlohmann/json.hpp"
@@ -73,5 +74,7 @@ namespace April::Module {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( ReturnToOutpost::Config, active )
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( ShowKitUses::Config, active )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( SuppressSpeechBubbles::Config, active )
 
 }

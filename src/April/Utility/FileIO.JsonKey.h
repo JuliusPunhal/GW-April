@@ -12,6 +12,7 @@
 #include "April/Module/ResignMessage.h"
 #include "April/Module/ReturnToOutpost.h"
 #include "April/Module/ShowKitUses.h"
+#include "April/Module/SuppressSpeechBubbles.h"
 
 
 namespace April {
@@ -83,6 +84,11 @@ namespace April {
 	template<>
 	struct JsonKey<Module::ShowKitUses::Config> {
 		static constexpr auto key = "Module/ShowKitUses";
+	};
+
+	template<>
+	struct JsonKey<Module::SuppressSpeechBubbles::Config> {
+		static constexpr auto key = "Module/SuppressSpeechBubbles";
 	};
 
 }

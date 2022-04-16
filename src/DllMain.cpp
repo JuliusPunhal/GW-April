@@ -106,6 +106,7 @@ namespace {
 		GW::RegisterCallback<RemoveEffect>(          &entry, on_packet );
 		GW::RegisterCallback<SkillRecharge>(         &entry, on_packet );
 		GW::RegisterCallback<SkillRecharged>(        &entry, on_packet );
+		GW::RegisterCallback<SpeechBubble>(          &entry, on_packet );
 		GW::RegisterCallback<UpdateGuildInfo>(       &entry, on_packet );
 
 		GW::RegisterSendChatCallback(
