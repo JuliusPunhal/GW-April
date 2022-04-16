@@ -236,6 +236,7 @@ namespace GW {
 
 	auto GetPlayerArray() -> GW::PlayerArray const&;
 
+	bool GetIsPlayerLeader();
 	bool GetIsPlayerLoaded();
 	bool GetIsPartyLoaded();
 
@@ -282,6 +283,22 @@ namespace GW {
 	void RegisterSendChatCallback(
 		GW::HookEntry*,
 		std::function<void( GW::HookStatus&, SendChatInfo )> const& );
+
+}
+
+// CtoS
+namespace GW {
+
+	namespace detail {
+		void SendPacket( unsigned size, void* buffer );
+	}
+
+	template<typename T>
+	void SendPacket( T const& packet )
+	{
+		auto cpy = packet;
+		detail::SendPacket( sizeof( T ), &cpy );
+	}
 
 }
 
@@ -435,12 +452,30 @@ namespace GW::Constants::ItemID {
 
 }
 
+namespace GW::Packet::CtoS {
+
+	template<auto I>
+	struct PacketBase {
+		unsigned const header = I;
+	};
+
+
+	struct ReturnToOutpost : PacketBase<GAME_CMSG_PARTY_RETURN_TO_OUTPOST>{};
+
+}
+
 namespace GW::Packet::StoC {
 
 	struct ItemGeneral_ReuseID : ItemGeneral {
 	};
 	unsigned const Packet<ItemGeneral_ReuseID>::STATIC_HEADER =
 		GAME_SMSG_ITEM_GENERAL_INFO + 1;
+
+	struct PlayerIsPartyLeader : Packet<PlayerIsPartyLeader> {
+		uint32_t is_leader; // bool
+	};
+	unsigned const Packet<PlayerIsPartyLeader>::STATIC_HEADER =
+		GAME_SMSG_PARTY_YOU_ARE_LEADER;
 
 	struct RemoveEffect : Packet<RemoveEffect> {
 		GW::AgentID agent_id;

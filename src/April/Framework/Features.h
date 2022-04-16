@@ -11,6 +11,7 @@
 #include "April/Module/ItemFilter.h"
 #include "April/Module/NotifyOnEffect.h"
 #include "April/Module/ResignMessage.h"
+#include "April/Module/ReturnToOutpost.h"
 #include "April/Module/UwTimer.h"
 #include "April/Utility/FontAtlas.h"
 #include "April/Utility/Mouse.h"
@@ -36,6 +37,7 @@ namespace April {
 			std::shared_ptr<Module::ItemFilter>,
 			std::unique_ptr<Module::NotifyOnEffect>,
 			std::unique_ptr<Module::ResignMessage>,
+			std::unique_ptr<Module::ReturnToOutpost>,
 			std::unique_ptr<Module::UwTimer>,
 			std::shared_ptr<FontAtlas>,
 			std::shared_ptr<Mouse>,

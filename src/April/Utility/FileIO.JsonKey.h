@@ -10,6 +10,7 @@
 #include "April/Module/ItemFilter.h"
 #include "April/Module/NotifyOnEffect.h"
 #include "April/Module/ResignMessage.h"
+#include "April/Module/ReturnToOutpost.h"
 
 
 namespace April {
@@ -71,6 +72,11 @@ namespace April {
 	template<>
 	struct JsonKey<Module::ResignMessage::Config> {
 		static constexpr auto key = "Module/ResignMessage";
+	};
+
+	template<>
+	struct JsonKey<Module::ReturnToOutpost::Config> {
+		static constexpr auto key = "Module/ReturnToOutpost";
 	};
 
 }

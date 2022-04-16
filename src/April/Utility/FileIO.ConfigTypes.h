@@ -9,6 +9,7 @@
 #include "April/Module/ItemFilter.h"
 #include "April/Module/NotifyOnEffect.h"
 #include "April/Module/ResignMessage.h"
+#include "April/Module/ReturnToOutpost.h"
 #include "April/Utility/FileIO.BasicTypes.h"
 
 #include "nlohmann/json.hpp"
@@ -67,5 +68,7 @@ namespace April::Module {
 		NotifyOnEffect::Config, active, on_gain, on_loss )
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( ResignMessage::Config, active )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( ReturnToOutpost::Config, active )
 
 }

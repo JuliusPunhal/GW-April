@@ -617,6 +617,11 @@ bool GW::GetIsPlayerLoaded()
 	return player_in_party->connected();
 }
 
+bool GW::GetIsPlayerLeader()
+{
+	return GW::GetPartyContext().flag & 0x80;
+}
+
 bool GW::GetIsPartyLoaded()
 {
 	return GW::PartyMgr::GetIsPartyLoaded();
@@ -744,6 +749,11 @@ void GW::RegisterSendChatCallback(
 		{
 			fn( *status, { msg - 1 } );
 		} );
+}
+
+void GW::detail::SendPacket( unsigned const size, void* buffer )
+{
+	GW::CtoS::SendPacket( size, buffer );
 }
 
 void GW::detail::RegisterCallback(

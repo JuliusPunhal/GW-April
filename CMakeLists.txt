@@ -45,6 +45,8 @@ target_sources(
 		src/April/Module/NotifyOnEffect.cpp
 		src/April/Module/ResignMessage.h
 		src/April/Module/ResignMessage.cpp
+		src/April/Module/ReturnToOutpost.h
+		src/April/Module/ReturnToOutpost.cpp
 		src/April/Module/UwTimer.h
 		src/April/Module/UwTimer.cpp
 		src/April/Utility/Consumables.h
