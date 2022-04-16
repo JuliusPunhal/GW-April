@@ -56,6 +56,7 @@ using DWORD = unsigned long;
 #include <array>
 #include <chrono>
 #include <optional>
+#include <vector>
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -226,8 +227,19 @@ namespace GW {
 // Party
 namespace GW {
 
+	using LoginNumber = decltype( AgentLiving::login_number );
+	using ResignedPlayers = std::vector<GW::LoginNumber>;
+
+
+	auto GetPartyContext() -> GW::PartyContext const&;
+	auto GetPartyInfo() -> GW::PartyInfo const*;
+
+	auto GetPlayerArray() -> GW::PlayerArray const&;
+
 	bool GetIsPlayerLoaded();
 	bool GetIsPartyLoaded();
+
+	auto GetResignedPlayers() -> ResignedPlayers const&;
 
 }
 
@@ -241,6 +253,16 @@ namespace GW {
 	inline constexpr auto EMOTE = ChatChannel{  6 };
 	inline constexpr auto PARTY = ChatChannel{ 11 };
 
+
+	bool IsResignMessage( GW::Packet::StoC::MessageCore const& );
+
+	auto GetResignerName( GW::Packet::StoC::MessageCore const& )
+		-> std::wstring_view;
+
+	// Wraps new_resigner_name into the correct identifiers so GW recognizes
+	// the message as a Resign-Message.
+	auto CreateResignMessage( std::wstring_view const new_resigner_name )
+		-> GW::Packet::StoC::MessageCore;
 
 	void SendChat( char channel, const char* msg );
 	void SendChat( char channel, const wchar_t* msg );

@@ -137,6 +137,8 @@ auto April::make_Features() -> Features
 		item_filter,
 		std::make_unique<Module::NotifyOnEffect>(
 			from_json<Module::NotifyOnEffect::Config>( json ) ),
+		std::make_unique<Module::ResignMessage>(
+			from_json<Module::ResignMessage::Config>( json ) ),
 		std::make_unique<Module::UwTimer>( uwtimes ),
 		font_atlas,
 		mouse,

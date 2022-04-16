@@ -23,6 +23,7 @@
 #include "GWCA/Managers/UIMgr.h"
 #pragma warning(pop)
 
+#include <string_view>
 #include <tuple>
 #include <type_traits>
 #include <vector>
@@ -147,6 +148,79 @@ namespace {
 	} g_ItemOwners;
 
 
+	class ResignLog {
+	public:
+		ResignLog() = default;
+
+		auto Get() const -> auto const& { return resigners; }
+
+		void Update( GW::Packet::StoC::MapLoaded const& )
+		{
+			resigners.clear();
+		}
+
+		void Update( GW::Packet::StoC::MessageCore const& packet )
+		{
+			auto const name = GW::GetResignerName( packet );
+			if ( name.empty() )
+				return;
+
+			auto const* party = GW::GetPartyInfo();
+			auto const& players = GW::GetPlayerArray();
+			if ( party == nullptr
+				|| not party->players.valid()
+				|| not players.valid() )
+			{
+				return;
+			}
+
+			auto const resigner = find_player( name, *party, players );
+			if ( resigner == nullptr )
+				return;
+
+			resigners.push_back( resigner->login_number );
+		}
+
+
+	private:
+		std::vector<GW::LoginNumber> resigners{};
+
+
+		static auto remove_pvp_suffix( wchar_t const* begin )
+		{
+			constexpr auto max_name_length = 19;
+			auto const* end =
+				std::find( begin, begin + max_name_length, L'\0' );
+
+			auto const pvp_tag = std::find( begin, end, L'(' );
+			if ( pvp_tag != end && pvp_tag > begin )
+				end = pvp_tag - 1; // Player Name (#) -> end == space before (
+
+			return std::wstring_view( begin, std::distance( begin, end ) );
+		}
+
+		static auto find_player(
+			std::wstring_view const name,
+			GW::PartyInfo const& party,
+			GW::PlayerArray const& players )
+			-> GW::PlayerPartyMember const*
+		{
+			auto const iter =
+				std::find_if(
+					party.players.begin(), party.players.end(),
+					[&]( GW::PlayerPartyMember const& player )
+					{
+						auto const id = player.login_number;
+						return
+							id < players.size()
+							&& remove_pvp_suffix( players[id].name ) == name;
+					} );
+
+			return iter != party.players.end() ? iter : nullptr;
+		}
+	} g_ResignLog;
+
+
 	template<typename Module_t, typename Packet_t>
 	void impl_UpdateModules( Module_t& mod, Packet_t const& packet  )
 	{
@@ -162,7 +236,7 @@ namespace {
 			{
 				(..., impl_UpdateModules( mod, packet ));
 			},
-			std::forward_as_tuple( g_Drunk, g_ItemOwners ) );
+			std::forward_as_tuple( g_Drunk, g_ItemOwners, g_ResignLog ) );
 	}
 
 }
@@ -181,6 +255,7 @@ bool GW::InitializeEx()
 
 	GW::RegisterCallback<ItemGeneral_ReuseID>( &entry, on_packet );
 	GW::RegisterCallback<MapLoaded>( &entry, on_packet );
+	GW::RegisterCallback<MessageCore>( &entry, on_packet );
 	GW::RegisterCallback<UpdateItemOwner>( &entry, on_packet );
 	GW::RegisterCallback<UpdateTitle>( &entry, on_packet );
 
@@ -501,6 +576,22 @@ void GW::OpenXunlaiWindow()
 	GW::GameThread::Enqueue( [](){ GW::Items::OpenXunlaiWindow(); } );
 }
 
+auto GW::GetPartyContext() -> GW::PartyContext const&
+{
+	// does not seem to be nullptr
+	return *GW::GameContext::instance()->party;
+}
+
+auto GW::GetPartyInfo() -> GW::PartyInfo const*
+{
+	return GW::GetPartyContext().player_party;
+}
+
+auto GW::GetPlayerArray() -> PlayerArray const&
+{
+	return GameContext::instance()->world->players;
+}
+
 bool GW::GetIsPlayerLoaded()
 {
 	auto const* party = GW::PartyMgr::GetPartyInfo();
@@ -529,6 +620,69 @@ bool GW::GetIsPlayerLoaded()
 bool GW::GetIsPartyLoaded()
 {
 	return GW::PartyMgr::GetIsPartyLoaded();
+}
+
+auto GW::GetResignedPlayers() -> std::vector<GW::LoginNumber> const&
+{
+	return g_ResignLog.Get();
+}
+
+
+namespace {
+	namespace ResignMessage {
+
+		using namespace GW::Packet::StoC;
+		using namespace std::string_view_literals;
+
+		constexpr auto Prefix = L"\x7BFF\xC9C4\xAEAA\x1B9B\x0107"sv;
+		constexpr auto Suffix = L"\x1\x0"sv;
+		constexpr auto N =
+			sizeof( MessageCore::message ) / sizeof( MessageCore::message[0] );
+
+	}
+}
+
+
+bool GW::IsResignMessage( GW::Packet::StoC::MessageCore const& packet )
+{
+	using namespace ResignMessage;
+
+	return std::wstring_view{ packet.message, Prefix.size() } == Prefix;
+}
+
+auto GW::GetResignerName( GW::Packet::StoC::MessageCore const& packet )
+	-> std::wstring_view
+{
+	using namespace ResignMessage;
+
+	if ( not IsResignMessage( packet ) )
+		return std::wstring_view{};
+
+	auto const name_begin = packet.message + Prefix.size();
+	auto const name_end =
+		std::find( name_begin, std::end( packet.message ), Suffix[0] );
+
+	return std::wstring_view( name_begin, name_end - name_begin );
+}
+
+auto GW::CreateResignMessage( std::wstring_view const new_name )
+	-> GW::Packet::StoC::MessageCore
+{
+	using namespace ResignMessage;
+	constexpr auto max_length = N - Prefix.size() - Suffix.size();
+
+	auto result = GW::Packet::StoC::MessageCore{};
+	result.header = GAME_SMSG_CHAT_MESSAGE_CORE;
+
+	auto const name_length = std::min( new_name.size(), max_length );
+	auto const name_begin = result.message + Prefix.size();
+	auto const name_end = name_begin + name_length;
+
+	std::copy( Prefix.begin(), Prefix.end(), result.message );
+	std::copy( new_name.begin(), new_name.end(), name_begin );
+	std::copy( Suffix.begin(), Suffix.end(), name_end );
+
+	return result;
 }
 
 void GW::SendChat( char const channel, const char* str )
