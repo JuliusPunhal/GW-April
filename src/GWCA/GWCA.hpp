@@ -109,11 +109,14 @@ namespace GW {
 	using AttributeID = Constants::Attribute;
 	using Morale = int;                       // -60 ... +10
 
+	using Constants::SkillID;
+
 
 	auto GetAsAgentGadget( GW::Agent const* ) -> GW::AgentGadget const*;
 	auto GetAsAgentItem( GW::Agent const* ) -> GW::AgentItem const*;
 	auto GetAsAgentLiving( GW::Agent const* ) -> GW::AgentLiving const*;
 
+	auto GetAgentArray() -> GW::AgentArray;
 	auto GetAgentByID( GW::AgentID ) -> GW::Agent const*;
 	auto GetAgentLivingByID( GW::AgentID ) -> GW::AgentLiving const*;
 
@@ -127,6 +130,8 @@ namespace GW {
 	// returns 0...1 percentage how much energy is _not_ affected by overcast
 	float GetMaxAvailableEnergy( GW::AgentLiving const& );
 
+	auto GetSkill( GW::AgentLiving const& ) -> GW::SkillID;
+
 	auto GetMorale( GW::AgentID ) -> Morale;
 	auto GetMorale() -> Morale;
 
@@ -138,6 +143,7 @@ namespace GW {
 	using InstanceTime = ms32;
 	using Constants::InstanceType;
 	using Constants::MapID;
+	using MissionProgress = float; // 0 ... 1
 	using ObjectiveID = uint32_t;
 
 
@@ -146,6 +152,8 @@ namespace GW {
 	auto GetMapID() -> MapID;
 
 	auto GetCurrentMapInfo() -> GW::AreaInfo const&;
+
+	auto GetMissionProgress() -> GW::MissionProgress;
 
 	bool InCinematic();
 

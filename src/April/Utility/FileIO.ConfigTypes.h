@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Gui/DhuumInfo.h"
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Inventory.h"
 #include "April/Gui/Skillbar.h"
@@ -18,6 +19,9 @@
 
 
 namespace April::Gui {
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		DhuumInfo::Config, window, auto_set_visibility )
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 		Energybar::Config,

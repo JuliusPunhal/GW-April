@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Gui/DhuumInfo.h"
 #include "April/Gui/HealthEnergy.h"
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Inventory.h"
@@ -51,6 +52,7 @@ namespace April::Module {
 
 		using GuiConfigs =
 			std::tuple<
+				std::shared_ptr<Gui::DhuumInfo::Config>,
 				std::shared_ptr<Gui::Energybar::Config>,
 				std::shared_ptr<Gui::Healthbar::Config>,
 				std::shared_ptr<Gui::InstanceTimer::Config>,

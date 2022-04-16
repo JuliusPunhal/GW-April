@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Gui/DhuumInfo.h"
 #include "April/Gui/HealthEnergy.h"
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Inventory.h"
@@ -20,6 +21,11 @@ namespace April {
 	template<typename T>
 	struct JsonKey{};
 
+
+	template<>
+	struct JsonKey<Gui::DhuumInfo::Config> {
+		static constexpr auto key = "Gui/DhuumInfo";
+	};
 
 	template<>
 	struct JsonKey<Gui::Energybar::Config> {

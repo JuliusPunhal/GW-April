@@ -282,6 +282,11 @@ auto GW::GetAsAgentLiving( GW::Agent const* agent ) -> GW::AgentLiving const*
 	return agent ? agent->GetAsAgentLiving() : nullptr;
 }
 
+auto GW::GetAgentArray() -> GW::AgentArray
+{
+	return GW::Agents::GetAgentArray();
+}
+
 auto GW::GetAgentByID( GW::AgentID const id ) -> GW::Agent const*
 {
 	return GW::Agents::GetAgentByID( id );
@@ -343,6 +348,11 @@ float GW::GetMaxAvailableEnergy( GW::AgentLiving const& agent )
 	return *reinterpret_cast<float const*>( &agent.h0118 );
 }
 
+auto GW::GetSkill( GW::AgentLiving const& agent ) -> GW::SkillID
+{
+	return static_cast<GW::SkillID>( agent.skill );
+}
+
 auto GW::GetMorale( GW::AgentID const agent_id ) -> Morale
 {
 	struct Sub {
@@ -388,6 +398,12 @@ auto GW::GetMapID() -> MapID
 auto GW::GetCurrentMapInfo() -> GW::AreaInfo const&
 {
 	return *GW::Map::GetCurrentMapInfo();
+}
+
+auto GW::GetMissionProgress() -> GW::MissionProgress
+{
+	// ptr become invalid but not nullptr
+	return GameContext::instance()->character->progress_bar->progress;
 }
 
 bool GW::InCinematic()

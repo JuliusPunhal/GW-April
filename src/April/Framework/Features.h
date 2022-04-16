@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Gui/DhuumInfo.h"
 #include "April/Gui/HealthEnergy.h"
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Inventory.h"
@@ -15,6 +16,7 @@
 #include "April/Module/ShowKitUses.h"
 #include "April/Module/SuppressSpeechBubbles.h"
 #include "April/Module/UwTimer.h"
+#include "April/Utility/DhuumsJudgement.h"
 #include "April/Utility/FontAtlas.h"
 #include "April/Utility/Mouse.h"
 #include "April/Utility/ReducedSkillRecharge.h"
@@ -27,6 +29,7 @@ namespace April {
 
 	using Features =
 		std::tuple<
+			std::unique_ptr<Gui::DhuumInfo>,
 			std::unique_ptr<Gui::Energybar>,
 			std::unique_ptr<Gui::Healthbar>,
 			std::unique_ptr<Gui::InstanceTimer>,
@@ -43,6 +46,7 @@ namespace April {
 			std::unique_ptr<Module::ShowKitUses>,
 			std::unique_ptr<Module::SuppressSpeechBubbles>,
 			std::unique_ptr<Module::UwTimer>,
+			std::shared_ptr<DhuumsJudgement>,
 			std::shared_ptr<FontAtlas>,
 			std::shared_ptr<Mouse>,
 			std::shared_ptr<ReducedSkillRecharge>>;

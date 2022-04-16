@@ -23,6 +23,8 @@ target_sources(
 		src/April/Framework/Features.cpp
 		src/April/Framework/WndProc.h
 		src/April/Framework/WndProc.cpp
+		src/April/Gui/DhuumInfo.h
+		src/April/Gui/DhuumInfo.cpp
 		src/April/Gui/HealthEnergy.h
 		src/April/Gui/HealthEnergy.cpp
 		src/April/Gui/InstanceTimer.h
@@ -57,6 +59,8 @@ target_sources(
 		src/April/Utility/Consumables.cpp
 		src/April/Utility/ConsumableState.h
 		src/April/Utility/ConsumableState.cpp
+		src/April/Utility/DhuumsJudgement.h
+		src/April/Utility/DhuumsJudgement.cpp
 		src/April/Utility/FileIO.h
 		src/April/Utility/FileIO.cpp
 		src/April/Utility/FileIO.BasicTypes.h
