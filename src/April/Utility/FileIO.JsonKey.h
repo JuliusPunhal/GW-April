@@ -8,6 +8,7 @@
 #include "April/Module/ChatCommands.h"
 #include "April/Module/GuildEditor.h"
 #include "April/Module/ItemFilter.h"
+#include "April/Module/NotifyOnEffect.h"
 
 
 namespace April {
@@ -59,6 +60,11 @@ namespace April {
 	template<>
 	struct JsonKey<Module::ItemFilter::Config> {
 		static constexpr auto key = "Module/ItemFilter";
+	};
+
+	template<>
+	struct JsonKey<Module::NotifyOnEffect::Config> {
+		static constexpr auto key = "Module/NotifyOnEffect";
 	};
 
 }

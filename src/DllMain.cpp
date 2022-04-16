@@ -88,6 +88,8 @@ namespace {
 		};
 
 		using namespace GW::Packet::StoC;
+		GW::RegisterCallback<AddEffect>(             &entry, on_packet );
+		GW::RegisterCallback<AddExternalBond>(       &entry, on_packet );
 		GW::RegisterCallback<AgentAdd>(              &entry, on_packet );
 		GW::RegisterCallback<AgentName>(             &entry, on_packet );
 		GW::RegisterCallback<AgentRemove>(           &entry, on_packet );
@@ -96,6 +98,7 @@ namespace {
 		GW::RegisterCallback<ObjectiveAdd>(          &entry, on_packet );
 		GW::RegisterCallback<ObjectiveDone>(         &entry, on_packet );
 		GW::RegisterCallback<ObjectiveUpdateName>(   &entry, on_packet );
+		GW::RegisterCallback<RemoveEffect>(          &entry, on_packet );
 		GW::RegisterCallback<SkillRecharge>(         &entry, on_packet );
 		GW::RegisterCallback<SkillRecharged>(        &entry, on_packet );
 		GW::RegisterCallback<UpdateGuildInfo>(       &entry, on_packet );

@@ -135,6 +135,8 @@ auto April::make_Features() -> Features
 		std::make_unique<Module::GuildEditor>(
 			from_json<Module::GuildEditor::Config>( json ) ),
 		item_filter,
+		std::make_unique<Module::NotifyOnEffect>(
+			from_json<Module::NotifyOnEffect::Config>( json ) ),
 		std::make_unique<Module::UwTimer>( uwtimes ),
 		font_atlas,
 		mouse,

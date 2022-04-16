@@ -4,6 +4,7 @@
 #include "April/Gui/Skillbar.h"
 #include "April/Module/ChatCommands.h"
 #include "April/Module/GuildEditor.h"
+#include "April/Module/NotifyOnEffect.h"
 #include "April/Utility/FontAtlas.h"
 #include "April/Utility/sorted_vector.h"
 
@@ -121,5 +122,8 @@ namespace April::Module {
 		GuildEditor::CapeStyle,
 		background_color, detail_color, emblem_color, shape, detail, emblem,
 		trim )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		NotifyOnEffect::Notification, skill_id, message )
 
 }

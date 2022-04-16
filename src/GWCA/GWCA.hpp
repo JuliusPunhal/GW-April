@@ -420,6 +420,13 @@ namespace GW::Packet::StoC {
 	unsigned const Packet<ItemGeneral_ReuseID>::STATIC_HEADER =
 		GAME_SMSG_ITEM_GENERAL_INFO + 1;
 
+	struct RemoveEffect : Packet<RemoveEffect> {
+		GW::AgentID agent_id;
+		unsigned    effect_id; // not GW::SkillID
+	};
+	unsigned const Packet<RemoveEffect>::STATIC_HEADER =
+		GAME_SMSG_EFFECT_REMOVED;
+
 	struct SkillRecharged : Packet<SkillRecharged> {
 		uint32_t agent_id;
 		uint32_t skill_id;

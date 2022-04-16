@@ -41,6 +41,8 @@ target_sources(
 		src/April/Module/GuildEditor.cpp
 		src/April/Module/ItemFilter.h
 		src/April/Module/ItemFilter.cpp
+		src/April/Module/NotifyOnEffect.h
+		src/April/Module/NotifyOnEffect.cpp
 		src/April/Module/UwTimer.h
 		src/April/Module/UwTimer.cpp
 		src/April/Utility/Consumables.h

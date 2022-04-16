@@ -7,6 +7,7 @@
 #include "April/Module/ChatCommands.h"
 #include "April/Module/GuildEditor.h"
 #include "April/Module/ItemFilter.h"
+#include "April/Module/NotifyOnEffect.h"
 #include "April/Utility/FileIO.BasicTypes.h"
 
 #include "nlohmann/json.hpp"
@@ -60,5 +61,8 @@ namespace April::Module {
 		active,
 		visible_user_items, visible_party_items, visible_user_rarities,
 		visible_party_rarities )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		NotifyOnEffect::Config, active, on_gain, on_loss )
 
 }
