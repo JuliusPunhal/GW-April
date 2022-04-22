@@ -1,5 +1,6 @@
 #pragma once
 
+#include "April/Gui/ChainedSouls.h"
 #include "April/Gui/DhuumInfo.h"
 #include "April/Gui/HealthEnergy.h"
 #include "April/Gui/InstanceTimer.h"
@@ -52,6 +53,7 @@ namespace April::Module {
 
 		using GuiConfigs =
 			std::tuple<
+				std::shared_ptr<Gui::ChainedSouls::Config>,
 				std::shared_ptr<Gui::DhuumInfo::Config>,
 				std::shared_ptr<Gui::Energybar::Config>,
 				std::shared_ptr<Gui::Healthbar::Config>,

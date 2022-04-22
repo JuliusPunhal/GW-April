@@ -103,6 +103,16 @@ auto April::Blue( float alpha ) -> ImVec4
 	return { 0, 0, 1, alpha };
 }
 
+auto April::DarkGreen( float alpha ) -> ImVec4
+{
+	return { 0, .7f, 0, alpha };
+}
+
+auto April::DarkRed( float alpha ) -> ImVec4
+{
+	return { .7f, 0, 0, alpha };
+}
+
 auto April::Green( float alpha ) -> ImVec4
 {
 	return { 0, 1, 0, alpha };

@@ -76,6 +76,7 @@ auto April::make_Features() -> Features
 
 	auto const json = load_json_from_file();
 
+	auto const chained_souls = std::make_shared<ChainedSouls>();
 	auto const consumables_mgr = std::make_shared<Module::ConsumablesMgr>();
 	auto const dhuums_judgement = std::make_shared<DhuumsJudgement>();
 	auto const font_atlas = std::make_shared<FontAtlas>();
@@ -89,6 +90,8 @@ auto April::make_Features() -> Features
 	font_atlas->Get( FontInfo{ "ABeeZee-Regular.ttf", 16 } );
 	font_atlas->LoadRequestedFonts(); // loads default font
 
+	auto const cfg_gui_chainedsouls =
+		from_json<Gui::ChainedSouls::Config>( json );
 	auto const cfg_gui_dhuuminfo = from_json<Gui::DhuumInfo::Config>( json );
 	auto const cfg_gui_energybar = from_json<Gui::Energybar::Config>( json );
 	auto const cfg_gui_healthbar = from_json<Gui::Healthbar::Config>( json );
@@ -99,6 +102,10 @@ auto April::make_Features() -> Features
 	auto const cfg_gui_uwtimer = from_json<Gui::UwTimer::Config>( json );
 
 	return Features{
+		std::make_unique<Gui::ChainedSouls>(
+			cfg_gui_chainedsouls,
+			mouse,
+			chained_souls ),
 		std::make_unique<Gui::DhuumInfo>(
 			cfg_gui_dhuuminfo,
 			dhuums_judgement,
@@ -131,6 +138,7 @@ auto April::make_Features() -> Features
 			consumables_mgr,
 			item_filter,
 			std::forward_as_tuple(
+				cfg_gui_chainedsouls,
 				cfg_gui_dhuuminfo,
 				cfg_gui_energybar,
 				cfg_gui_healthbar,
@@ -153,6 +161,7 @@ auto April::make_Features() -> Features
 		std::make_unique<Module::SuppressSpeechBubbles>(
 			from_json<Module::SuppressSpeechBubbles::Config>( json ) ),
 		std::make_unique<Module::UwTimer>( uwtimes ),
+		chained_souls,
 		dhuums_judgement,
 		font_atlas,
 		mouse,

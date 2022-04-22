@@ -47,6 +47,8 @@ namespace April {
 	auto White( float alpha = 1 ) -> ImVec4;
 
 	auto Blue( float alpha = 1 ) -> ImVec4;
+	auto DarkGreen( float alpha = 1 ) -> ImVec4;
+	auto DarkRed( float alpha = 1 ) -> ImVec4;
 	auto Green( float alpha = 1 ) -> ImVec4;
 	auto Red( float alpha = 1 ) -> ImVec4;
 	auto Yellow( float alpha = 1 ) -> ImVec4;

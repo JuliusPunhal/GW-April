@@ -23,6 +23,8 @@ target_sources(
 		src/April/Framework/Features.cpp
 		src/April/Framework/WndProc.h
 		src/April/Framework/WndProc.cpp
+		src/April/Gui/ChainedSouls.h
+		src/April/Gui/ChainedSouls.cpp
 		src/April/Gui/DhuumInfo.h
 		src/April/Gui/DhuumInfo.cpp
 		src/April/Gui/HealthEnergy.h
@@ -55,6 +57,8 @@ target_sources(
 		src/April/Module/SuppressSpeechBubbles.cpp
 		src/April/Module/UwTimer.h
 		src/April/Module/UwTimer.cpp
+		src/April/Utility/ChainedSouls.h
+		src/April/Utility/ChainedSouls.cpp
 		src/April/Utility/Consumables.h
 		src/April/Utility/Consumables.cpp
 		src/April/Utility/ConsumableState.h
