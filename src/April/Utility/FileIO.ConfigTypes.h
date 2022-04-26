@@ -7,6 +7,7 @@
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
 #include "April/Module/ChatCommands.h"
+#include "April/Module/ChatFilter.h"
 #include "April/Module/GuildEditor.h"
 #include "April/Module/ItemFilter.h"
 #include "April/Module/NotifyOnEffect.h"
@@ -60,6 +61,16 @@ namespace April::Gui {
 namespace April::Module {
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( ChatCommands::Config, abbreviations )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		ChatFilter::Config,
+		active,
+		ally_drop_common, ally_drop_rare, ally_pickup_common, ally_pickup_rare,
+		user_drop_common, user_drop_rare, user_pickup_common, user_pickup_rare,
+		favor, guest_privileges, hall_of_heros, lunars, nine_rings,
+		no_one_hears_you, player_has_achieved_title, skill_points,
+		skill_updated_for_pvp, target_is_immune, whisper_target_away,
+		you_have_been_playing_for )
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 		GuildEditor::Config,

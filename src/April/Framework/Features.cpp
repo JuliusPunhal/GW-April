@@ -16,16 +16,17 @@ namespace {
 	{
 	};
 
-	template<typename T, typename = void>
+	template<typename T, typename Info_t, typename = void>
 	struct has_ChatUpdate : std::false_type {};
 
-	template<typename T>
+	template<typename T, typename Info_t>
 	struct has_ChatUpdate<
 		T,
+		Info_t,
 		std::void_t<decltype(
 			std::declval<T>().Update(
 				std::declval<GW::HookStatus&>(),
-				std::declval<GW::SendChatInfo>() ) )>>
+				std::declval<Info_t>() ) )>>
 		: std::true_type
 	{
 	};
@@ -49,10 +50,11 @@ namespace {
 		}
 	}
 
-	template<typename T>
-	void chat_update( T& ft, GW::HookStatus& status, GW::SendChatInfo info )
+	template<typename T, typename Info_t>
+	void chat_update( T& ft, GW::HookStatus& status, Info_t info )
 	{
-		if constexpr ( has_ChatUpdate<typename T::element_type>::value )
+		using Feature_t = typename T::element_type;
+		if constexpr ( has_ChatUpdate<Feature_t, Info_t>::value )
 		{
 			ft->Update( status, info );
 		}
@@ -146,6 +148,8 @@ auto April::make_Features() -> Features
 				cfg_gui_inventory,
 				cfg_gui_skillbar,
 				cfg_gui_uwtimer ) ),
+		std::make_unique<Module::ChatFilter>(
+			from_json<Module::ChatFilter::Config>( json ) ),
 		consumables_mgr,
 		std::make_unique<Module::GuildEditor>(
 			from_json<Module::GuildEditor::Config>( json ) ),
@@ -178,6 +182,17 @@ void April::Shutdown( Features& features )
 void April::Update( Features& features )
 {
 	std::apply( []( auto&... ft ) { (..., update( ft )); }, features );
+}
+
+void April::Update(
+	Features& features, GW::HookStatus& status, GW::LocalMessageInfo info )
+{
+	std::apply(
+		[&status, info]( auto&... ft )
+		{
+			(..., chat_update( ft, status, info ));
+		},
+		features );
 }
 
 void April::Update(

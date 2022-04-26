@@ -39,6 +39,8 @@ target_sources(
 		src/April/Gui/UwTimer.cpp
 		src/April/Module/ChatCommands.h
 		src/April/Module/ChatCommands.cpp
+		src/April/Module/ChatFilter.h
+		src/April/Module/ChatFilter.cpp
 		src/April/Module/ConsumablesMgr.h
 		src/April/Module/ConsumablesMgr.cpp
 		src/April/Module/GuildEditor.h

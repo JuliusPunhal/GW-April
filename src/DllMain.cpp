@@ -98,6 +98,9 @@ namespace {
 		GW::RegisterCallback<ItemGeneral_ReuseID>(   &entry, on_packet );
 		GW::RegisterCallback<MapLoaded>(             &entry, on_packet );
 		GW::RegisterCallback<MessageCore>(           &entry, on_packet );
+		GW::RegisterCallback<MessageGlobal>(         &entry, on_packet );
+		GW::RegisterCallback<MessageLocal>(          &entry, on_packet );
+		GW::RegisterCallback<MessageServer>(         &entry, on_packet );
 		GW::RegisterCallback<ObjectiveAdd>(          &entry, on_packet );
 		GW::RegisterCallback<ObjectiveDone>(         &entry, on_packet );
 		GW::RegisterCallback<ObjectiveUpdateName>(   &entry, on_packet );
@@ -108,6 +111,13 @@ namespace {
 		GW::RegisterCallback<SkillRecharged>(        &entry, on_packet );
 		GW::RegisterCallback<SpeechBubble>(          &entry, on_packet );
 		GW::RegisterCallback<UpdateGuildInfo>(       &entry, on_packet );
+
+		GW::RegisterLocalMessageCallback(
+			&entry,
+			[]( GW::HookStatus& status, GW::LocalMessageInfo msg )
+			{
+				April::Update( *features, status, msg );
+			} );
 
 		GW::RegisterSendChatCallback(
 			&entry,

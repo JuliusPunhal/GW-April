@@ -8,6 +8,7 @@
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
 #include "April/Module/ChatCommands.h"
+#include "April/Module/ChatFilter.h"
 #include "April/Module/ConsumablesMgr.h"
 #include "April/Module/GuildEditor.h"
 #include "April/Module/ItemFilter.h"
@@ -40,6 +41,7 @@ namespace April {
 			std::unique_ptr<Gui::Skillbar>,
 			std::unique_ptr<Gui::UwTimer>,
 			std::unique_ptr<Module::ChatCommands>,
+			std::unique_ptr<Module::ChatFilter>,
 			std::shared_ptr<Module::ConsumablesMgr>,
 			std::unique_ptr<Module::GuildEditor>,
 			std::shared_ptr<Module::ItemFilter>,
@@ -60,6 +62,7 @@ namespace April {
 	void Shutdown( Features& );
 
 	void Update( Features& );
+	void Update( Features&, GW::HookStatus&, GW::LocalMessageInfo );
 	void Update( Features&, GW::HookStatus&, GW::SendChatInfo );
 	void Display( Features& );
 

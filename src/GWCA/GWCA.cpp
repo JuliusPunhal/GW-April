@@ -697,6 +697,10 @@ auto GW::GetResignedPlayers() -> std::vector<GW::LoginNumber> const&
 	return g_ResignLog.Get();
 }
 
+auto GW::GetMessageBuffer() -> GW::MessageBuffer&
+{
+	return GW::GameContext::instance()->world->message_buff;
+}
 
 namespace {
 	namespace ResignMessage {
@@ -802,6 +806,18 @@ void GW::WriteChat( GW::ChatChannel const channel, std::wstring const& msg )
 {
 	GW::Chat::WriteChat(
 		static_cast<GW::Chat::Channel>( channel.channel ), msg.c_str() );
+}
+
+void GW::RegisterLocalMessageCallback(
+	GW::HookEntry* entry,
+	std::function<void( GW::HookStatus&, GW::LocalMessageInfo )> const& fn )
+{
+	GW::Chat::RegisterLocalMessageCallback(
+		entry,
+		[fn]( GW::HookStatus* status, int channel, wchar_t* msg )
+		{
+			fn( *status, { channel, msg } );
+		} );
 }
 
 void GW::RegisterSendChatCallback(

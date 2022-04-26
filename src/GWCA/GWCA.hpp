@@ -271,6 +271,11 @@ namespace GW {
 	inline constexpr auto PARTY = ChatChannel{ 11 };
 
 
+	using MessageBuffer = decltype( GW::WorldContext::message_buff );
+
+	auto GetMessageBuffer() -> MessageBuffer&;
+
+
 	bool IsResignMessage( GW::Packet::StoC::MessageCore const& );
 
 	auto GetResignerName( GW::Packet::StoC::MessageCore const& )
@@ -290,6 +295,16 @@ namespace GW {
 	void WriteChat( ChatChannel, const wchar_t* msg );
 	void WriteChat( ChatChannel, std::string const& msg );
 	void WriteChat( ChatChannel, std::wstring const& msg );
+
+
+	struct LocalMessageInfo {
+		int      channel;
+		wchar_t* msg;     // encoded
+	};
+
+	void RegisterLocalMessageCallback(
+		GW::HookEntry*,
+		std::function<void( GW::HookStatus&, LocalMessageInfo )> const& );
 
 
 	struct SendChatInfo {
