@@ -16,6 +16,7 @@
 #include "April/Module/ReturnToOutpost.h"
 #include "April/Module/ShowKitUses.h"
 #include "April/Module/SuppressSpeechBubbles.h"
+#include "April/Utility/DefaultTheme.h"
 
 
 namespace April {
@@ -23,6 +24,11 @@ namespace April {
 	template<typename T>
 	struct JsonKey{};
 
+
+	template<>
+	struct JsonKey<DefaultTheme::Config> {
+		static constexpr auto key = "Gui/DefaultTheme";
+	};
 
 	template<>
 	struct JsonKey<Gui::ChainedSouls::Config> {

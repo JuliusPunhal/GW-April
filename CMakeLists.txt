@@ -65,6 +65,8 @@ target_sources(
 		src/April/Utility/Consumables.cpp
 		src/April/Utility/ConsumableState.h
 		src/April/Utility/ConsumableState.cpp
+		src/April/Utility/DefaultTheme.h
+		src/April/Utility/DefaultTheme.cpp
 		src/April/Utility/DhuumsJudgement.h
 		src/April/Utility/DhuumsJudgement.cpp
 		src/April/Utility/FileIO.h

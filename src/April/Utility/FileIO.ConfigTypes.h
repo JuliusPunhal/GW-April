@@ -15,10 +15,18 @@
 #include "April/Module/ReturnToOutpost.h"
 #include "April/Module/ShowKitUses.h"
 #include "April/Module/SuppressSpeechBubbles.h"
+#include "April/Utility/DefaultTheme.h"
 #include "April/Utility/FileIO.BasicTypes.h"
 
 #include "nlohmann/json.hpp"
 
+
+namespace April {
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		DefaultTheme::Config, font, move_from_titlebar, style )
+
+}
 
 namespace April::Gui {
 

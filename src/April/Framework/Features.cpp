@@ -89,9 +89,6 @@ auto April::make_Features() -> Features
 	auto const reduced_recharge = std::make_shared<ReducedSkillRecharge>();
 	auto const uwtimes = std::make_shared<UwTimesHistory>();
 
-	font_atlas->Get( FontInfo{ "ABeeZee-Regular.ttf", 16 } );
-	font_atlas->LoadRequestedFonts(); // loads default font
-
 	auto const cfg_gui_chainedsouls =
 		from_json<Gui::ChainedSouls::Config>( json );
 	auto const cfg_gui_dhuuminfo = from_json<Gui::DhuumInfo::Config>( json );
@@ -102,6 +99,13 @@ auto April::make_Features() -> Features
 	auto const cfg_gui_inventory = from_json<Gui::Inventory::Config>( json );
 	auto const cfg_gui_skillbar = from_json<Gui::Skillbar::Config>( json );
 	auto const cfg_gui_uwtimer = from_json<Gui::UwTimer::Config>( json );
+	auto const cfg_default_theme = from_json<DefaultTheme::Config>( json );
+
+	font_atlas->Get( cfg_default_theme->font );
+	font_atlas->LoadRequestedFonts();
+
+	auto default_theme = DefaultTheme{ cfg_default_theme, font_atlas };
+	default_theme.ApplyThemeToImGui();
 
 	return Features{
 		std::make_unique<Gui::ChainedSouls>(
