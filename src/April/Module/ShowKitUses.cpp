@@ -1,6 +1,7 @@
 
 #include "April/Module/ShowKitUses.h"
 
+using namespace April::Module;
 using namespace GW::Packet::StoC;
 
 
@@ -25,6 +26,32 @@ namespace {
 			packet.quantity = *new_qty;
 	}
 
+	template<class Packet_t>
+	void save_unchanged(
+		Packet_t const& packet,
+		std::vector<ShowKitUses::ItemPacket>& unchanged )
+	{
+		// using get_uses() as makeshift is_ident_or_salvage()
+		if ( get_uses( packet ) == std::nullopt )
+			return;
+
+		auto get_id = []( auto const& packet ) { return packet.item_id; };
+
+		auto is_current = [&]( ShowKitUses::ItemPacket const& saved )
+		{
+			return packet.item_id == std::visit( get_id, saved );
+		};
+
+		auto const found =
+			std::find_if( unchanged.begin(), unchanged.end(), is_current );
+
+		if ( found != unchanged.end() )
+		{
+			*found = packet;
+		}
+		else unchanged.push_back( packet );
+	}
+
 }
 
 
@@ -34,14 +61,23 @@ April::Module::ShowKitUses::ShowKitUses(
 {
 }
 
-void April::Module::ShowKitUses::Update( ItemGeneral& packet ) const
+void April::Module::ShowKitUses::Update( InstanceLoadStart const& )
 {
+	unchanged.clear();
+}
+
+void April::Module::ShowKitUses::Update( ItemGeneral_FirstID& packet )
+{
+	save_unchanged( packet, unchanged );
+
 	if ( config->active )
 		adjust_qty( packet );
 }
 
-void April::Module::ShowKitUses::Update( ItemGeneral_ReuseID& packet ) const
+void April::Module::ShowKitUses::Update( ItemGeneral_ReuseID& packet )
 {
+	save_unchanged( packet, unchanged );
+
 	if ( config->active )
 		adjust_qty( packet );
 }

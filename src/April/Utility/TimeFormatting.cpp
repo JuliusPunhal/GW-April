@@ -9,6 +9,7 @@
 using namespace GW::literals;
 using namespace std::chrono;
 using sec32 = duration<long>;
+using sec32f = duration<float>;
 
 
 auto April::to_string_ss( GW::ms32 const ms ) -> std::string
@@ -20,6 +21,20 @@ auto April::to_string_ss( GW::ms32 const ms ) -> std::string
 	snprintf(
 		buf.data(), buf.size(),
 		ms < 0_ms ? "-%02d" : "%02d",
+		s.count() );
+
+	return std::string{ buf.data() };
+}
+
+auto April::to_string_sff( GW::ms32 const ms ) -> std::string
+{
+	auto const time = abs( ms );
+	auto const s = duration_cast<sec32f>( time );
+
+	auto buf = std::array<char, 16>{};
+	snprintf(
+		buf.data(), buf.size(),
+		ms < 0_ms ? "-%.2f" : "%.2f",
 		s.count() );
 
 	return std::string{ buf.data() };

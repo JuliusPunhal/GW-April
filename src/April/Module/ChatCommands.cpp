@@ -19,17 +19,6 @@ using namespace std::string_view_literals;
 
 namespace {
 
-	constexpr auto cmd_openxunlai =       "/april_open_xunlai";
-	constexpr auto cmd_pcons_perm_on =    "/april_pcons_perm_on";
-	constexpr auto cmd_pcons_perm_off =   "/april_pcons_perm_off";
-	constexpr auto cmd_pcons_temp_on =    "/april_pcons_temp_on";
-	constexpr auto cmd_pcons_temp_off =   "/april_pcons_temp_off";
-	constexpr auto cmd_pcons_objective =  "/april_pcons_objective";
-	constexpr auto cmd_reset_dx9 =        "/april_reset_dx9";
-	constexpr auto cmd_suppressed_items = "/april_show_suppressed_items";
-	constexpr auto cmd_toggle_window =    "/april_toggle_window";
-
-
 	template<typename Iter_t>
 	auto find_space( Iter_t const begin, Iter_t const end )
 	{
@@ -334,6 +323,12 @@ auto April::Module::make_Abbreviation(
 		return Abbreviation{ abbr, exp };
 	}
 	else return std::nullopt;
+}
+
+bool April::Module::ChatCommands::Abbreviation::operator==(
+	std::string const& str ) const
+{
+	return abbreviated_ == str;
 }
 
 auto April::Module::ChatCommands::Config::default_Abbreviations()

@@ -5,6 +5,7 @@
 #include "April/Gui/HealthEnergy.h"
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Inventory.h"
+#include "April/Gui/Settings.Config.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
 #include "April/Module/ConsumablesMgr.h"
@@ -38,6 +39,9 @@ namespace April::Module {
 			auto expanded() const -> auto const& { return expanded_; }
 
 
+			bool operator==( std::string const& ) const;
+
+
 		private:
 			std::string abbreviated_;
 			std::string expanded_;
@@ -59,8 +63,21 @@ namespace April::Module {
 				std::shared_ptr<Gui::Healthbar::Config>,
 				std::shared_ptr<Gui::InstanceTimer::Config>,
 				std::shared_ptr<Gui::Inventory::Config>,
+				std::shared_ptr<Gui::Settings_Config>,
 				std::shared_ptr<Gui::Skillbar::Config>,
 				std::shared_ptr<Gui::UwTimer::Config>>;
+
+
+		static constexpr auto cmd_openxunlai =       "/april_open_xunlai";
+		static constexpr auto cmd_pcons_perm_on =    "/april_pcons_perm_on";
+		static constexpr auto cmd_pcons_perm_off =   "/april_pcons_perm_off";
+		static constexpr auto cmd_pcons_temp_on =    "/april_pcons_temp_on";
+		static constexpr auto cmd_pcons_temp_off =   "/april_pcons_temp_off";
+		static constexpr auto cmd_pcons_objective =  "/april_pcons_objective";
+		static constexpr auto cmd_reset_dx9 =        "/april_reset_dx9";
+		static constexpr auto cmd_toggle_window =    "/april_toggle_window";
+		static constexpr auto cmd_suppressed_items =
+			"/april_show_suppressed_items";
 
 
 		ChatCommands(

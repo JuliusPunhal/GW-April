@@ -44,6 +44,26 @@ bool ImGui::CollapsingHeader(
 	return ImGui::CollapsingHeader( label.c_str(), flags );
 }
 
+void ImGui::HelpMarker( const char* desc )
+{
+	constexpr auto flags = ImGuiHoveredFlags_AllowWhenBlockedByActiveItem;
+
+	ImGui::TextDisabled( "(?)" );
+	if ( ImGui::IsItemHovered( flags ) )
+	{
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos( ImGui::GetFontSize() * 35.0f );
+		ImGui::TextUnformatted( desc );
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
+}
+
+void ImGui::HelpMarker( std::string const& str )
+{
+	return ImGui::HelpMarker( str.c_str() );
+}
+
 void ImGui::MoveCursorPos( ImVec2 const& new_pos )
 {
 	auto const cursor = ImGui::GetCursorPos();
@@ -58,6 +78,13 @@ void ImGui::MoveCursorPosX( float const new_x )
 void ImGui::MoveCursorPosY( float const new_y )
 {
 	ImGui::SetCursorPosY( ImGui::GetCursorPosY() + new_y);
+}
+
+void ImGui::SeparatorSpaced( float const before, float const after )
+{
+	ImGui::MoveCursorPosY( before * ImGui::GetFrameHeight() );
+	ImGui::Separator();
+	ImGui::MoveCursorPosY( after * ImGui::GetFrameHeight() );
 }
 
 void ImGui::SetNextWindowPosCentered( ImGuiCond const cond )
@@ -76,6 +103,36 @@ bool ImGui::SmallButton( std::string const& label )
 void ImGui::Text( std::string const& str )
 {
 	ImGui::Text( str.c_str() );
+}
+
+void ImGui::TextCentered( const char* label )
+{
+	ImGui::MoveCursorPosX(
+		+ 0.5f * ImGui::GetContentRegionAvail().x
+		- 0.5f * ImGui::CalcTextSize( label ).x );
+
+	ImGui::Text( label );
+}
+
+void ImGui::TextCentered( std::string const& str )
+{
+	return ImGui::TextCentered( str.c_str() );
+}
+
+void ImGui::TextWrapped( std::string const& str )
+{
+	return ImGui::TextWrapped( str.c_str() );
+}
+
+float ImGui::WidthToFitNItems( int const n )
+{
+	auto const available_space = ImGui::GetContentRegionAvail().x;
+	auto const total_spacing = (n - 1) * ImGui::GetStyle().ItemSpacing.x;
+
+	auto const space_for_items = available_space - total_spacing;
+	auto const width_one_item = space_for_items / n;
+
+	return width_one_item;
 }
 
 auto April::Invisible() -> ImVec4
@@ -126,6 +183,11 @@ auto April::Red( float alpha ) -> ImVec4
 auto April::Yellow( float alpha ) -> ImVec4
 {
 	return { 1, 1, 0, alpha };
+}
+
+auto April::MutedRed( float alpha ) -> ImVec4
+{
+	return { .7f, 0, 0, alpha };
 }
 
 auto April::operator+( ImVec2 const& lhs, ImVec2 const& rhs ) -> ImVec2

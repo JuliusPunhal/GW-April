@@ -331,6 +331,13 @@ namespace GW {
 		detail::SendPacket( sizeof( T ), &cpy );
 	}
 
+
+	using DialogID = unsigned;
+
+	void SendDialog( DialogID );
+
+	auto GetLastSentDialog() -> DialogID;
+
 }
 
 // StoC
@@ -497,7 +504,50 @@ namespace GW::Packet::CtoS {
 
 namespace GW::Packet::StoC {
 
-	struct ItemGeneral_ReuseID : ItemGeneral {
+	// GWCA's DisplayCape uses "uint8_t status;", leaving the three final
+	// padding-bytes uninitialized, which will be misinterpreted when emulating
+	// the packet.
+	struct CapeVisibility : Packet<CapeVisibility> {
+		uint32_t agent_id;
+		uint32_t visible;  // 0 or 1
+
+		constexpr CapeVisibility( uint32_t id, uint32_t visible )
+			: Packet{ STATIC_HEADER }, agent_id{ id }, visible{ visible }
+		{
+		}
+	};
+	unsigned const Packet<CapeVisibility>::STATIC_HEADER =
+		GAME_SMSG_AGENT_DISPLAY_CAPE;
+
+	struct InstanceLoadStart : Packet<InstanceLoadStart> {
+		uint32_t unk1;
+		uint32_t unk2;
+		uint32_t unk3;
+		uint32_t unk4;
+	};
+	unsigned const Packet<InstanceLoadStart>::STATIC_HEADER =
+		GAME_SMSG_INSTANCE_LOAD_HEAD;
+
+	struct ItemGeneral_FirstID : Packet<ItemGeneral_FirstID> {
+		uint32_t item_id;
+		uint32_t model_file_id;
+		uint32_t type;
+		uint32_t unk1;
+		uint32_t extra_id;
+		uint32_t materials;
+		uint32_t unk2;
+		uint32_t interaction;
+		uint32_t price;
+		uint32_t model_id;
+		uint32_t quantity;
+		wchar_t  enc_name[64];
+		uint32_t mod_struct_size;
+		uint32_t mod_struct[64];
+	};
+	const uint32_t Packet<ItemGeneral_FirstID>::STATIC_HEADER =
+		GAME_SMSG_ITEM_GENERAL_INFO;
+
+	struct ItemGeneral_ReuseID : ItemGeneral_FirstID {
 	};
 	unsigned const Packet<ItemGeneral_ReuseID>::STATIC_HEADER =
 		GAME_SMSG_ITEM_GENERAL_INFO + 1;

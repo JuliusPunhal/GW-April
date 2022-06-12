@@ -52,7 +52,21 @@ namespace April {
 			sort();
 		}
 
+		void replace( const_iterator const it, T const& el )
+		{
+			auto const pos = it - vec.begin();
+			vec[pos] = el;
+			sort();
+		}
+		void replace( const_iterator const it, T&& el )
+		{
+			auto const pos = it - vec.begin();
+			vec[pos] = std::move( el );
+			sort();
+		}
+
 		auto clear() noexcept { return vec.clear(); }
+		auto erase( const_iterator const it ) { return vec.erase( it ); }
 
 
 	private:

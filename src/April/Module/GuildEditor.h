@@ -3,6 +3,7 @@
 #include "GWCA/GWCA.hpp"
 
 #include <memory>
+#include <optional>
 #include <string>
 
 
@@ -35,10 +36,18 @@ namespace April::Module {
 
 		GuildEditor( std::shared_ptr<Config const> );
 
+		void Update( GW::Packet::StoC::MapLoaded const& );
 		void Update( GW::Packet::StoC::UpdateGuildInfo& );
+
+		auto Unmodified() const -> auto const& { return unmodified; }
+
+		void ApplyNameToPacket( GW::Packet::StoC::UpdateGuildInfo& ) const;
+		void ApplyTagToPacket( GW::Packet::StoC::UpdateGuildInfo& ) const;
+		void ApplyCapeToPacket( GW::Packet::StoC::UpdateGuildInfo& ) const;
 
 
 	private:
+		std::optional<GW::Packet::StoC::UpdateGuildInfo> unmodified;
 		std::shared_ptr<Config const> config;
 	};
 

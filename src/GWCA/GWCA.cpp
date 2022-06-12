@@ -23,6 +23,8 @@
 #include "GWCA/Managers/UIMgr.h"
 #pragma warning(pop)
 
+#include "April/Utility/stl.h"
+
 #include <string_view>
 #include <tuple>
 #include <type_traits>
@@ -835,6 +837,16 @@ void GW::RegisterSendChatCallback(
 void GW::detail::SendPacket( unsigned const size, void* buffer )
 {
 	GW::CtoS::SendPacket( size, buffer );
+}
+
+void GW::SendDialog( DialogID const id )
+{
+	GW::Agents::SendDialog( id );
+}
+
+auto GW::GetLastSentDialog() -> DialogID
+{
+	return GW::Agents::GetLastDialogId();
 }
 
 void GW::detail::RegisterCallback(

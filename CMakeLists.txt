@@ -33,6 +33,40 @@ target_sources(
 		src/April/Gui/InstanceTimer.cpp
 		src/April/Gui/Inventory.h
 		src/April/Gui/Inventory.cpp
+		src/April/Gui/Settings.h
+		src/April/Gui/Settings.cpp
+		src/April/Gui/Settings.Config.h
+		src/April/Gui/Settings.Config.cpp
+		src/April/Gui/Settings/Settings.ChatCommands.h
+		src/April/Gui/Settings/Settings.ChatCommands.cpp
+		src/April/Gui/Settings/Settings.ChatFilter.h
+		src/April/Gui/Settings/Settings.ChatFilter.cpp
+		src/April/Gui/Settings/Settings.DefaultTheme.h
+		src/April/Gui/Settings/Settings.DefaultTheme.cpp
+		src/April/Gui/Settings/Settings.Dialogs.h
+		src/April/Gui/Settings/Settings.Dialogs.cpp
+		src/April/Gui/Settings/Settings.Generic.h
+		src/April/Gui/Settings/Settings.Generic.cpp
+		src/April/Gui/Settings/Settings.GuildEditor.h
+		src/April/Gui/Settings/Settings.GuildEditor.cpp
+		src/April/Gui/Settings/Settings.HealthEnergy.h
+		src/April/Gui/Settings/Settings.HealthEnergy.cpp
+		src/April/Gui/Settings/Settings.InstanceTimer.h
+		src/April/Gui/Settings/Settings.InstanceTimer.cpp
+		src/April/Gui/Settings/Settings.Inventory.h
+		src/April/Gui/Settings/Settings.Inventory.cpp
+		src/April/Gui/Settings/Settings.ItemFilter.h
+		src/April/Gui/Settings/Settings.ItemFilter.cpp
+		src/April/Gui/Settings/Settings.NotifyOnEffect.h
+		src/April/Gui/Settings/Settings.NotifyOnEffect.cpp
+		src/April/Gui/Settings/Settings.ResignLog.h
+		src/April/Gui/Settings/Settings.ResignLog.cpp
+		src/April/Gui/Settings/Settings.Settings.h
+		src/April/Gui/Settings/Settings.Settings.cpp
+		src/April/Gui/Settings/Settings.ShowKitUses.h
+		src/April/Gui/Settings/Settings.ShowKitUses.cpp
+		src/April/Gui/Settings/Settings.Skillbar.h
+		src/April/Gui/Settings/Settings.Skillbar.cpp
 		src/April/Gui/Skillbar.h
 		src/April/Gui/Skillbar.cpp
 		src/April/Gui/UwTimer.h
@@ -85,6 +119,8 @@ target_sources(
 		src/April/Utility/Reaper.cpp
 		src/April/Utility/ReducedSkillRecharge.h
 		src/April/Utility/ReducedSkillRecharge.cpp
+		src/April/Utility/SettingsWidgets.h
+		src/April/Utility/SettingsWidgets.cpp
 		src/April/Utility/sorted_vector.h
 		src/April/Utility/sorted_vector.cpp
 		src/April/Utility/stl.h

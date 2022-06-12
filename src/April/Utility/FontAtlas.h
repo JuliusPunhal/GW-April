@@ -28,10 +28,15 @@ namespace April {
 		// (2) AppData/Roaming/GW-April/, and (3) Windows/Fonts/
 		bool LoadRequestedFonts();
 
+		auto GetLoadedFonts() const -> auto const& { return loaded_fonts; }
+
+		static bool CanLoad( FontInfo const& );
+
 
 	private:
 		std::vector<FontInfo> mutable requested_fonts{};
 		std::vector<FontInfo> unable_to_load{};
+		std::vector<FontInfo> loaded_fonts{};
 	};
 
 }

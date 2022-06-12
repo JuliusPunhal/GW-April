@@ -4,8 +4,10 @@
 #include "April/Gui/DhuumInfo.h"
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Inventory.h"
+#include "April/Gui/Settings.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
+#include "April/Gui/Settings/Settings.Dialogs.h"
 #include "April/Module/ChatCommands.h"
 #include "April/Module/ChatFilter.h"
 #include "April/Module/GuildEditor.h"
@@ -55,6 +57,10 @@ namespace April::Gui {
 		no_item, unknown_item, wrong_instance_type, suggest_use, need_not_use,
 		can_not_use, special_state,
 		font, window )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( Settings::Config, heading, window )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( Settings_Dialogs::Config, dialogs )
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 		Skillbar::Config,

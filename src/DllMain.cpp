@@ -47,6 +47,8 @@ namespace {
 	void RenderCallback( IDirect3DDevice9* )
 	{
 		std::get<std::shared_ptr<April::Mouse>>( *features )->restore();
+		std::get<std::shared_ptr<April::DefaultTheme>>( *features )
+			->ApplyThemeToImGui();
 
 		ImGui_ImplDX9_NewFrame();
 		ImGui_ImplWin32_NewFrame();
@@ -78,6 +80,14 @@ namespace {
 		ImGui_ImplWin32_Init( GW::GetWindowHandle() );
 		ImGui_ImplDX9_Init( device );
 
+		ImGui::SetColorEditOptions(
+			ImGuiColorEditFlags_AlphaBar
+			| ImGuiColorEditFlags_AlphaPreview
+			| ImGuiColorEditFlags_DisplayRGB
+			| ImGuiColorEditFlags_Uint8
+			| ImGuiColorEditFlags_PickerHueWheel
+			| ImGuiColorEditFlags_InputRGB );
+
 		features = std::make_unique<April::Features>( April::make_Features() );
 
 		auto entry = GW::HookEntry{};
@@ -94,7 +104,8 @@ namespace {
 		GW::RegisterCallback<AgentName>(             &entry, on_packet );
 		GW::RegisterCallback<AgentRemove>(           &entry, on_packet );
 		GW::RegisterCallback<AgentUpdateAllegiance>( &entry, on_packet );
-		GW::RegisterCallback<ItemGeneral>(           &entry, on_packet );
+		GW::RegisterCallback<InstanceLoadStart>(     &entry, on_packet );
+		GW::RegisterCallback<ItemGeneral_FirstID>(   &entry, on_packet );
 		GW::RegisterCallback<ItemGeneral_ReuseID>(   &entry, on_packet );
 		GW::RegisterCallback<MapLoaded>(             &entry, on_packet );
 		GW::RegisterCallback<MessageCore>(           &entry, on_packet );

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "April/Gui/HealthEnergy.h"
+#include "April/Gui/Settings.h"
+#include "April/Gui/Settings/Settings.Dialogs.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Module/ChatCommands.h"
 #include "April/Module/GuildEditor.h"
@@ -156,6 +158,13 @@ namespace April::Gui {
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 		Skillbar::Config::Threshold, uptime, color )
+
+}
+
+namespace April::Gui {
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		Settings_Dialogs::NamedDialog, description, dialog )
 
 }
 

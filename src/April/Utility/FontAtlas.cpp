@@ -151,6 +151,7 @@ bool April::FontAtlas::LoadRequestedFonts()
 			unable_to_load.push_back( info );
 			all_fonts_loaded = false;
 		}
+		else loaded_fonts.push_back( info );
 	}
 	requested_fonts.clear();
 
@@ -161,4 +162,12 @@ bool April::FontAtlas::LoadRequestedFonts()
 	}
 
 	return all_fonts_loaded;
+}
+
+bool April::FontAtlas::CanLoad( FontInfo const& info )
+{
+	return
+		is_font_file( info.name )
+		&& info.size > 0
+		&& not get_font_path( info.name ).empty();
 }

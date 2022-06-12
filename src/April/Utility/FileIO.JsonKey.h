@@ -5,6 +5,8 @@
 #include "April/Gui/HealthEnergy.h"
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Inventory.h"
+#include "April/Gui/Settings.h"
+#include "April/Gui/Settings/Settings.Dialogs.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
 #include "April/Module/ChatCommands.h"
@@ -63,6 +65,16 @@ namespace April {
 	template<>
 	struct JsonKey<Gui::UwTimer::Config> {
 		static constexpr auto key = "Gui/UwTimer";
+	};
+
+	template<>
+	struct JsonKey<Gui::Settings::Config> {
+		static constexpr auto key = "Gui/Settings";
+	};
+
+	template<>
+	struct JsonKey<Gui::Settings_Dialogs::Config> {
+		static constexpr auto key = "Gui/Settings/Dialogs";
 	};
 
 	template<>

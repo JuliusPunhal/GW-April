@@ -5,6 +5,7 @@
 #include "April/Gui/HealthEnergy.h"
 #include "April/Gui/InstanceTimer.h"
 #include "April/Gui/Inventory.h"
+#include "April/Gui/Settings.h"
 #include "April/Gui/Skillbar.h"
 #include "April/Gui/UwTimer.h"
 #include "April/Module/ChatCommands.h"
@@ -19,6 +20,7 @@
 #include "April/Module/SuppressSpeechBubbles.h"
 #include "April/Module/UwTimer.h"
 #include "April/Utility/ChainedSouls.h"
+#include "April/Utility/DefaultTheme.h"
 #include "April/Utility/DhuumsJudgement.h"
 #include "April/Utility/FontAtlas.h"
 #include "April/Utility/Mouse.h"
@@ -38,20 +40,22 @@ namespace April {
 			std::unique_ptr<Gui::Healthbar>,
 			std::unique_ptr<Gui::InstanceTimer>,
 			std::unique_ptr<Gui::Inventory>,
+			std::unique_ptr<Gui::Settings>,
 			std::unique_ptr<Gui::Skillbar>,
 			std::unique_ptr<Gui::UwTimer>,
 			std::unique_ptr<Module::ChatCommands>,
 			std::unique_ptr<Module::ChatFilter>,
 			std::shared_ptr<Module::ConsumablesMgr>,
-			std::unique_ptr<Module::GuildEditor>,
+			std::shared_ptr<Module::GuildEditor>,
 			std::shared_ptr<Module::ItemFilter>,
 			std::unique_ptr<Module::NotifyOnEffect>,
 			std::unique_ptr<Module::ResignMessage>,
 			std::unique_ptr<Module::ReturnToOutpost>,
-			std::unique_ptr<Module::ShowKitUses>,
+			std::shared_ptr<Module::ShowKitUses>,
 			std::unique_ptr<Module::SuppressSpeechBubbles>,
 			std::unique_ptr<Module::UwTimer>,
 			std::shared_ptr<ChainedSouls>,
+			std::shared_ptr<DefaultTheme>,
 			std::shared_ptr<DhuumsJudgement>,
 			std::shared_ptr<FontAtlas>,
 			std::shared_ptr<Mouse>,
