@@ -486,6 +486,43 @@ auto GW::GetSkillID( GW::Effect const& effect ) -> GW::SkillID
 	return static_cast<GW::SkillID>( effect.skill_id );
 }
 
+bool GW::UseSkill(
+	int const slot, GW::AgentID const target, bool const ping )
+{
+	using namespace GW::Constants::TargetType;
+
+	auto const* skillbar = GW::GetPlayerSkillbar();
+	if ( skillbar == nullptr )
+		return false;
+
+	auto const* player = GW::GetCharacter();
+	if ( player == nullptr )
+		return false;
+
+	if ( target == 0u )
+	{
+		auto const skill_id = GW::GetSkillID( skillbar->skills[slot] );
+		auto const& skill_info = GW::GetSkillConstantData( skill_id );
+
+		if ( skill_info.target == AllyOrSelf )
+		{
+			// When GW::UseSkill() is called with target == 0, the skill should
+			// be used on self. However, when using a skill that can target
+			// others, the packet will actually be sent with the player's
+			// agent_id.
+
+			auto const id = player->agent_id;
+			detail::Enqueue(
+				[=]() { GW::SkillbarMgr::UseSkill( slot, id, ping ); } );
+			return true;
+		}
+	}
+
+	detail::Enqueue(
+		[=]() { GW::SkillbarMgr::UseSkill( slot, target, ping ); } );
+	return true;
+}
+
 auto GW::GetTimeRemaining( GW::Effect const& effect ) -> GW::ms32
 {
 	return ms32{ effect.GetTimeRemaining() };

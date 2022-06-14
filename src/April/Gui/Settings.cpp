@@ -40,6 +40,7 @@ namespace {
 
 	inline constexpr auto names = std::tuple{
 		Name<Settings_Generic<Gui::ChainedSouls::Config>>{ "Chained Souls" },
+		Name<Settings_DhuumBot>{ "Dhuum Bot" },
 		Name<Settings_Generic<Gui::DhuumInfo::Config>>{ "Dhuum Info" },
 		Name<Settings_Energybar>{ "Energybar" },
 		Name<Settings_Healthbar>{ "Healthbar" },
@@ -384,6 +385,9 @@ April::Gui::Settings::Settings(
 			}
 		},
 		std::tuple{
+			Settings_DhuumBot{
+				get_sp<Module::DhuumBot>( features )
+			},
 			Settings_Dialogs{
 				get_sp<Settings_Dialogs::Config>( configs )
 			},

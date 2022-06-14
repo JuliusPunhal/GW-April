@@ -11,6 +11,7 @@
 #include "April/Module/ChatCommands.h"
 #include "April/Module/ChatFilter.h"
 #include "April/Module/ConsumablesMgr.h"
+#include "April/Module/DhuumBot.h"
 #include "April/Module/GuildEditor.h"
 #include "April/Module/ItemFilter.h"
 #include "April/Module/NotifyOnEffect.h"
@@ -46,6 +47,7 @@ namespace April {
 			std::unique_ptr<Module::ChatCommands>,
 			std::unique_ptr<Module::ChatFilter>,
 			std::shared_ptr<Module::ConsumablesMgr>,
+			std::shared_ptr<Module::DhuumBot>,
 			std::shared_ptr<Module::GuildEditor>,
 			std::shared_ptr<Module::ItemFilter>,
 			std::unique_ptr<Module::NotifyOnEffect>,

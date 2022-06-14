@@ -43,6 +43,8 @@ target_sources(
 		src/April/Gui/Settings/Settings.ChatFilter.cpp
 		src/April/Gui/Settings/Settings.DefaultTheme.h
 		src/April/Gui/Settings/Settings.DefaultTheme.cpp
+		src/April/Gui/Settings/Settings.DhuumBot.h
+		src/April/Gui/Settings/Settings.DhuumBot.cpp
 		src/April/Gui/Settings/Settings.Dialogs.h
 		src/April/Gui/Settings/Settings.Dialogs.cpp
 		src/April/Gui/Settings/Settings.Generic.h
@@ -77,6 +79,8 @@ target_sources(
 		src/April/Module/ChatFilter.cpp
 		src/April/Module/ConsumablesMgr.h
 		src/April/Module/ConsumablesMgr.cpp
+		src/April/Module/DhuumBot.h
+		src/April/Module/DhuumBot.cpp
 		src/April/Module/GuildEditor.h
 		src/April/Module/GuildEditor.cpp
 		src/April/Module/ItemFilter.h

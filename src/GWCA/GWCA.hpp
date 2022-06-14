@@ -106,6 +106,7 @@ namespace GW {
 namespace GW {
 
 	using Constants::Profession;
+	using Allegiance = decltype( GW::AgentLiving::allegiance );
 	using AttributeID = Constants::Attribute;
 	using Morale = int;                       // -60 ... +10
 
@@ -165,6 +166,7 @@ namespace GW {
 	using Constants::SkillID;
 	using Constants::SkillType;
 
+	using TargetType = decltype( GW::Skill::target );
 	using SkillDataArray =
 		std::array<
 			GW::Skill,
@@ -181,6 +183,10 @@ namespace GW {
 
 	auto GetRecharge( GW::SkillbarSkill const& ) -> GW::ms32;
 	auto GetSkillID( GW::SkillbarSkill const& ) -> GW::SkillID;
+
+
+	bool UseSkill(
+		int slot /*0...8*/, GW::AgentID target = 0u, bool ping = false );
 
 }
 
@@ -409,6 +415,36 @@ namespace GW {
 }
 
 // Other
+namespace GW::Constants::Allegiance {
+
+	inline constexpr GW::Allegiance Allied = 1;
+	inline constexpr GW::Allegiance Neutral = 2;
+	inline constexpr GW::Allegiance Hostile = 3;
+	inline constexpr GW::Allegiance Spirit = 4;
+	inline constexpr GW::Allegiance Pet = 4;
+	inline constexpr GW::Allegiance Minion = 5;
+	inline constexpr GW::Allegiance NPC = 6;
+	inline constexpr GW::Allegiance Minipet = 6;
+
+}
+
+namespace GW::Constants::TargetType {
+
+	inline constexpr GW::TargetType Self = 0;
+	inline constexpr GW::TargetType Corpse = 1;
+	inline constexpr GW::TargetType Untamed = 1;
+	inline constexpr GW::TargetType AdjacentFoes = 1;
+	inline constexpr GW::TargetType AllyOrSelf = 3;
+	inline constexpr GW::TargetType OtherAlly = 4;
+	inline constexpr GW::TargetType SingleFoe = 5;
+	inline constexpr GW::TargetType DeadPartyMember1 = 6;
+	inline constexpr GW::TargetType DeadPartyMember2 = 11;
+	inline constexpr GW::TargetType Minion = 14;
+	inline constexpr GW::TargetType DeadPartyMember3 = 15;
+	inline constexpr GW::TargetType FoeAoe = 16;
+
+}
+
 namespace GW::Constants::ObjectiveID {
 
 	inline constexpr GW::ObjectiveID Chamber = 146;

@@ -115,6 +115,7 @@ auto April::make_Features() -> Features
 
 	auto const chained_souls = std::make_shared<ChainedSouls>();
 	auto const consumables_mgr = std::make_shared<Module::ConsumablesMgr>();
+	auto const dhuum_bot = std::make_shared<Module::DhuumBot>();
 	auto const dhuums_judgement = std::make_shared<DhuumsJudgement>();
 	auto const font_atlas = std::make_shared<FontAtlas>();
 	auto const guild_editor =
@@ -182,6 +183,7 @@ auto April::make_Features() -> Features
 			},
 			std::tuple{
 				font_atlas,
+				dhuum_bot,
 				guild_editor,
 				item_filter,
 				show_kit_uses
@@ -211,6 +213,7 @@ auto April::make_Features() -> Features
 		std::make_unique<Module::ChatFilter>(
 			cfg_mod_chatfilter ),
 		consumables_mgr,
+		dhuum_bot,
 		guild_editor,
 		item_filter,
 		std::make_unique<Module::NotifyOnEffect>(

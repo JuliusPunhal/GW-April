@@ -5,6 +5,7 @@
 // Module Settings Widgets
 #include "April/Gui/Settings/Settings.ChatCommands.h"
 #include "April/Gui/Settings/Settings.ChatFilter.h"
+#include "April/Gui/Settings/Settings.DhuumBot.h"
 #include "April/Gui/Settings/Settings.GuildEditor.h"
 #include "April/Gui/Settings/Settings.ItemFilter.h"
 #include "April/Gui/Settings/Settings.NotifyOnEffect.h"
@@ -76,6 +77,7 @@ namespace April::Gui {
 
 		using InfoWidgets =
 			std::tuple<
+				Settings_DhuumBot,
 				Settings_Dialogs,
 				Settings_ResignLog>;
 
@@ -118,6 +120,7 @@ namespace April::Gui {
 		using Features =
 			std::tuple<
 				std::shared_ptr<FontAtlas>,
+				std::shared_ptr<Module::DhuumBot>,
 				std::shared_ptr<Module::GuildEditor>,
 				std::shared_ptr<Module::ItemFilter>,
 				std::shared_ptr<Module::ShowKitUses>>;
