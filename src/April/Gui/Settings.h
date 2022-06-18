@@ -115,6 +115,7 @@ namespace April::Gui {
 				std::shared_ptr<Gui::Skillbar::Config>,
 				std::shared_ptr<Gui::UwTimer::Config>,
 				std::shared_ptr<DefaultTheme::Config>,
+				std::shared_ptr<Exit::Config>,
 				std::shared_ptr<Gui::Settings_Dialogs::Config>>;
 
 		using Features =

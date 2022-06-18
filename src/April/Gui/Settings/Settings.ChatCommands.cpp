@@ -198,6 +198,13 @@ namespace {
 			ImGui::TreePop();
 		}
 
+		if ( ImGui::TreeNode( ChatCommands::cmd_exit ) )
+		{
+			ImGui::TextWrapped(
+				"Quits April. Unsaved changes will be lost.\n\n" );
+			ImGui::TreePop();
+		}
+
 		ImGui::TextWrapped(
 			"Chat Commands are case-sensitive and can be chained in one "
 			"message!" );

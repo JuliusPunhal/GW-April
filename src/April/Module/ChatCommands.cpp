@@ -184,11 +184,13 @@ April::Module::ChatCommands::ChatCommands(
 	std::shared_ptr<Config const>   config,
 	std::shared_ptr<ConsumablesMgr> consumables_mgr,
 	std::shared_ptr<ItemFilter>     item_filter,
+	std::shared_ptr<Exit>           exit,
 	GuiConfigs                      gui_configs )
 	:
 	config{ config },
 	consumables_mgr{ consumables_mgr },
 	item_filter{ item_filter },
+	exit{ exit },
 	gui_configs{ gui_configs }
 {
 }
@@ -210,7 +212,12 @@ void April::Module::ChatCommands::Update(
 		auto const cmd = stl::make_sv( cmd_begin, space );
 		auto const args = trim_spaces( stl::make_sv( space, cmd_end ) );
 
-		if ( cmd == cmd_reset_dx9 )
+		if ( cmd == cmd_exit )
+		{
+			exit->initiate_exit();
+			status.blocked = true;
+		}
+		else if ( cmd == cmd_reset_dx9 )
 		{
 			ImGui_ImplDX9_InvalidateDeviceObjects();
 			status.blocked = true;

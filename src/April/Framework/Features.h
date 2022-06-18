@@ -26,6 +26,7 @@
 #include "April/Utility/FontAtlas.h"
 #include "April/Utility/Mouse.h"
 #include "April/Utility/ReducedSkillRecharge.h"
+#include "April/Utility/Exit.h"
 
 #include <memory>
 #include <tuple>
@@ -61,7 +62,8 @@ namespace April {
 			std::shared_ptr<DhuumsJudgement>,
 			std::shared_ptr<FontAtlas>,
 			std::shared_ptr<Mouse>,
-			std::shared_ptr<ReducedSkillRecharge>>;
+			std::shared_ptr<ReducedSkillRecharge>,
+			std::shared_ptr<Exit>>;
 
 
 	auto make_Features() -> Features;

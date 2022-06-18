@@ -107,6 +107,8 @@ target_sources(
 		src/April/Utility/DefaultTheme.cpp
 		src/April/Utility/DhuumsJudgement.h
 		src/April/Utility/DhuumsJudgement.cpp
+		src/April/Utility/Exit.h
+		src/April/Utility/Exit.cpp
 		src/April/Utility/FileIO.h
 		src/April/Utility/FileIO.cpp
 		src/April/Utility/FileIO.BasicTypes.h

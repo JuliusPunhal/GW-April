@@ -381,6 +381,7 @@ April::Gui::Settings::Settings(
 			},
 			Settings_DefaultTheme{
 				get_sp<DefaultTheme::Config>( configs ),
+				get_sp<Exit::Config>( configs ),
 				get_sp<FontAtlas>( features )
 			}
 		},

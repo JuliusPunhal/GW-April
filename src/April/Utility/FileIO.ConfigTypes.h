@@ -28,6 +28,8 @@ namespace April {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 		DefaultTheme::Config, font, move_from_titlebar, style )
 
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( Exit::Config, allow_vk_end )
+
 }
 
 namespace April::Gui {

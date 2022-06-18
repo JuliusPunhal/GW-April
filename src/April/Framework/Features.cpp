@@ -113,6 +113,8 @@ auto April::make_Features() -> Features
 	auto const cfg_wgt_dialogs =
 		from_json<Gui::Settings_Dialogs::Config>( json );
 
+	auto const cfg_exit = from_json<Exit::Config>( json );
+
 	auto const chained_souls = std::make_shared<ChainedSouls>();
 	auto const consumables_mgr = std::make_shared<Module::ConsumablesMgr>();
 	auto const dhuum_bot = std::make_shared<Module::DhuumBot>();
@@ -130,6 +132,8 @@ auto April::make_Features() -> Features
 
 	auto const default_theme =
 		std::make_shared<DefaultTheme>( cfg_default_theme, font_atlas );
+
+	auto const exit = std::make_shared<Exit>( cfg_exit );
 
 	return Features{
 		std::make_unique<Gui::ChainedSouls>(
@@ -179,6 +183,7 @@ auto April::make_Features() -> Features
 				cfg_gui_skillbar,
 				cfg_gui_uwtimer,
 				cfg_default_theme,
+				cfg_exit,
 				cfg_wgt_dialogs
 			},
 			std::tuple{
@@ -200,6 +205,7 @@ auto April::make_Features() -> Features
 			cfg_mod_chatcommands,
 			consumables_mgr,
 			item_filter,
+			exit,
 			std::forward_as_tuple(
 				cfg_gui_chainedsouls,
 				cfg_gui_dhuuminfo,
@@ -231,7 +237,8 @@ auto April::make_Features() -> Features
 		dhuums_judgement,
 		font_atlas,
 		mouse,
-		reduced_recharge
+		reduced_recharge,
+		exit
 	};
 }
 

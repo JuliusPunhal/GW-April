@@ -8,8 +8,9 @@
 
 April::Gui::Settings_DefaultTheme::Settings_DefaultTheme(
 	std::shared_ptr<DefaultTheme::Config> config,
+	std::shared_ptr<Exit::Config>         exit_config,
 	std::shared_ptr<FontAtlas const>      fonts )
-	: config{ config }, fonts{ fonts }
+	: config{ config }, exit_config{ exit_config }, fonts{ fonts }
 {
 }
 
@@ -107,4 +108,7 @@ void April::Gui::Settings_DefaultTheme::Draw()
 	ImGui::Checkbox(
 		"Move windows only from titlebar",
 		&config->move_from_titlebar );
+
+	ImGui::Checkbox(
+		"Exit April with [End] key", &exit_config->allow_vk_end );
 }

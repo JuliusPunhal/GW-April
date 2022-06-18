@@ -64,7 +64,7 @@ namespace {
 		using FontAtlas = std::shared_ptr<April::FontAtlas>;
 		std::get<FontAtlas>( *features )->LoadRequestedFonts();
 
-		if ( GetAsyncKeyState( VK_END ) )
+		if ( std::get<std::shared_ptr<April::Exit>>( *features )->want_exit() )
 		{
 			April::Shutdown( *features );
 

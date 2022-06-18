@@ -127,4 +127,9 @@ namespace April {
 		static constexpr auto key = "Module/SuppressSpeechBubbles";
 	};
 
+	template<>
+	struct JsonKey<Exit::Config> {
+		static constexpr auto key = "Utility/Exit";
+	};
+
 }

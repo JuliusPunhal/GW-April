@@ -10,6 +10,7 @@
 #include "April/Gui/UwTimer.h"
 #include "April/Module/ConsumablesMgr.h"
 #include "April/Module/ItemFilter.h"
+#include "April/Utility/Exit.h"
 
 #include "GWCA/GWCA.hpp"
 
@@ -68,6 +69,7 @@ namespace April::Module {
 				std::shared_ptr<Gui::UwTimer::Config>>;
 
 
+		static constexpr auto cmd_exit =             "/april_exit";
 		static constexpr auto cmd_openxunlai =       "/april_open_xunlai";
 		static constexpr auto cmd_pcons_perm_on =    "/april_pcons_perm_on";
 		static constexpr auto cmd_pcons_perm_off =   "/april_pcons_perm_off";
@@ -84,6 +86,7 @@ namespace April::Module {
 			std::shared_ptr<Config const>,
 			std::shared_ptr<ConsumablesMgr>,
 			std::shared_ptr<ItemFilter>,
+			std::shared_ptr<Exit>,
 			GuiConfigs );
 
 		void Update( GW::HookStatus&, GW::SendChatInfo );
@@ -93,6 +96,7 @@ namespace April::Module {
 		std::shared_ptr<Config const>   config;
 		std::shared_ptr<ConsumablesMgr> consumables_mgr;
 		std::shared_ptr<ItemFilter>     item_filter;
+		std::shared_ptr<Exit>           exit;
 		GuiConfigs                      gui_configs;
 	};
 
