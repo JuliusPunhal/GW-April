@@ -122,6 +122,11 @@ namespace GW {
 	auto GetAgentLivingByID( GW::AgentID ) -> GW::AgentLiving const*;
 
 	auto GetCharacter() -> GW::AgentLiving const*;
+	auto GetTarget() -> GW::Agent const*;
+
+	void ChangeTarget( GW::Agent const& );
+	void ChangeTarget( GW::AgentID );
+	void ClearTarget();
 
 	auto GetPlayerAttribute( GW::AttributeID ) -> GW::Attribute const*;
 

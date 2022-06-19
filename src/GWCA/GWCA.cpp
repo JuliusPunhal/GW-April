@@ -313,6 +313,27 @@ auto GW::GetCharacter() -> GW::AgentLiving const*
 	return player;
 }
 
+auto GW::GetTarget() -> GW::Agent const*
+{
+	return GW::Agents::GetTarget();
+}
+
+void GW::ChangeTarget( GW::Agent const& agent )
+{
+	GW::ChangeTarget( agent.agent_id );
+}
+
+void GW::ChangeTarget( GW::AgentID const agent_id )
+{
+	GW::detail::Enqueue(
+		[=]() { GW::Agents::ChangeTarget( agent_id ); } );
+}
+
+void GW::ClearTarget()
+{
+	GW::ChangeTarget( 0u );
+}
+
 auto GW::GetPlayerAttribute( GW::AttributeID const id ) -> GW::Attribute const*
 {
 	auto const& party = GW::GameContext::instance()->world->attributes;
@@ -489,6 +510,7 @@ auto GW::GetSkillID( GW::Effect const& effect ) -> GW::SkillID
 bool GW::UseSkill(
 	int const slot, GW::AgentID const target, bool const ping )
 {
+	using namespace GW::Constants::Allegiance;
 	using namespace GW::Constants::TargetType;
 
 	auto const* skillbar = GW::GetPlayerSkillbar();
@@ -499,24 +521,40 @@ bool GW::UseSkill(
 	if ( player == nullptr )
 		return false;
 
-	if ( target == 0u )
+	auto const* current_target = GW::GetAsAgentLiving( GW::GetTarget() );
+	auto const  skill_id = GW::GetSkillID( skillbar->skills[slot] );
+	auto const& skill_info = GW::GetSkillConstantData( skill_id );
+
+	if ( skill_info.target == Self )
 	{
-		auto const skill_id = GW::GetSkillID( skillbar->skills[slot] );
-		auto const& skill_info = GW::GetSkillConstantData( skill_id );
-
-		if ( skill_info.target == AllyOrSelf )
-		{
-			// When GW::UseSkill() is called with target == 0, the skill should
-			// be used on self. However, when using a skill that can target
-			// others, the packet will actually be sent with the player's
-			// agent_id.
-
-			auto const id = player->agent_id;
-			detail::Enqueue(
-				[=]() { GW::SkillbarMgr::UseSkill( slot, id, ping ); } );
-			return true;
-		}
+		detail::Enqueue(
+			[=]() { GW::SkillbarMgr::UseSkill( slot, 0u, ping ); } );
+		return true;
 	}
+
+	if ( skill_info.target == AllyOrSelf && target == 0 )
+	{
+		// When GW::UseSkill() is called with target == 0, the skill should
+		// be used on self. However, when using a skill that can target
+		// others, the packet will actually be sent with the player's
+		// agent_id.
+
+		if (
+			current_target
+			&& current_target->allegiance != Hostile
+			&& current_target->agent_id != player->agent_id )
+		{
+			GW::ChangeTarget( target );
+		}
+
+		auto const id = player->agent_id;
+		detail::Enqueue(
+			[=]() { GW::SkillbarMgr::UseSkill( slot, id, ping ); } );
+		return true;
+	}
+
+	if ( current_target == nullptr || current_target->agent_id != target )
+		GW::ChangeTarget( target );
 
 	detail::Enqueue(
 		[=]() { GW::SkillbarMgr::UseSkill( slot, target, ping ); } );
