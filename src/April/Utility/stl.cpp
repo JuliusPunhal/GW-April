@@ -31,3 +31,14 @@ auto stl::utf8_to_wstr( std::string const& str ) -> std::wstring
 
 	return result;
 }
+
+auto stl::wstr_to_ascii( std::wstring const& str ) -> std::string
+{
+	auto result = std::string{};
+	result.reserve( str.size() );
+
+	for ( auto const ch : str )
+		result.push_back( ch > 0x7F ? '?' : static_cast<char>( ch ) );
+
+	return result;
+}

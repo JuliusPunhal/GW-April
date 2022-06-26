@@ -45,6 +45,7 @@ namespace stl {
 
 	auto utf8_to_wstr( std::string const& ) -> std::wstring;
 	auto wstr_to_utf8( std::wstring const& ) -> std::string;
+	auto wstr_to_ascii( std::wstring const& ) -> std::string;
 
 
 	#if defined(_MSC_VER) && _MSC_VER >= 1900 && _MSC_FULL_VER >= 190023918 && _MSC_VER < 2000

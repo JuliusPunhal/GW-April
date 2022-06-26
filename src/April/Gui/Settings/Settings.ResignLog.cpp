@@ -72,10 +72,10 @@ void April::Gui::Settings_ResignLog::Draw()
 		auto const name = GW::GetPlayerArray()[player.login_number].name;
 
 		if ( ImGui::Button( label, { size, 0 } ) )
-			GW::SendChat( '#', stl::wstr_to_utf8( name ) + ": " + label );
+			GW::SendChat( '#', stl::wstr_to_ascii( name ) + ": " + label );
 
 		ImGui::SameLine();
-		ImGui::Text( "%S", name );
+		ImGui::Text( stl::wstr_to_utf8( name ) );
 		ImGui::PopID();
 	}
 }
