@@ -77,6 +77,7 @@ namespace April::Module {
 		static constexpr auto cmd_pcons_temp_off =   "/april_pcons_temp_off";
 		static constexpr auto cmd_pcons_objective =  "/april_pcons_objective";
 		static constexpr auto cmd_reset_dx9 =        "/april_reset_dx9";
+		static constexpr auto cmd_settings_panel =   "/april_settings_panel";
 		static constexpr auto cmd_toggle_window =    "/april_toggle_window";
 		static constexpr auto cmd_suppressed_items =
 			"/april_show_suppressed_items";

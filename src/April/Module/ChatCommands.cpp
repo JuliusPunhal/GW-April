@@ -1,6 +1,8 @@
 
 #include "April/Module/ChatCommands.h"
 
+#include "April/Gui/Settings.h"
+
 #include "April/Utility/stl.h"
 
 #include "ImGui/ImGui.hpp"
@@ -274,6 +276,20 @@ void April::Module::ChatCommands::Update(
 			}
 			else GW::WriteChat( GW::EMOTE, "Reset Consumables-Objective" );
 		}
+		else if ( cmd == cmd_settings_panel )
+		{
+			status.blocked = true;
+
+			using Gui_t = std::shared_ptr<Gui::Settings_Config>;
+			auto const gui = std::get<Gui_t>( gui_configs );
+			auto const found =
+				Gui::SetSettingsPanel( std::string{ args }, *gui );
+
+			if ( not found )
+				GW::WriteChat(
+					GW::EMOTE,
+					"Settings Panel " + std::string{ args } + " not found!" );
+		}
 		else if ( cmd == cmd_suppressed_items )
 		{
 			auto chat_msg = [&]() -> std::string
@@ -377,6 +393,7 @@ auto April::Module::ChatCommands::Config::default_Abbreviations()
 		make( "/s_off",           cmd_pcons_temp_off ),
 		make( "/o",               cmd_pcons_objective ),
 		make( "/texmod",          cmd_reset_dx9 ),
+		make( "/settings_panel",  cmd_settings_panel ),
 		make( "/show_suppressed", cmd_suppressed_items ),
 		make( "/wnd",             cmd_toggle_window ),
 

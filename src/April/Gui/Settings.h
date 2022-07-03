@@ -150,8 +150,10 @@ namespace April::Gui {
 		SectionsCombined                 drawables;
 		Configurations                   configs;
 
-		int         selected_section = 0;
-		std::string selected_feature = "";
+		int selected_section = 0;
 	};
+
+
+	bool SetSettingsPanel( std::string const&, Settings::Config& );
 
 }

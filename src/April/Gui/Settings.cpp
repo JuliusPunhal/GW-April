@@ -421,7 +421,10 @@ void April::Gui::Settings::Display()
 	{
 		auto const selected_changed =
 			draw_sidebar_and_saveload(
-				sections, selected_section, selected_feature, configs );
+				sections,
+				selected_section,
+				config->selected_feature,
+				configs );
 
 		ImGui::SameLine();
 
@@ -430,7 +433,7 @@ void April::Gui::Settings::Display()
 			if ( selected_changed )
 				ImGui::SetScrollY( 0 );
 
-			if ( selected_feature == "" )
+			if ( config->selected_feature == "" )
 			{
 				ImGui::PushFont( fonts->Get( config->heading ) );
 				ImGui::TextCentered( "Welcome" );
@@ -440,9 +443,31 @@ void April::Gui::Settings::Display()
 				ImGui::TextWrapped( desc_april );
 				ImGui::SeparatorSpaced();
 			}
-			else draw_selected( selected_feature, drawables, *config, *fonts );
+			else
+				draw_selected(
+					config->selected_feature, drawables, *config, *fonts );
 		}
 		ImGui::EndChild();
 	}
 	ImGui::End();
+}
+
+bool April::Gui::SetSettingsPanel(
+	std::string const& name, Settings::Config& config )
+{
+	auto found = false;
+	auto set_feature = [&]( auto const& ft )
+	{
+		if ( ft.name == name )
+		{
+			config.selected_feature = name;
+			found = true;
+		}
+	};
+
+	std::apply(
+		[&set_feature]( auto&... ft ) { (..., set_feature( ft )); },
+		names );
+
+	return found;
 }

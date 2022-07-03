@@ -51,6 +51,13 @@ namespace {
 			+ ChatCommands::cmd_pcons_objective + " 0\"\n"
 		"- Note: See abbreviations for more examples.\n\n";
 
+	auto const desc_settings_panel =
+		"Changes the active panel in the Settings-window to the specified "
+		"panel. The names are found in the sidebar or as header in the active "
+		"panel.\n"
+		"- Takes 1 panel-name as argument\n"
+		"- Example: \""s + ChatCommands::cmd_settings_panel + " Dhuum Bot\n\n";
+
 	auto const desc_toggle_window =
 		"Toggles visiblity for specified window.\n"
 		"- Takes 1 window-name (and optionally \"hide\" or \"show\") as "
@@ -178,6 +185,12 @@ namespace {
 		if ( ImGui::TreeNode( ChatCommands::cmd_toggle_window ) )
 		{
 			ImGui::TextWrapped( desc_toggle_window );
+			ImGui::TreePop();
+		}
+
+		if ( ImGui::TreeNode( ChatCommands::cmd_settings_panel ) )
+		{
+			ImGui::TextWrapped( desc_settings_panel );
 			ImGui::TreePop();
 		}
 
