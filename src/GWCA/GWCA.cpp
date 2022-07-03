@@ -26,6 +26,7 @@
 #include "April/Utility/stl.h"
 
 #include <algorithm>
+#include <cmath>
 #include <tuple>
 #include <type_traits>
 #include <vector>
@@ -406,6 +407,13 @@ auto GW::GetMorale( GW::AgentID const agent_id ) -> Morale
 auto GW::GetMorale() -> Morale
 {
 	return GW::GetMorale( GW::Agents::GetPlayerId() );
+}
+
+auto GW::GetVelocity( GW::Agent const& agent ) -> float
+{
+	return
+		std::sqrtf( agent.move_x * agent.move_x + agent.move_y * agent.move_y )
+		/ 288.f;
 }
 
 auto GW::GetInstanceTime() -> InstanceTime

@@ -22,6 +22,7 @@
 // Info Widgets
 #include "April/Gui/Settings/Settings.Dialogs.h"
 #include "April/Gui/Settings/Settings.ResignLog.h"
+#include "April/Gui/Settings/Settings.TargetInfo.h"
 
 // Generic Settings Widgets
 #include "April/Gui/Settings/Settings.Generic.h"
@@ -81,7 +82,8 @@ namespace April::Gui {
 			std::tuple<
 				Settings_DhuumBot,
 				Settings_Dialogs,
-				Settings_ResignLog>;
+				Settings_ResignLog,
+				Settings_TargetInfo>;
 
 		struct Sections {
 			ModuleSettings modules;

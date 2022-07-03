@@ -69,6 +69,8 @@ target_sources(
 		src/April/Gui/Settings/Settings.ShowKitUses.cpp
 		src/April/Gui/Settings/Settings.Skillbar.h
 		src/April/Gui/Settings/Settings.Skillbar.cpp
+		src/April/Gui/Settings/Settings.TargetInfo.h
+		src/April/Gui/Settings/Settings.TargetInfo.cpp
 		src/April/Gui/Skillbar.h
 		src/April/Gui/Skillbar.cpp
 		src/April/Gui/UwTimer.h

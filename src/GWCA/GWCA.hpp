@@ -106,7 +106,12 @@ namespace GW {
 // Agent
 namespace GW {
 
+	namespace Constants {
+		namespace AgentModelID = ModelID;
+	}
+
 	using Constants::Profession;
+	using AgentModelID = decltype( AgentLiving::player_number );
 	using Allegiance = decltype( AgentLiving::allegiance );
 	using LoginNumber = decltype( AgentLiving::login_number );
 	using AttributeID = Constants::Attribute;
@@ -144,6 +149,9 @@ namespace GW {
 
 	auto GetMorale( GW::AgentID ) -> Morale;
 	auto GetMorale() -> Morale;
+
+	// returns 0...1...1.66 percentage
+	auto GetVelocity( GW::Agent const& ) -> float;
 
 }
 
@@ -476,6 +484,14 @@ namespace GW::Constants::ObjectiveID {
 	inline constexpr GW::ObjectiveID Pools = 155;
 	inline constexpr GW::ObjectiveID Completed_X_of_10_quests = 156;
 	inline constexpr GW::ObjectiveID Dhuum = 157;
+
+}
+
+namespace GW::Constants::ModelID {
+
+	inline constexpr GW::AgentModelID XunlaiChest = 5001;
+	inline constexpr GW::AgentModelID SkeletonOfDhuum1 = 2342;
+	inline constexpr GW::AgentModelID SkeletonOfDhuum2 = 2343;
 
 }
 

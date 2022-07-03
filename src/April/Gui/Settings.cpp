@@ -69,7 +69,8 @@ namespace {
 		},
 		Name<Settings_DefaultTheme>{ "Default Theme" },
 		Name<Settings_Dialogs>{ "Dialogs" },
-		Name<Settings_ResignLog>{ "Resign Log" }
+		Name<Settings_ResignLog>{ "Resign Log" },
+		Name<Settings_TargetInfo>{ "Target Info" }
 	};
 
 	template<typename T>
@@ -401,6 +402,7 @@ April::Gui::Settings::Settings(
 				get_sp<Settings_Dialogs::Config>( configs )
 			},
 			Settings_ResignLog{},
+			Settings_TargetInfo{},
 		},
 	},
 	drawables{
