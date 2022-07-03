@@ -28,6 +28,7 @@
 #include "April/Gui/ChainedSouls.h"
 #include "April/Gui/DhuumInfo.h"
 #include "April/Gui/UwTimer.h"
+#include "April/Module/ResignReminder.h"
 #include "April/Module/ResignMessage.h"
 #include "April/Module/ReturnToOutpost.h"
 #include "April/Module/SuppressSpeechBubbles.h"
@@ -57,6 +58,7 @@ namespace April::Gui {
 				Settings_ItemFilter,
 				Settings_NotifyOnEffect,
 				Settings_Generic<Module::ResignMessage::Config>,
+				Settings_Generic<Module::ResignReminder::Config>,
 				Settings_Generic<Module::ReturnToOutpost::Config>,
 				Settings_ShowKitUses,
 				Settings_Generic<
@@ -102,6 +104,7 @@ namespace April::Gui {
 				std::shared_ptr<Module::ItemFilter::Config>,
 				std::shared_ptr<Module::NotifyOnEffect::Config>,
 				std::shared_ptr<Module::ResignMessage::Config>,
+				std::shared_ptr<Module::ResignReminder::Config>,
 				std::shared_ptr<Module::ReturnToOutpost::Config>,
 				std::shared_ptr<Module::ShowKitUses::Config>,
 				std::shared_ptr<Module::SuppressSpeechBubbles::Config>,

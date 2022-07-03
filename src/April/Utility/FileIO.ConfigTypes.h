@@ -14,6 +14,7 @@
 #include "April/Module/ItemFilter.h"
 #include "April/Module/NotifyOnEffect.h"
 #include "April/Module/ResignMessage.h"
+#include "April/Module/ResignReminder.h"
 #include "April/Module/ReturnToOutpost.h"
 #include "April/Module/ShowKitUses.h"
 #include "April/Module/SuppressSpeechBubbles.h"
@@ -105,6 +106,8 @@ namespace April::Module {
 		NotifyOnEffect::Config, active, on_gain, on_loss )
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( ResignMessage::Config, active )
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( ResignReminder::Config, active )
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( ReturnToOutpost::Config, active )
 

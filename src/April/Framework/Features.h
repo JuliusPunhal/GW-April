@@ -16,6 +16,7 @@
 #include "April/Module/ItemFilter.h"
 #include "April/Module/NotifyOnEffect.h"
 #include "April/Module/ResignMessage.h"
+#include "April/Module/ResignReminder.h"
 #include "April/Module/ReturnToOutpost.h"
 #include "April/Module/ShowKitUses.h"
 #include "April/Module/SuppressSpeechBubbles.h"
@@ -53,6 +54,7 @@ namespace April {
 			std::shared_ptr<Module::ItemFilter>,
 			std::unique_ptr<Module::NotifyOnEffect>,
 			std::unique_ptr<Module::ResignMessage>,
+			std::unique_ptr<Module::ResignReminder>,
 			std::unique_ptr<Module::ReturnToOutpost>,
 			std::shared_ptr<Module::ShowKitUses>,
 			std::unique_ptr<Module::SuppressSpeechBubbles>,

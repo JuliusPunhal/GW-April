@@ -89,6 +89,8 @@ target_sources(
 		src/April/Module/NotifyOnEffect.cpp
 		src/April/Module/ResignMessage.h
 		src/April/Module/ResignMessage.cpp
+		src/April/Module/ResignReminder.h
+		src/April/Module/ResignReminder.cpp
 		src/April/Module/ReturnToOutpost.h
 		src/April/Module/ReturnToOutpost.cpp
 		src/April/Module/ShowKitUses.h

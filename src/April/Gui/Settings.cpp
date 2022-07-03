@@ -57,6 +57,9 @@ namespace {
 		Name<Settings_Generic<Module::ResignMessage::Config>>{
 			"Resign Message"
 		},
+		Name<Settings_Generic<Module::ResignReminder::Config>>{
+			"Resign Reminder"
+		},
 		Name<Settings_Generic<Module::ReturnToOutpost::Config>>{
 			"Return to Outpost"
 		},
@@ -298,6 +301,11 @@ April::Gui::Settings::Settings(
 				"message to show how many party-members have resigned:\n\n"
 				"Your Character Name (1/8) has resigned.",
 				get_sp<Module::ResignMessage::Config>( configs )
+			},
+			Settings_Generic{
+				"When activated, this module will write a message into chat "
+				"if all players except you have resigned.",
+				get_sp<Module::ResignReminder::Config>( configs )
 			},
 			Settings_Generic{
 				"When activated, this module will automatically return you to "

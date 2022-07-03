@@ -56,6 +56,7 @@ using DWORD = unsigned long;
 #include <array>
 #include <chrono>
 #include <optional>
+#include <string_view>
 #include <vector>
 
 #define WIN32_LEAN_AND_MEAN
@@ -106,7 +107,8 @@ namespace GW {
 namespace GW {
 
 	using Constants::Profession;
-	using Allegiance = decltype( GW::AgentLiving::allegiance );
+	using Allegiance = decltype( AgentLiving::allegiance );
+	using LoginNumber = decltype( AgentLiving::login_number );
 	using AttributeID = Constants::Attribute;
 	using Morale = int;                       // -60 ... +10
 
@@ -123,6 +125,8 @@ namespace GW {
 
 	auto GetCharacter() -> GW::AgentLiving const*;
 	auto GetTarget() -> GW::Agent const*;
+
+	auto GetPlayerLoginNumber() -> GW::LoginNumber;
 
 	void ChangeTarget( GW::Agent const& );
 	void ChangeTarget( GW::AgentID );
@@ -253,8 +257,6 @@ namespace GW {
 
 // Party
 namespace GW {
-
-	using LoginNumber = decltype( AgentLiving::login_number );
 	using ResignedPlayers = std::vector<GW::LoginNumber>;
 
 
@@ -267,7 +269,17 @@ namespace GW {
 	bool GetIsPlayerLoaded();
 	bool GetIsPartyLoaded();
 
+	auto GetPlayerPartyMember( GW::LoginNumber )
+		-> GW::PlayerPartyMember const*;
+	auto GetPlayerPartyMember( GW::AgentLiving const& )
+		-> GW::PlayerPartyMember const*;
+
+	auto GetPlayerName( GW::PlayerPartyMember const& ) -> std::wstring_view;
+
 	auto GetResignedPlayers() -> ResignedPlayers const&;
+	bool HasResigned( GW::PlayerPartyMember const& ); // only if .connected()
+	auto CountConnected() -> int;
+	auto CountConnectedAndResigned() -> int;
 
 }
 

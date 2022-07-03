@@ -103,6 +103,8 @@ auto April::make_Features() -> Features
 		from_json<Module::NotifyOnEffect::Config>( json );
 	auto const cfg_mod_resignmsg =
 		from_json<Module::ResignMessage::Config>( json );
+	auto const cfg_mod_resignreminder =
+		from_json<Module::ResignReminder::Config>( json );
 	auto const cfg_mod_returnoutpost =
 		from_json<Module::ReturnToOutpost::Config>( json );
 	auto const cfg_mod_showkituses =
@@ -170,6 +172,7 @@ auto April::make_Features() -> Features
 				cfg_mod_itemfilter,
 				cfg_mod_notifyeffect,
 				cfg_mod_resignmsg,
+				cfg_mod_resignreminder,
 				cfg_mod_returnoutpost,
 				cfg_mod_showkituses,
 				cfg_mod_speechbubbles,
@@ -226,6 +229,8 @@ auto April::make_Features() -> Features
 			cfg_mod_notifyeffect ),
 		std::make_unique<Module::ResignMessage>(
 			cfg_mod_resignmsg ),
+		std::make_unique<Module::ResignReminder>(
+			cfg_mod_resignreminder ),
 		std::make_unique<Module::ReturnToOutpost>(
 			cfg_mod_returnoutpost ),
 		show_kit_uses,

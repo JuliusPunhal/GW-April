@@ -15,6 +15,7 @@
 #include "April/Module/ItemFilter.h"
 #include "April/Module/NotifyOnEffect.h"
 #include "April/Module/ResignMessage.h"
+#include "April/Module/ResignReminder.h"
 #include "April/Module/ReturnToOutpost.h"
 #include "April/Module/ShowKitUses.h"
 #include "April/Module/SuppressSpeechBubbles.h"
@@ -110,6 +111,11 @@ namespace April {
 	template<>
 	struct JsonKey<Module::ResignMessage::Config> {
 		static constexpr auto key = "Module/ResignMessage";
+	};
+
+	template<>
+	struct JsonKey<Module::ResignReminder::Config> {
+		static constexpr auto key = "Module/ResignReminder";
 	};
 
 	template<>

@@ -25,7 +25,7 @@
 
 #include "April/Utility/stl.h"
 
-#include <string_view>
+#include <algorithm>
 #include <tuple>
 #include <type_traits>
 #include <vector>
@@ -316,6 +316,11 @@ auto GW::GetCharacter() -> GW::AgentLiving const*
 auto GW::GetTarget() -> GW::Agent const*
 {
 	return GW::Agents::GetTarget();
+}
+
+auto GW::GetPlayerLoginNumber() -> GW::LoginNumber
+{
+	return GW::GameContext::instance()->character->player_number;
 }
 
 void GW::ChangeTarget( GW::Agent const& agent )
@@ -769,9 +774,74 @@ bool GW::GetIsPartyLoaded()
 	return GW::PartyMgr::GetIsPartyLoaded();
 }
 
-auto GW::GetResignedPlayers() -> std::vector<GW::LoginNumber> const&
+auto GW::GetPlayerPartyMember( GW::LoginNumber const login_number )
+	-> GW::PlayerPartyMember const*
+{
+	auto const* party = GW::GetPartyInfo();
+	if ( party == nullptr || not party->players.valid() )
+		return nullptr;
+
+	auto const party_member =
+		std::find_if(
+			party->players.begin(),
+			party->players.end(),
+			[&]( GW::PlayerPartyMember const& member )
+			{
+				return member.login_number == login_number;
+			} );
+
+	if ( party_member == party->players.end() )
+		return nullptr;
+
+	return party_member;
+}
+
+auto GW::GetPlayerPartyMember( GW::AgentLiving const& agent )
+	-> GW::PlayerPartyMember const*
+{
+	return GW::GetPlayerPartyMember( agent.login_number );
+}
+
+auto GW::GetResignedPlayers() -> ResignedPlayers const&
 {
 	return g_ResignLog.Get();
+}
+
+bool GW::HasResigned( GW::PlayerPartyMember const& player )
+{
+	if ( not player.connected() )
+		return false;
+
+	auto const& resigners = GW::GetResignedPlayers();
+	auto const resigned =
+		std::find( resigners.begin(), resigners.end(), player.login_number );
+
+	return resigned != resigners.end();
+}
+
+auto GW::CountConnected() -> int
+{
+	auto connected = []( GW::PlayerPartyMember const& player )
+	{
+		return player.connected();
+	};
+
+	auto const* party = GW::GetPartyInfo();
+	if ( party == nullptr || not party->players.valid() )
+		return 0;
+
+	auto const& players = party->players;
+	return std::count_if( players.begin(), players.end(), connected );
+}
+
+auto GW::CountConnectedAndResigned() -> int
+{
+	auto const* party = GW::GetPartyInfo();
+	if ( party == nullptr || not party->players.valid() )
+		return 0;
+
+	auto const& players = party->players;
+	return std::count_if( players.begin(), players.end(), GW::HasResigned );
 }
 
 auto GW::GetMessageBuffer() -> GW::MessageBuffer&
