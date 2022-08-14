@@ -307,13 +307,22 @@ void April::Module::ChatCommands::Update(
 		}
 		else if ( cmd == cmd_toggle_window )
 		{
-			if ( args.substr( args.size() - 5, 5 ) == " show" )
+			constexpr auto sfx_hide = " hide"sv;
+			constexpr auto sfx_show = " show"sv;
+			constexpr auto sfx_size = sfx_hide.size(); // == sfx_show.size()
+			static_assert( sfx_hide.size() == sfx_show.size() );
+
+			auto const suffix =
+				args.size() < sfx_size
+				? ""sv : args.substr( args.size() - sfx_size, sfx_size );
+
+			if ( suffix == sfx_show )
 			{
 				auto const name = args.substr( 0, args.size() - 5 );
 				if ( toggle_gui( gui_configs, name, true ) )
 					status.blocked = true;
 			}
-			else if ( args.substr( args.size() - 5, 5 ) == " hide" )
+			else if ( suffix == sfx_hide )
 			{
 				auto const name = args.substr( 0, args.size() - 5 );
 				if ( toggle_gui( gui_configs, name, false ) )
