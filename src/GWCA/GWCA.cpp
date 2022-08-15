@@ -75,14 +75,14 @@ namespace {
 
 			if ( gained_points == 1 )
 			{
-				g_Drunk.last_update = GW::GetInstanceTime();
-				g_Drunk.duration =
+				last_update = GW::GetInstanceTime();
+				duration =
 					std::min( GW::GetDrunkTime() + 1_min, 5_min + 0_ms );
 			}
 			else if ( gained_points >= 3 )
 			{
-				g_Drunk.last_update = GW::GetInstanceTime();
-				g_Drunk.duration = 5_min;
+				last_update = GW::GetInstanceTime();
+				duration = 5_min;
 			}
 		}
 
